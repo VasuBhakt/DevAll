@@ -6,16 +6,29 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "exports": {
-    "./package.json": "./package.json",
-    ".": {
-      "@dev-all/source": "./src/index.ts",
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "default": "./dist/index.js"
-    }
-  },
   "dependencies": {
     "tslib": "^2.3.0"
+  },
+  "nx": {
+    "targets": {
+      "studio": {
+        "command": "npx prisma studio --config ./prisma.config.ts",
+        "options": {
+          "cwd": "packages/database"
+        }
+      },
+      "migrate": {
+        "command": "npx prisma migrate dev --config ./prisma.config.ts",
+        "options": {
+          "cwd": "packages/database"
+        }
+      },
+      "generate": {
+        "command": "npx prisma generate --config ./prisma.config.ts",
+        "options": {
+          "cwd": "packages/database"
+        }
+      }
+    }
   }
 }
