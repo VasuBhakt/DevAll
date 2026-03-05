@@ -45,6 +45,8 @@
   "dependencies": {
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
+    "@nestjs/mapped-types": "*",
+    "@nestjs/microservices": "^11.1.16",
     "@nestjs/platform-express": "^11.0.0",
     "@prisma/adapter-neon": "^7.4.2",
     "@prisma/client": "^7.4.2",
