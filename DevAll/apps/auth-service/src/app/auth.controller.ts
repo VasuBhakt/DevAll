@@ -1,6 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { type User } from '@dev-all/database';
+import { APIResponse } from '@dev-all/helpers';
 
 @Controller('auth')
 export class AuthController {
@@ -8,6 +9,7 @@ export class AuthController {
 
   @Post('signup')
   async signup(@Body() body: User) {
-    return await this.authService.signup(body.email, body.password, body.name)
+    const user = await this.authService.signup(body.email, body.password, body.name);
+    return new APIResponse(204, 'User registered successfully!', user);
   }
 }

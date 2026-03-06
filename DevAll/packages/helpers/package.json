@@ -12,11 +12,5 @@
       "default": "./dist/index.js"
     },
     "./package.json": "./package.json"
-  },
-  "dependencies": {
-    "bcrypt": "^6.0.0"
-  },
-  "devDependencies": {
-    "@types/bcrypt": "^6.0.0"
   }
 }
