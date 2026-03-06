@@ -23,6 +23,9 @@
   ],
   "references": [
     {
+      "path": "../../packages/helpers/tsconfig.lib.json"
+    },
+    {
       "path": "../../packages/database/tsconfig.lib.json"
     }
   ]

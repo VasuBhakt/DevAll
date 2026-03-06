@@ -25,6 +25,9 @@
     "paths": {
       "@dev-all/database": [
         "packages/database/src/index.ts"
+      ],
+      "@dev-all/helpers": [
+        "packages/helpers/src/index.ts"
       ]
     }
   }
