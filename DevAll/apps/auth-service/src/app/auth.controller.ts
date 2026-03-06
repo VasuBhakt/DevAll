@@ -9,7 +9,7 @@ export class AuthController {
 
   @Post('signup')
   async signup(@Body() body: User) {
-    const user = await this.authService.signup(body.email, body.password, body.name);
-    return new APIResponse(204, 'User registered successfully!', user);
+    const createdUser = await this.authService.signup(body.email, body.password, body.name);
+    return new APIResponse(201, "User created successfully", createdUser)
   }
 }

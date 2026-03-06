@@ -1,11 +1,9 @@
 export class APIResponse<T = any> {
-    statusCode: number;
-    message: string;
-    data: T;
 
-    constructor(statusCode: number, message: string, data: T) {
-        this.statusCode = statusCode;
-        this.message = message;
-        this.data = data;
+    constructor(
+        public statusCode: number,
+        public message: string,
+        public data: T) {
+
     }
 }
