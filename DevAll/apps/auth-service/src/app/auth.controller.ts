@@ -8,6 +8,6 @@ export class AuthController {
 
   @Post('signup')
   async signup(@Body() body: User) {
-    this.authService.signup(body.email, body.password, body.name)
+    return await this.authService.signup(body.email, body.password, body.name)
   }
 }
