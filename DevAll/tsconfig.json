@@ -4,16 +4,16 @@
   "files": [],
   "references": [
     {
-      "path": "./apps/auth-service-e2e"
-    },
-    {
-      "path": "./apps/auth-service"
-    },
-    {
       "path": "./packages/database"
     },
     {
       "path": "./packages/helpers"
+    },
+    {
+      "path": "./apps/api-e2e"
+    },
+    {
+      "path": "./apps/api"
     }
   ]
 }
