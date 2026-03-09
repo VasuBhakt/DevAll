@@ -46,6 +46,8 @@ model User {
 
   created_at           DateTime  @default(now())
   updated_at           DateTime  @updatedAt
+
+  @@index([is_verified, verify_token_expiry])
 }
 
 // Profile Model
@@ -78,6 +80,7 @@ model Profile {
 
 // CP Profile Model
 model CP_Profile {
+  id              String    @default(uuid())
   user_id         String
   user            User        @relation(fields: [user_id], references: [id])
   platform        CP_Platform
@@ -99,6 +102,7 @@ model CP_Profile {
 
 // Project Profile Model
 model Project_Profile {
+  id              String    @default(uuid())
   user_id         String
   user            User             @relation(fields: [user_id], references: [id])
   platform        Project_Platform

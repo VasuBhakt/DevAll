@@ -18,7 +18,7 @@ export class MailService {
         try {
             const response = await brevoClient.transactionalEmails.sendTransacEmail({
                 sender: {
-                    email: process.env.BREVO_FROM_EMAIL || 'no-reply@devall.com',
+                    email: process.env['BREVO_FROM_EMAIL'] || 'no-reply@devall.com',
                     name: 'DevAll'
                 },
                 to: [{ email: options.email }],
