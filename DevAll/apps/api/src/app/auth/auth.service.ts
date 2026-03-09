@@ -169,6 +169,32 @@ export class AuthService {
         return "User signed out successfully!";
     }
 
+    async refreshTokens(refreshToken: string): Promise<Tokens> {
+        const hashedRefreshToken = await this.utilService.hashToken(refreshToken)
+        const user = await this.prisma.client.user.findFirst({
+            where: {
+                refresh_token: hashedRefreshToken
+            }
+        })
+        if (!user) {
+            throw new HttpException(
+                "Invalid Refresh Token",
+                HttpStatus.BAD_REQUEST
+            )
+        }
+        const tokens = await this.utilService.generateAccessAndRefreshTokens(user.id, user.username, user.role);
+        const newHashedRefreshToken = await this.utilService.hashToken(tokens.refresh_token);
+        await this.prisma.client.user.update({
+            where: {
+                id: user.id
+            },
+            data: {
+                refresh_token: newHashedRefreshToken
+            }
+        })
+        return tokens;
+    }
+
     async verifyEmail(verificationToken: string): Promise<boolean> {
         const hashedToken = await this.utilService.hashToken(verificationToken);
         const user = await this.prisma.client.user.findFirst({
