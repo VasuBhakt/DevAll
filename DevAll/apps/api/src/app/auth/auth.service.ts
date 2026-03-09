@@ -75,7 +75,7 @@ export class AuthService {
             },
         });
         // generate verification url
-        const verifyUrl = `${process.env['CORS_ORIGIN']}/verify-email/${verificationToken.token}`;
+        const verifyUrl = `${process.env['FRONTEND_URL']}/verify-email/${verificationToken.token}`;
         // generate email message
         const message = `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; border: 1px solid #e5e7eb; border-radius: 8px; padding: 24px;">
         <h2 style="color: #4F46E5; margin-bottom: 16px;">Welcome to DevAll!</h2>
@@ -250,7 +250,7 @@ export class AuthService {
                 forgot_password_token_expiry: forgotPasswordToken.ttl,
             },
         })
-        const generateForgotPasswordUrl = `${process.env['CORS_ORIGIN']}/forgot-password/${forgotPasswordToken.token}`;
+        const generateForgotPasswordUrl = `${process.env['FRONTEND_URL']}/forgot-password/${forgotPasswordToken.token}`;
         const message = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
             <h2 style="color: #4F46E5;">Reset your password</h2>
