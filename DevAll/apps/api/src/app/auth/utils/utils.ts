@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import type { Response } from 'express';
+import { TokenDTO } from '../entities';
 
 @Injectable()
 export class UtilsService {
@@ -22,11 +23,11 @@ export class UtilsService {
         return isPasswordCorrect;
     }
 
-    async generateToken(ttl: number): Promise<object> {
+    async generateToken(ttl: number): Promise<TokenDTO> {
         const token = await crypto.randomBytes(20).toString('hex');
         const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
         const expiresAt = new Date(Date.now() + ttl);
-        return { token, hashedToken, expiresAt };
+        return new TokenDTO(token, hashedToken, expiresAt);
     }
 
     async hashToken(token: string): Promise<string> {

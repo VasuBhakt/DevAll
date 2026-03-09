@@ -71,7 +71,7 @@ export class AuthService {
                 username: dto.username,
                 password: hashedPassword,
                 verification_token: verificationToken.hashedToken,
-                verify_token_expiry: verificationToken.expiresAt,
+                verify_token_expiry: verificationToken.ttl,
             },
         });
         // generate verification url
@@ -247,7 +247,7 @@ export class AuthService {
             },
             data: {
                 forgot_password_token: forgotPasswordToken.hashedToken,
-                forgot_password_token_expiry: forgotPasswordToken.expiresAt,
+                forgot_password_token_expiry: forgotPasswordToken.ttl,
             },
         })
         const generateForgotPasswordUrl = `${process.env['CORS_ORIGIN']}/forgot-password/${forgotPasswordToken.token}`;
