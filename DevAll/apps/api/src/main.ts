@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app/app.module.js';
+import { GlobalExceptionFilter, TransformInterceptor } from '@dev-all/helpers';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,6 +13,9 @@ async function bootstrap() {
     origin: process.env['FRONTEND_URL'] || 'http://localhost:4200',
     credentials: true,
   });
+
+  app.useGlobalFilters(new GlobalExceptionFilter());
+  app.useGlobalInterceptors(new TransformInterceptor());
 
   const port = process.env['PORT'] || 3000;
   await app.listen(port);
