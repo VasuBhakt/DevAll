@@ -24,10 +24,16 @@ export class UtilsService {
     }
 
     async generateToken(ttl: number): Promise<TokenDTO> {
-        const token = await crypto.randomBytes(20).toString('hex');
+        const token = crypto.randomBytes(20).toString('hex');
         const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
         const expiresAt = new Date(Date.now() + ttl);
-        return new TokenDTO(token, hashedToken, expiresAt);
+
+        const tokenDTO = new TokenDTO();
+        tokenDTO.token = token;
+        tokenDTO.hashedToken = hashedToken;
+        tokenDTO.ttl = expiresAt;
+
+        return tokenDTO;
     }
 
     async hashToken(token: string): Promise<string> {
