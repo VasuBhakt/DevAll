@@ -1,8 +1,12 @@
+import { IsNotEmpty } from "class-validator";
+
 export class TokenDTO {
-    constructor(
-        public token: string,
-        public hashedToken: string,
-        public ttl: Date
-    ) {}
+    @IsNotEmpty()
+    token! : string;
     
+    @IsNotEmpty()
+    hashedToken! : string;
+
+    @IsNotEmpty()
+    ttl!: Date;
 }

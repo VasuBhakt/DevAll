@@ -1,19 +1,18 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Patch, Post, Query } from "@nestjs/common";
 import { ProfileService } from "./profile.service";
-import { createProfileDTO } from "./entities/createProfileDTO";
+import { ProfileDTO,UpdateProfileDTO  } from "./entities/index";
 import { APIResponse, GetCurrentUserId, Public } from "@dev-all/helpers";
-import { updateProfileDTO } from "./entities/updateProfileDTO";
 
 @Controller('profile')
 export class ProfileController {
     constructor(
-        private profileService : ProfileService
-    ) {}
+        private profileService: ProfileService
+    ) { }
 
-    @Post('create-profile')
+    @Post('create')
     @HttpCode(HttpStatus.OK)
     async createProfile(
-        @Body() profile: createProfileDTO,
+        @Body() profile: ProfileDTO,
         @GetCurrentUserId() id: string
     ): Promise<APIResponse> {
         const response = await this.profileService.createProfile(profile, id);
@@ -25,10 +24,10 @@ export class ProfileController {
     }
 
     @Public()
-    @Get(':id?')
+    @Get()
     @HttpCode(HttpStatus.OK)
     async getProfile(
-        @Param('id') id?: string,
+        @Query('id') id?: string,
         @GetCurrentUserId() loggedInUserId?: string
     ): Promise<APIResponse> {
         const response = await this.profileService.getProfile(id, loggedInUserId);
@@ -39,10 +38,10 @@ export class ProfileController {
         )
     }
 
-    @Patch('update-profile')
+    @Patch('update')
     @HttpCode(HttpStatus.OK)
     async updateProfile(
-        @Body() profile: updateProfileDTO,
+        @Body() profile: UpdateProfileDTO,
         @GetCurrentUserId() id: string
     ) {
         const response = await this.profileService.updateProfile(profile, id);

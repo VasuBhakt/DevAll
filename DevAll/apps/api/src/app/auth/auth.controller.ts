@@ -56,7 +56,7 @@ export class AuthController {
         );
     }
 
-    @Post('logout')
+    @Post('signout')
     @HttpCode(HttpStatus.OK)
     async signout(
         @GetCurrentUserId() userId: string,
@@ -108,7 +108,7 @@ export class AuthController {
     @Post('forgot-password')
     @HttpCode(HttpStatus.OK)
     async forgotPassword(
-        @Body() {email}:{email:string}
+        @Body() { email }: { email: string }
     ): Promise<APIResponse> {
         const response = await this.authService.forgotPassword(email);
         return new APIResponse(
@@ -122,7 +122,7 @@ export class AuthController {
     @Post('reset-password/:token')
     @HttpCode(HttpStatus.OK)
     async resetPassword(
-        @Body() {password}: {password: string},
+        @Body() { password }: { password: string },
         @Param('token') token: string
     ): Promise<APIResponse> {
         await this.authService.resetPassword(password, token)

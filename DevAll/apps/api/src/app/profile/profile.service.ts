@@ -1,7 +1,6 @@
-import { PrismaService, Profile } from "@dev-all/database";
+import { PrismaService } from "@dev-all/database";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { createProfileDTO } from "./entities/createProfileDTO";
-import { updateProfileDTO } from "./entities/updateProfileDTO";
+import { ProfileDTO, UpdateProfileDTO} from "./entities/index";
 
 @Injectable()
 export class ProfileService {
@@ -9,7 +8,7 @@ export class ProfileService {
         private prisma: PrismaService
     ) {}
 
-    async createProfile(dto: createProfileDTO, userId: string): Promise<string> {
+    async createProfile(dto: ProfileDTO, userId: string): Promise<string> {
         if(!dto.name) {
             throw new HttpException(
                 "Name is required",
@@ -25,7 +24,7 @@ export class ProfileService {
         return "Profile created successfully!"
     }
 
-    async getProfile(userId?: string, loggedInUserId? : string): Promise<Profile> {
+    async getProfile(userId?: string, loggedInUserId? : string): Promise<ProfileDTO> {
         if(!userId && !loggedInUserId) {
             throw new HttpException(
                 "Provide valid userId",
@@ -44,7 +43,8 @@ export class ProfileService {
                     HttpStatus.BAD_REQUEST
                 )
             }
-            return profile;
+            const {id, user_id, created_at, updated_at, ...data} = profile
+            return data as ProfileDTO;
         }
         const loggedInProfile = await this.prisma.client.profile.findFirst({
             where: {
@@ -57,11 +57,12 @@ export class ProfileService {
                 HttpStatus.BAD_REQUEST
             )
         }
-        return loggedInProfile;
+        const {id, user_id, created_at, updated_at, ...data} = loggedInProfile
+            return data as ProfileDTO;
         
     }
 
-    async updateProfile(dto: updateProfileDTO, userId: string): Promise<string> {
+    async updateProfile(dto: UpdateProfileDTO, userId: string): Promise<string> {
         await this.prisma.client.profile.update({
             where: {
                 user_id: userId

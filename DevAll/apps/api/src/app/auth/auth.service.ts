@@ -208,7 +208,12 @@ export class AuthService {
                 HttpStatus.BAD_REQUEST
             )
         }
-        if (user.verify_token_expiry && user.verify_token_expiry < new Date()) {
+        if (user.verify_token_expiry && user.verify_token_expiry.getTime() < Date.now()) {
+            await this.prisma.client.user.delete({
+                where: {
+                    id: user.id
+                }
+            })
             throw new HttpException(
                 "Verification token has expired",
                 HttpStatus.BAD_REQUEST
