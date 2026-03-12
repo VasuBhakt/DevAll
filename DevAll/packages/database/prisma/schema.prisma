@@ -84,6 +84,7 @@ model CP_Profile {
   user_id         String
   user            User        @relation(fields: [user_id], references: [id])
   platform        CP_Platform
+  username        String
   profile_link    String
   rating          Int?
   max_rating      Int?
@@ -92,7 +93,7 @@ model CP_Profile {
   easy_problems   Int?
   problems_solved Int?
   badge           String?
-  contests        Json?
+  contests        Json[]
   
   created_at      DateTime    @default(now())
   updated_at      DateTime    @updatedAt
