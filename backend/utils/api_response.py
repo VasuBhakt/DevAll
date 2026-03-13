@@ -4,7 +4,7 @@ from pydantic import BaseModel
 T = TypeVar("T")
 
 class APIResponse(BaseModel, Generic[T]):
-    success: bool
-    status: int
-    message: str
+    success: bool = True
+    status: int = 200
+    message: str = "Success"
     data: Optional[T] = None

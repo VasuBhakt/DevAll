@@ -1,0 +1,25 @@
+{
+    "python.defaultInterpreterPath": "c:\\Users\\swast\\DevAll\\backend\\.venv\\Scripts\\python.exe",
+    "python.analysis.extraPaths": [
+        "c:\\Users\\swast\\DevAll\\backend",
+        "c:\\Users\\swast\\DevAll\\backend\\.venv\\Lib\\site-packages"
+    ],
+    "python.autoComplete.extraPaths": [
+        "c:\\Users\\swast\\DevAll\\backend",
+        "c:\\Users\\swast\\DevAll\\backend\\.venv\\Lib\\site-packages"
+    ],
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.indexing": true,
+    "python.analysis.packageIndexDepths": [
+        {
+            "name": "fastapi",
+            "depth": 5,
+            "includeAllSymbols": true
+        },
+        {
+            "name": "starlette",
+            "depth": 5,
+            "includeAllSymbols": true
+        }
+    ]
+}
