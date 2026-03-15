@@ -9,7 +9,9 @@ import os
 
 
 class DependenciesService:
-    async def verifyJWT(request: Request, db: AsyncSession = Depends(get_db)) -> str:
+    async def verifyJWT(
+        self, request: Request, db: AsyncSession = Depends(get_db)
+    ) -> str:
         token = request.cookies.get("access_token")
         if not token:
             raise APIException("Unauthorized", status=401, error_code="UNAUTHORIZED")

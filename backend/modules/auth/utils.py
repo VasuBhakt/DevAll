@@ -32,7 +32,7 @@ class AuthUtilService:
             "id": user.id,
             "username": user.username,
             "role": user.role,
-            "exp": datetime.utcnow() + timedelta(days=1),
+            "exp": datetime.utcnow() + timedelta(hours=1),
         }
         refresh_token_payload = {
             "id": user.id,
@@ -54,7 +54,7 @@ class AuthUtilService:
         self,
         response: Response,
         tokens: JWTTokens,
-        access_token_max_age: int = 24 * 60 * 60,  # 1 day
+        access_token_max_age: int = 60 * 60,  # 1 hour
         refresh_token_max_age: int = 7 * 24 * 60 * 60,  # 7 days
     ):
         response.set_cookie(

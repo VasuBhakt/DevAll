@@ -1,13 +1,22 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from fastapi import Depends
-from .schemas import SignupRequest, SigninRequest, UserResponse, JWTTokens
+from .schemas import (
+    SignupRequest,
+    SigninRequest,
+    UserResponse,
+    JWTTokens,
+    ForgetPasswordRequest,
+    ResetPasswordRequest,
+)
 from database import User, get_db
 from utils import APIException, EmailService
 from .utils import AuthUtilService
 import logging
 import os
 from datetime import datetime, timedelta
+from fastapi import Request, Depends
+import jwt
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -17,10 +26,12 @@ logger = logging.getLogger(__name__)
 
 class AuthService:
 
+    # constructor
     def __init__(self):
         self.util_service = AuthUtilService()
         self.email_service = EmailService()
 
+    # user signup
     async def signup(
         self, request: SignupRequest, db: AsyncSession = Depends(get_db)
     ) -> str:
@@ -50,7 +61,7 @@ class AuthService:
 
         new_user = User(
             email=request.email,
-            username=request.username,
+            username=request.username.lower(),
             password=hashed_password,
             verification_token=verify_token.hashed_token,
             verify_token_expiry=expiry_time,
@@ -97,6 +108,7 @@ class AuthService:
             "User created successfully. Please check your email for verification link."
         )
 
+    # user signin
     async def signin(
         self, request: SigninRequest, db: AsyncSession = Depends(get_db)
     ) -> JWTTokens:
@@ -149,3 +161,251 @@ class AuthService:
             )
 
         return tokens
+
+    # signout
+    async def signout(
+        self,
+        request: Request,
+        db: AsyncSession = Depends(get_db),
+    ) -> str:
+        if not request.state.user:
+            raise APIException(
+                message="Unauthorized", status=401, error_code="UNAUTHORIZED"
+            )
+        user_id = request.state.user.id
+        query = select(User).where(User.id == user_id)
+        result = await db.execute(query)
+        user = result.scalars().first()
+        if not user:
+            raise APIException(
+                message="User not found", status=404, error_code="USER_NOT_FOUND"
+            )
+        user.refresh_token = None
+        try:
+            db.add(user)
+            await db.commit()
+            await db.refresh(user)
+        except Exception as e:
+            await db.rollback()
+            logger.error(f"Database error during signout: {e}")
+            raise APIException(
+                message="An error occurred while logging out",
+                status=500,
+                error_code="SERVER_ERROR",
+            )
+        return "Signout successful"
+
+    # refresh access token
+    async def refresh_access_token(
+        self, request: Request, db: AsyncSession = Depends(get_db)
+    ) -> JWTTokens:
+        token = request.cookies.get("refresh_token")
+        if not token:
+            raise APIException(
+                message="Refresh token not found",
+                status=401,
+                error_code="REFRESH_TOKEN_NOT_FOUND",
+            )
+        decoded_token = jwt.decode(
+            token,
+            os.getenv("JWT_REFRESH_TOKEN", "hello"),
+            algorithms=["HS256"],
+        )
+        user_id = decoded_token.get("id")
+        if not user_id:
+            raise APIException(
+                "Unauthorized, id not present",
+                status=401,
+                error_code="UNAUTHORIZED",
+            )
+        query = select(User).where(User.id == user_id)
+        result = await db.execute(query)
+        user = result.scalars().first()
+        if not user:
+            raise APIException(
+                "Unauthorized, invalid user id",
+                status=401,
+                error_code="UNAUTHORIZED",
+            )
+        hashed_token = self.util_service.hash_token(token)
+        if user.refresh_token != hashed_token:
+            raise APIException(
+                "Unauthorized, invalid refresh token",
+                status=401,
+                error_code="UNAUTHORIZED",
+            )
+        user_response = UserResponse(
+            id=user.id,
+            username=user.username,
+            role=user.role if isinstance(user.role, str) else user.role.value,
+        )
+        tokens = self.util_service.generate_access_and_refresh_tokens(user_response)
+        user.refresh_token = self.util_service.hash_token(tokens.refresh_token)
+        try:
+            db.add(user)
+            await db.commit()
+            await db.refresh(user)
+        except Exception as e:
+            await db.rollback()
+            logger.error(f"Database error during refresh access token: {e}")
+            raise APIException(
+                message="An error occurred while refreshing access token",
+                status=500,
+                error_code="SERVER_ERROR",
+            )
+        return tokens
+
+    # verify email
+    async def verify_email(self, token: str, db: AsyncSession = Depends(get_db)) -> str:
+        hashed_verification_token = self.util_service.hash_token(token)
+        query = select(User).where(User.verification_token == hashed_verification_token)
+        result = await db.execute(query)
+        user = result.scalars().first()
+        if not user:
+            raise APIException(
+                "Invalid verification token",
+                status=401,
+                error_code="INVALID_VERIFICATION_TOKEN",
+            )
+        if user.verify_token_expiry < datetime.utcnow():
+            raise APIException(
+                "Verification token expired",
+                status=401,
+                error_code="VERIFICATION_TOKEN_EXPIRED",
+            )
+        user.is_verified = True
+        user.verification_token = None
+        user.verify_token_expiry = None
+        try:
+            db.add(user)
+            await db.commit()
+            await db.refresh(user)
+        except Exception as e:
+            await db.rollback()
+            logger.error(f"Database error during verify email: {e}")
+            raise APIException(
+                message="An error occurred while verifying email",
+                status=500,
+                error_code="SERVER_ERROR",
+            )
+        return "Email verified successfully"
+
+    # forget password
+    async def forget_password(
+        self, request: ForgetPasswordRequest, db: AsyncSession = Depends(get_db)
+    ) -> str:
+        query = select(User).where(User.email == request.email)
+        result = await db.execute(query)
+        user = result.scalars().first()
+        if not user:
+            raise APIException(
+                "User not found", status=404, error_code="USER_NOT_FOUND"
+            )
+        if not user.is_verified:
+            raise APIException(
+                "User not verified. Please verify your email first.",
+                status=401,
+                error_code="USER_NOT_VERIFIED",
+            )
+        forget_password_token_expiry = datetime.utcnow() + timedelta(hours=1)
+        forget_password_token = self.util_service.generate_token()
+        user.forget_password_token = forget_password_token.hashed_token
+        user.forget_password_token_expiry = forget_password_token_expiry
+        forget_password_url = f"{os.getenv('FRONTEND_URL', 'http://localhost:3000')}/forgot-password/{forgot_password_token.token}"
+        message = f"""<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+            <h2 style="color: #4F46E5;">Reset your password</h2>
+            <p>You have requested to reset your password. Click the button below to proceed:</p>
+            <a href="{forget_password_url}" style="display: inline-block; background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 16px 0;">Reset Password</a>
+            <p style="font-size: 0.9em; color: #666;">This link is valid for 30 minutes. If you did not request this, please ignore this email.</p>
+        </div>"""
+        email_sent = await self.email_service.send_email(
+            to_email=request.email, subject="Reset Your Password", html_content=message
+        )
+        if not email_sent:
+            raise APIException(
+                message="Error sending reset password email",
+                status=500,
+                error_code="EMAIL_ERROR",
+            )
+        try:
+            db.add(user)
+            await db.commit()
+            await db.refresh(user)
+        except Exception as e:
+            await db.rollback()
+            logger.error(f"Database error during forget password: {e}")
+            raise APIException(
+                message="An error occurred while forgetting password",
+                status=500,
+                error_code="SERVER_ERROR",
+            )
+        return "Forget password token generated and email sent successfully"
+
+    async def reset_password(
+        self,
+        token: str,
+        request: ResetPasswordRequest,
+        db: AsyncSession = Depends(get_db),
+    ) -> str:
+        hashed_password_token = self.util_service.hash_token(token)
+        query = select(User).where(User.forget_password_token == hashed_password_token)
+        result = await db.execute(query)
+        user = result.scalars().first()
+        if not user:
+            raise APIException(
+                "Invalid reset password token",
+                status=401,
+                error_code="INVALID_RESET_PASSWORD_TOKEN",
+            )
+        if user.forget_password_token_expiry < datetime.utcnow():
+            raise APIException(
+                "Reset password token expired",
+                status=401,
+                error_code="RESET_PASSWORD_TOKEN_EXPIRED",
+            )
+        user.password = await self.util_service.hash_password(request.new_password)
+        user.forget_password_token = None
+        user.forget_password_token_expiry = None
+        try:
+            db.add(user)
+            await db.commit()
+            await db.refresh(user)
+        except Exception as e:
+            await db.rollback()
+            logger.error(f"Database error during reset password: {e}")
+            raise APIException(
+                message="An error occurred while resetting password",
+                status=500,
+                error_code="SERVER_ERROR",
+            )
+        return "Reset password successful"
+
+    async def delete_account(
+        self, request: Request, db: AsyncSession = Depends(get_db)
+    ) -> str:
+        if not request.state.user:
+            raise APIException(
+                "Unauthorized",
+                status=401,
+                error_code="UNAUTHORIZED",
+            )
+        user_id = request.state.user.id
+        query = select(User).where(User.id == user_id)
+        result = await db.execute(query)
+        user = result.scalars().first()
+        if not user:
+            raise APIException(
+                "User not found", status=404, error_code="USER_NOT_FOUND"
+            )
+        try:
+            await db.delete(user)
+            await db.commit()
+        except Exception as e:
+            await db.rollback()
+            logger.error(f"Database error during delete account: {e}")
+            raise APIException(
+                message="An error occurred while deleting account",
+                status=500,
+                error_code="SERVER_ERROR",
+            )
+        return "Account deleted successfully"
