@@ -6,6 +6,9 @@ from sqlalchemy.future import select
 from utils import APIException
 import jwt
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class DependenciesService:

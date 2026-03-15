@@ -15,6 +15,9 @@ import os
 from datetime import datetime, timedelta
 from fastapi import Request, Depends
 import jwt
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"

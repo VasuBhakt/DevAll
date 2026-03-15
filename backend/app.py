@@ -3,6 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from utils import APIException
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 
