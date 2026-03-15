@@ -4,7 +4,7 @@ from fastapi import Response
 import secrets
 import hashlib
 import hmac
-from .schemas import UserResponse, JWTTokens
+from .schemas import UserResponse, JWTTokens, Token
 import jwt
 import os
 from datetime import datetime, timedelta

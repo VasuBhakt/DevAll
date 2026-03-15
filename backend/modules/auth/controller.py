@@ -6,7 +6,7 @@ from .service import AuthService
 from .utils import AuthUtilService
 from utils import APIResponse
 
-router = APIRouter()
+auth_router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
 def get_auth_service():
@@ -17,7 +17,7 @@ def get_auth_util_service():
     return AuthUtilService()
 
 
-@router.post("/signup")
+@auth_router.post("/signup")
 async def register(
     request: SignupRequest,
     db: AsyncSession = Depends(get_db),
@@ -27,7 +27,7 @@ async def register(
     return APIResponse(message=message, status=201)
 
 
-@router.post("/signin")
+@auth_router.post("/signin")
 async def login(
     request: SigninRequest,
     response: Response,

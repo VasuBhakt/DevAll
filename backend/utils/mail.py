@@ -18,7 +18,7 @@ client = AsyncBrevo(api_key=os.getenv("BREVO_API_KEY"))
 
 
 class EmailService:
-    async def send_email(to_email: str, subject: str, html_content: str) -> bool:
+    async def send_email(self, to_email: str, subject: str, html_content: str) -> bool:
         try:
             result = await client.transactional_emails.send_transac_email(
                 subject=subject,

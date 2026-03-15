@@ -14,6 +14,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from modules.auth import auth_router
+
+app.include_router(auth_router)
+
+
+@app.get("/")
+async def root():
+    return {"message": "API IS UP!"}
+
+
 @app.exception_handler(APIException)
 async def global_exception_handler(request: Request, exc: APIException):
     status = getattr(exc, "status", 500)
@@ -25,6 +35,6 @@ async def global_exception_handler(request: Request, exc: APIException):
             "success": False,
             "status": status,
             "message": message,
-            "error_code": exc.error_code
-        }
+            "error_code": exc.error_code,
+        },
     )
