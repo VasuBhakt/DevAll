@@ -1,16 +1,14 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from fastapi import Depends
 from .schemas import (
     SignupRequest,
     SigninRequest,
-    UserResponse,
     JWTTokens,
     ForgetPasswordRequest,
     ResetPasswordRequest,
 )
 from database import User, get_db
-from utils import APIException, EmailService
+from utils import APIException, EmailService, UserDetails
 from .utils import AuthUtilService
 import logging
 import os
@@ -138,7 +136,7 @@ class AuthService:
                 error_code="USER_NOT_VERIFIED",
             )
 
-        user_response = UserResponse(
+        user_response = UserDetails(
             id=user.id,
             username=user.username,
             role=user.role if isinstance(user.role, str) else user.role.value,
@@ -165,14 +163,10 @@ class AuthService:
     # signout
     async def signout(
         self,
-        request: Request,
+        user_id: str,
         db: AsyncSession = Depends(get_db),
     ) -> str:
-        if not request.state.user:
-            raise APIException(
-                message="Unauthorized", status=401, error_code="UNAUTHORIZED"
-            )
-        user_id = request.state.user.id
+
         query = select(User).where(User.id == user_id)
         result = await db.execute(query)
         user = result.scalars().first()
@@ -234,7 +228,7 @@ class AuthService:
                 status=401,
                 error_code="UNAUTHORIZED",
             )
-        user_response = UserResponse(
+        user_response = UserDetails(
             id=user.id,
             username=user.username,
             role=user.role if isinstance(user.role, str) else user.role.value,
@@ -381,15 +375,8 @@ class AuthService:
         return "Reset password successful"
 
     async def delete_account(
-        self, request: Request, db: AsyncSession = Depends(get_db)
+        self, user_id: str, db: AsyncSession = Depends(get_db)
     ) -> str:
-        if not request.state.user:
-            raise APIException(
-                "Unauthorized",
-                status=401,
-                error_code="UNAUTHORIZED",
-            )
-        user_id = request.state.user.id
         query = select(User).where(User.id == user_id)
         result = await db.execute(query)
         user = result.scalars().first()

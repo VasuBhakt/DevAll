@@ -1,6 +1,6 @@
 from fastapi import Request, Depends
 from database import User, get_db
-from .schemas import UserResponse
+from .schema import UserDetails
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from utils import APIException
@@ -31,7 +31,7 @@ class DependenciesService:
             # Async query
             query = select(User).where(User.id == user_id)
             result = await db.execute(query)
-            user = result.scalar_one_or_none()
+            user = result.scalars().first()
 
             if not user:
                 raise APIException(
@@ -40,7 +40,7 @@ class DependenciesService:
                     error_code="UNAUTHORIZED",
                 )
 
-            request.state.user = UserResponse(
+            request.state.user = UserDetails(
                 id=user.id,
                 username=user.username,
                 role=user.role if isinstance(user.role, str) else user.role.value,

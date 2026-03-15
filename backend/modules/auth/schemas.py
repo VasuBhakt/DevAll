@@ -15,12 +15,6 @@ class SigninRequest(BaseModel):
     password: str
 
 
-class UserResponse(BaseModel):
-    username: str
-    id: str
-    role: str
-
-
 class Token(BaseModel):
     raw_token: str
     hashed_token: str

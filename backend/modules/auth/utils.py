@@ -4,7 +4,8 @@ from fastapi import Response
 import secrets
 import hashlib
 import hmac
-from .schemas import UserResponse, JWTTokens, Token
+from .schemas import JWTTokens, Token
+from utils import UserDetails
 import jwt
 import os
 from datetime import datetime, timedelta
@@ -27,7 +28,7 @@ class AuthUtilService:
         hashed_token = self.hash_token(token)
         return Token(raw_token=token, hashed_token=hashed_token)
 
-    def generate_access_and_refresh_tokens(self, user: UserResponse) -> JWTTokens:
+    def generate_access_and_refresh_tokens(self, user: UserDetails) -> JWTTokens:
         access_token_payload = {
             "id": user.id,
             "username": user.username,

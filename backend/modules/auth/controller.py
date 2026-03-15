@@ -4,14 +4,12 @@ from database import get_db
 from .schemas import (
     SignupRequest,
     SigninRequest,
-    UserResponse,
     ForgetPasswordRequest,
     ResetPasswordRequest,
 )
 from .service import AuthService
 from .utils import AuthUtilService
-from .dependencies import DependenciesService
-from utils import APIResponse
+from utils import APIResponse, DependenciesService, APIException
 
 
 auth_router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -107,7 +105,13 @@ async def signout(
     auth_service: AuthService = Depends(get_auth_service),
     auth_check: str = Depends(get_dependencies_service().verifyJWT),
 ) -> APIResponse:
-    message = await auth_service.signout(request, db)
+    if not request.state.user:
+        raise APIException(
+            message="Unauthorized",
+            status=401,
+            error_code="UNAUTHORIZED",
+        )
+    message = await auth_service.signout(request.state.user.id, db)
     response.delete_cookie("access_token")
     response.delete_cookie("refresh_token")
     return APIResponse(message=message, status=200)
@@ -121,7 +125,13 @@ async def delete_account(
     auth_service: AuthService = Depends(get_auth_service),
     auth_check: str = Depends(get_dependencies_service().verifyJWT),
 ) -> APIResponse:
-    message = await auth_service.delete_account(request, db)
+    if not request.state.user:
+        raise APIException(
+            "Unauthorized",
+            status=401,
+            error_code="UNAUTHORIZED",
+        )
+    message = await auth_service.delete_account(request.state.user.id, db)
     response.delete_cookie("access_token")
     response.delete_cookie("refresh_token")
     return APIResponse(message=message, status=200)
