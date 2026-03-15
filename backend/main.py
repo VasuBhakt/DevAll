@@ -19,7 +19,7 @@ from database import engine
 @asynccontextmanager
 async def lifespan(app):
     try:
-        with engine.connect() as connection:
+        async with engine.connect() as connection:
             logger.info("Successfully connected to NeonDB!")
         yield
     except Exception as e:
