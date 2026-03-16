@@ -204,6 +204,7 @@ class Achievement(Base):
     organization = Column(String, nullable=True)
     event = Column(String, nullable=True)
     event_link = Column(String, nullable=True)
+    event_date = Column(Date, nullable=True)
 
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

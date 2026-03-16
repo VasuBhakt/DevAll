@@ -19,9 +19,11 @@ app.add_middleware(
 
 from modules.auth import auth_router
 from modules.profile import profile_router
+from modules.achievements import achievement_router
 
 app.include_router(auth_router)
 app.include_router(profile_router)
+app.include_router(achievement_router)
 
 
 @app.get("/")
