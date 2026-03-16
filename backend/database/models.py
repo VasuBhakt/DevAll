@@ -7,6 +7,7 @@ from sqlalchemy import (
     String,
     ForeignKey,
     DateTime,
+    Date,
     Boolean,
     Index,
     Enum as SQLEnum,
@@ -81,6 +82,9 @@ class User(Base):
     )
     achievements = relationship(
         "Achievement", back_populates="user", cascade="all, delete-orphan"
+    )
+    experience = relationship(
+        "Experience", back_populates="user", cascade="all, delete-orphan"
     )
 
     __table_args__ = (
@@ -205,3 +209,20 @@ class Achievement(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     user = relationship("User", back_populates="achievements")
+
+
+class Experience(Base):
+    __tablename__ = "experiences"
+
+    id = Column(String, primary_key=True, index=True, default=generate_uuid)
+    user_id = Column(String, ForeignKey("users.id"))
+
+    organization = Column(String, nullable=False)
+    start_date = Column(Date, nullable=False)
+    end_date = Column(Date, nullable=True)
+    job_title = Column(String, nullable=False)
+    description = Column(String, nullable=False)
+    skills = Column(ARRAY(String), nullable=True)
+    location = Column(String, nullable=True)
+
+    user = relationship("User", back_populates="experience")
