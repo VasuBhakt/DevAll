@@ -107,7 +107,7 @@ class AchievementService:
             return PaginatedAchievementResponse(
                 items=achievements,
                 page=page,
-                size=limit,
+                limit=limit,
             )
         except Exception as e:
             logger.error(f"Database error during achievement fetch: {e}")

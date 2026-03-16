@@ -32,4 +32,4 @@ class AchievementResponse(AchievementBase):
 class PaginatedAchievementResponse(BaseModel):
     items: list[AchievementResponse]
     page: int
-    size: int
+    limit: int
