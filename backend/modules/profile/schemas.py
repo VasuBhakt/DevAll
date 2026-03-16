@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 
-class CreateProfileRequest(BaseModel):
+class ProfileBase(BaseModel):
     name: str
     bio: Optional[str] = None
     profile_picture: Optional[str] = None
@@ -22,6 +22,10 @@ class CreateProfileRequest(BaseModel):
     twitch: Optional[str] = None
     youtube: Optional[str] = None
     discord: Optional[str] = None
+
+
+class CreateProfileRequest(ProfileBase):
+    pass
 
 
 class UpdateProfileRequest(CreateProfileRequest):

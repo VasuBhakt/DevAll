@@ -3,7 +3,7 @@ from sqlalchemy.future import select
 from fastapi import Depends, Request
 from database import Profile, get_db
 from utils import APIException
-from .schemas import CreateProfileRequest, UpdateProfileRequest
+from .schemas import CreateProfileRequest, UpdateProfileRequest, ProfileBase
 import logging
 
 logging.basicConfig(
@@ -83,3 +83,20 @@ class ProfileService:
                 error_code="SERVER_ERROR",
             )
         return "Profile updated successfully"
+
+    # get profile
+    """async def get_profile(
+        self,
+        username: str,
+        db: AsyncSession = Depends(get_db),
+    ) -> ProfileBase:
+        query = select(Profile).where(Profile.username == username)
+        result = await db.execute(query)
+        profile = result.scalars().first()
+        if not profile:
+            raise APIException(
+                message="Profile not found",
+                status=404,
+                error_code="PROFILE_NOT_FOUND",
+            )
+        return ProfileBase(**profile.model_dump())"""
