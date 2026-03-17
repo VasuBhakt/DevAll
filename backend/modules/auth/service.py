@@ -37,7 +37,7 @@ class AuthService:
         self, request: SignupRequest, db: AsyncSession = Depends(get_db)
     ) -> str:
         query = select(User).where(
-            (User.email == request.email) | (User.username == request.username)
+            (User.email == request.email) | (User.username == request.username.lower())
         )
         result = await db.execute(query)
         existing_user = result.scalars().first()

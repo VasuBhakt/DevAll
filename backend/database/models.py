@@ -159,6 +159,7 @@ class Repo_Profile(Base):
     profile_link = Column(String, nullable=False)
     followers_count = Column(Integer, nullable=True)
     organizations = Column(ARRAY(String), nullable=True)
+    public_repo_count = Column(Integer, nullable=True)
 
     # Using JSONB for complex nested data from GitHub/HF
     pinned_repos = Column(ARRAY(JSONB), nullable=True)
@@ -176,7 +177,7 @@ class Project(Base):
     __tablename__ = "projects"
 
     id = Column(String, primary_key=True, index=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"))
+    user_id = Column(String, ForeignKey("users.id"), index=True)
 
     name = Column(String, nullable=False)
     description = Column(String, nullable=False)
@@ -185,6 +186,7 @@ class Project(Base):
     languages = Column(ARRAY(String), nullable=True)
     github_link = Column(String, nullable=True)
     project_link = Column(String, nullable=True)
+    project_date = Column(Date, nullable=True)
 
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -196,7 +198,7 @@ class Achievement(Base):
     __tablename__ = "achievements"
 
     id = Column(String, primary_key=True, index=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"))
+    user_id = Column(String, ForeignKey("users.id"), index=True)
 
     title = Column(String, nullable=False)
     description = Column(String, nullable=True)
@@ -216,7 +218,7 @@ class Experience(Base):
     __tablename__ = "experiences"
 
     id = Column(String, primary_key=True, index=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"))
+    user_id = Column(String, ForeignKey("users.id"), index=True)
 
     organization = Column(String, nullable=False)
     start_date = Column(Date, nullable=False)
