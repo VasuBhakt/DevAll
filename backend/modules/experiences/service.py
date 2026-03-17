@@ -1,6 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy import func
 from fastapi import Depends, Request
 from database import Experience, get_db
 from utils import APIException
@@ -9,8 +8,6 @@ from .schemas import (
     UpdateExperienceRequest,
     PaginatedExperienceResponse,
 )
-from typing import Optional
-from datetime import datetime
 import logging
 
 logging.basicConfig(

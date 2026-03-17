@@ -3,7 +3,7 @@ from sqlalchemy.future import select
 from fastapi import Depends, Request
 from database import Profile, get_db
 from utils import APIException
-from .schemas import CreateProfileRequest, UpdateProfileRequest, ProfileBase
+from .schemas import CreateProfileRequest, UpdateProfileRequest
 import logging
 
 logging.basicConfig(
