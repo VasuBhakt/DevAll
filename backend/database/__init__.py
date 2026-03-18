@@ -1,4 +1,5 @@
 from .database import get_db, engine
+from .redis_client import get_redis
 from .models import (
     User,
     Profile,

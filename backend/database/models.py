@@ -139,7 +139,8 @@ class CP_Profile(Base):
     medium_problems = Column(Integer, nullable=True)
     easy_problems = Column(Integer, nullable=True)
     problems_solved = Column(Integer, nullable=True)
-    badge = Column(String, nullable=True)
+    rank = Column(String, nullable=True)
+    max_rank = Column(String, nullable=True)
 
     # PostgreSQL specific JSONB for contest history
     contests = Column(ARRAY(JSONB), nullable=True)
