@@ -18,11 +18,12 @@ def get_dependencies_service():
     return DependenciesService()
 
 
-@cp_profile_router.get("/fetch")
-@limiter.limit("5/hour")
+@cp_profile_router.get("/fetch/{platform}/{handle}")
+@limiter.limit("20/hour")
 async def fetch_cp_profile(
     request: Request,
-    fetch_request: FetchCPProfileSchema = Depends(),
+    platform: str,
+    handle: str,
     db: AsyncSession = Depends(get_db),
     redis_client: Redis = Depends(get_redis),
     cp_profile_service: CPProfileService = Depends(get_cp_profile_service),
@@ -30,8 +31,8 @@ async def fetch_cp_profile(
 ):
     response = await cp_profile_service.fetch_cp_profile(
         request.state.user.id,
-        fetch_request.handle,
-        fetch_request.platform,
+        handle,
+        platform,
         db,
         redis_client,
     )
