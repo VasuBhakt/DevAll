@@ -12,29 +12,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-async def _throttle_lc_request(redis_client, cooldown=2.5):
-    """Distributed throttle using Redis to space out requests globally."""
-    if not redis_client:
-        return
-
-    key = "lc_global_last_request"
-    while True:
-        last_request = await redis_client.get(key)
-        now = time.time()
-
-        if last_request:
-            elapsed = now - float(last_request)
-            if elapsed < cooldown:
-                wait_time = cooldown - elapsed
-                logger.info(f"Throttling: Spacing out requests by {wait_time:.2f}s")
-                await asyncio.sleep(wait_time)
-                continue
-
-        # Atomic set to update the last request time
-        await redis_client.set(key, str(time.time()))
-        break
-
-
 class LeetCodeContest(BaseModel):
     contest_name: str
     rank: int
@@ -56,6 +33,29 @@ class LeetCodeProfile(BaseModel):
     contests: list[LeetCodeContest] = []
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+
+async def _throttle_lc_request(redis_client, cooldown=2.5):
+    """Distributed throttle using Redis to space out requests globally."""
+    if not redis_client:
+        return
+
+    key = "lc_global_last_request"
+    while True:
+        last_request = await redis_client.get(key)
+        now = time.time()
+
+        if last_request:
+            elapsed = now - float(last_request)
+            if elapsed < cooldown:
+                wait_time = cooldown - elapsed
+                logger.info(f"Throttling: Spacing out requests by {wait_time:.2f}s")
+                await asyncio.sleep(wait_time)
+                continue
+
+        # Atomic set to update the last request time
+        await redis_client.set(key, str(time.time()))
+        break
 
 
 LEETCODE_GQL_URL = "https://leetcode.com/graphql"

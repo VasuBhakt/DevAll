@@ -9,6 +9,8 @@ from .fetchers import (
     CodeforcesProfile,
     fetch_leetcode_profile,
     LeetCodeProfile,
+    fetch_codechef_profile,
+    CodeChefProfile,
 )
 import json
 
@@ -35,6 +37,8 @@ class CPProfileService:
             platform_model = CodeforcesProfile
         elif platform == "leetcode":
             platform_model = LeetCodeProfile
+        elif platform == "codechef":
+            platform_model = CodeChefProfile
         else:
             raise APIException(400, "Invalid platform")
 
@@ -51,6 +55,8 @@ class CPProfileService:
             profile = await fetch_codeforces_profile(handle, redis_client)
         elif platform == "leetcode":
             profile = await fetch_leetcode_profile(handle, redis_client)
+        elif platform == "codechef":
+            profile = await fetch_codechef_profile(handle, redis_client)
 
         if not profile:
             return None

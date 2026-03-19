@@ -70,14 +70,13 @@ async def fetch_codeforces_profile(handle: str, redis_client=None):
         try:
             # 1. Wait for global CF cooldown (2 seconds)
             await _throttle_cf_request(redis_client)
-
-            return await _fetch_raw(handle)
+            return await _fetch_cf_raw(handle)
         except Exception as e:
             logger.error(f"Failed to fetch CF profile: {str(e)}")
             raise APIException(400, f"Failed to fetch CF profile: {str(e)}")
 
 
-async def _fetch_raw(handle: str):
+async def _fetch_cf_raw(handle: str):
     """Internal helper to do the actual network IO concurrently."""
     async with httpx.AsyncClient(timeout=10.0) as client:
         user_url = f"{BASE_URL}user.info?handles={handle}"
