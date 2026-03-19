@@ -97,6 +97,20 @@ async def reset_password(
 # PRIVATE ROUTES
 
 
+@auth_router.get("/me")
+async def get_current_user(
+    request: Request,
+    auth_check: str = Depends(get_dependencies_service().verifyJWT),
+) -> APIResponse:
+    if not request.state.user:
+        raise APIException(
+            message="Unauthorized",
+            status=401,
+            error_code="UNAUTHORIZED",
+        )
+    return APIResponse(data=request.state.user, status=200)
+
+
 @auth_router.post("/signout")
 async def signout(
     request: Request,
