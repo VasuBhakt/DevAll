@@ -42,8 +42,9 @@ class GithubPinnedRepo(BaseModel):
     name: str
     description: Optional[str] = None
     url: str
-    stargazer_count: int = Field(alias="stargazerCount")
+    stars: int = Field(validation_alias="stargazerCount")
     languages: List[str] = []
+    project_link: Optional[str] = Field(validation_alias="homepageUrl", default=None)
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
@@ -108,6 +109,7 @@ async def _fetch_gh_raw(handle: str):
               description
               url
               stargazerCount
+              homepageUrl
               languages(first: 3, orderBy: {field: SIZE, direction: DESC}) {
                 nodes {
                   name
@@ -182,8 +184,9 @@ async def _fetch_gh_raw(handle: str):
                         "name": node["name"],
                         "description": node.get("description"),
                         "url": node["url"],
-                        "stargazer_count": node.get("stargazerCount", 0),
+                        "stars": node.get("stargazerCount", 0),
                         "languages": [l["name"] for l in node["languages"]["nodes"]],
+                        "project_link": node.get("homepageUrl"),
                     }
                 )
 

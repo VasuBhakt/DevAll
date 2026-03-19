@@ -12,11 +12,11 @@ logger = logging.getLogger(__name__)
 
 
 class CodeforcesContest(BaseModel):
-    contest_id: int = Field(alias="contestId")
-    contest_name: str = Field(alias="contestName")
+    contest_id: int = Field(validation_alias="contestId")
+    contest_name: str = Field(validation_alias="contestName")
     rank: int
-    old_rating: int = Field(alias="oldRating")
-    new_rating: int = Field(alias="newRating")
+    old_rating: int = Field(validation_alias="oldRating")
+    new_rating: int = Field(validation_alias="newRating")
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 

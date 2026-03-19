@@ -54,7 +54,7 @@ class RepoProfileService:
             )
 
         # 4. Update DB (Background sync)
-        profile_data = profile.model_dump(mode="json")
+        profile_data = profile.model_dump(mode="json", by_alias=False)
         stmt = insert(Repo_Profile).values(
             user_id=user_id, platform=platform, **profile_data
         )
@@ -72,7 +72,9 @@ class RepoProfileService:
         # 5. Save to Cache
         if redis_client:
             # Cache for 6 hours
-            await redis_client.set(cache_key, profile.model_validate_json(profile.model_dump_json()).model_dump_json(), ex=3600 * 6)
+            await redis_client.set(
+                cache_key, profile.model_dump_json(by_alias=False), ex=3600 * 6
+            )
             logger.info(f"Cached data for {cache_key}")
 
         return profile
