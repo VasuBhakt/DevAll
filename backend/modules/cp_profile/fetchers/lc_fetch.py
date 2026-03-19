@@ -73,7 +73,11 @@ async def fetch_leetcode_profile(handle: str, redis_client=None):
             return await _fetch_lc_raw(handle)
         except Exception as e:
             logger.error(f"Failed to fetch LeetCode profile: {str(e)}")
-            raise APIException(400, f"Failed to fetch LeetCode profile: {str(e)}")
+            raise APIException(
+                status=400,
+                message=f"Failed to fetch LeetCode profile: {str(e)}",
+                error_code="FAILED_REQUEST",
+            )
 
 
 async def _fetch_lc_raw(handle: str):
@@ -119,11 +123,19 @@ async def _fetch_lc_raw(handle: str):
             )
 
             if response.status_code != 200:
-                raise APIException(400, "Failed to connect to LeetCode")
+                raise APIException(
+                    status=400,
+                    message="Failed to connect to LeetCode",
+                    error_code="FAILED_REQUEST",
+                )
 
             data = response.json().get("data")
             if not data or not data.get("matchedUser"):
-                raise APIException(404, "LeetCode user not found")
+                raise APIException(
+                    status=404,
+                    message="LeetCode user not found",
+                    error_code="NOT_FOUND",
+                )
 
             # Extract counts
             stats = data["matchedUser"]["submitStats"]["acSubmissionNum"]
@@ -162,4 +174,8 @@ async def _fetch_lc_raw(handle: str):
             )
         except Exception as e:
             logger.error(f"LeetCode fetch error: {str(e)}")
-            raise APIException(400, f"Failed to fetch LeetCode profile: {str(e)}")
+            raise APIException(
+                status=400,
+                message=f"Failed to fetch LeetCode profile: {str(e)}",
+                error_code="FAILED_REQUEST",
+            )

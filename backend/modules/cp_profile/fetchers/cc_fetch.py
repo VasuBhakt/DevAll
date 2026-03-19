@@ -69,7 +69,11 @@ async def fetch_codechef_profile(handle: str, redis_client=None):
             return await _fetch_cc_raw(handle)
         except Exception as e:
             logger.error(f"Failed to fetch CodeChef profile: {str(e)}")
-            raise APIException(400, f"Failed to fetch CodeChef profile: {str(e)}")
+            raise APIException(
+                status=400,
+                message=f"Failed to fetch CodeChef profile: {str(e)}",
+                error_code="FAILED_REQUEST",
+            )
 
 
 async def _fetch_cc_raw(handle: str):
@@ -85,7 +89,11 @@ async def _fetch_cc_raw(handle: str):
             )
 
             if response.status_code != 200:
-                raise APIException(404, "CodeChef user not found")
+                raise APIException(
+                    status=404,
+                    message="CodeChef user not found",
+                    error_code="NOT_FOUND",
+                )
 
             soup = BeautifulSoup(response.text, "lxml")
 
@@ -148,7 +156,11 @@ async def _fetch_cc_raw(handle: str):
 
         except Exception as e:
             logger.error(f"CodeChef scrape error: {str(e)}")
-            raise APIException(400, f"Failed to fetch CodeChef profile: {str(e)}")
+            raise APIException(
+                status=400,
+                message=f"Failed to fetch CodeChef profile: {str(e)}",
+                error_code="FAILED_REQUEST",
+            )
 
 
 def _calculate_stars(rating: int) -> str:

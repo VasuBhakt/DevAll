@@ -15,6 +15,7 @@ from .fetchers import (
     AtCoderProfile,
 )
 import json
+from utils import APIException
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -63,9 +64,15 @@ class CPProfileService:
             profile = await fetch_codechef_profile(handle, redis_client)
         elif platform == "atcoder":
             profile = await fetch_atcoder_profile(handle, redis_client)
+        else:
+            raise APIException(
+                status=400, message="Invalid platform", status_code="INVALID"
+            )
 
         if not profile:
-            return None
+            raise APIException(
+                status=404, message="Profile not found", status_code="NOT_FOUND"
+            )
 
         # 4. Update DB (Background sync)
         profile_data = profile.model_dump(mode="json")

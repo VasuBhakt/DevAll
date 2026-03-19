@@ -68,7 +68,11 @@ async def fetch_atcoder_profile(handle: str, redis_client=None):
             return await _fetch_ac_raw(handle)
         except Exception as e:
             logger.error(f"Failed to fetch AtCoder profile: {str(e)}")
-            raise APIException(400, f"Failed to fetch AtCoder profile: {str(e)}")
+            raise APIException(
+                status=400,
+                message=f"Failed to fetch AtCoder profile: {str(e)}",
+                error_code="FAILED_REQUEST",
+            )
 
 
 async def _fetch_ac_raw(handle: str):
@@ -84,7 +88,9 @@ async def _fetch_ac_raw(handle: str):
             p_res, h_res = await asyncio.gather(profile_task, history_task)
 
             if p_res.status_code != 200:
-                raise APIException(404, "AtCoder user not found")
+                raise APIException(
+                    status=404, message="AtCoder user not found", error_code="NOT_FOUND"
+                )
 
             soup = BeautifulSoup(p_res.text, "lxml")
 
@@ -160,4 +166,8 @@ async def _fetch_ac_raw(handle: str):
 
         except Exception as e:
             logger.error(f"AtCoder fetch error: {str(e)}")
-            raise APIException(400, f"Failed to fetch AtCoder profile: {str(e)}")
+            raise APIException(
+                status=400,
+                message=f"Failed to fetch AtCoder profile: {str(e)}",
+                error_code="FAILED_REQUEST",
+            )

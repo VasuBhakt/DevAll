@@ -73,7 +73,11 @@ async def fetch_codeforces_profile(handle: str, redis_client=None):
             return await _fetch_cf_raw(handle)
         except Exception as e:
             logger.error(f"Failed to fetch CF profile: {str(e)}")
-            raise APIException(400, f"Failed to fetch CF profile: {str(e)}")
+            raise APIException(
+                status=400,
+                message=f"Failed to fetch CF profile: {str(e)}",
+                error_code="FAILED_REQUEST",
+            )
 
 
 async def _fetch_cf_raw(handle: str):
@@ -89,7 +93,11 @@ async def _fetch_cf_raw(handle: str):
         user_res, contest_res = await asyncio.gather(user_task, contest_task)
 
         if user_res.status_code != 200 or contest_res.status_code != 200:
-            raise APIException(400, "Failed to fetch codeforces profile")
+            raise APIException(
+                status=400,
+                message="Failed to fetch codeforces profile",
+                error_code="FAILED_REQUEST",
+            )
 
         user_info = user_res.json()["result"][0]
         contest_info = contest_res.json()["result"]
