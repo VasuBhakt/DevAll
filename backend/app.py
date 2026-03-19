@@ -31,6 +31,7 @@ from modules.experiences import experience_router
 from modules.projects import project_router
 from modules.public import public_router
 from modules.cp_profile import cp_profile_router
+from modules.repo_profile import repo_profile_router
 
 app.include_router(auth_router)
 app.include_router(profile_router)
@@ -39,6 +40,7 @@ app.include_router(experience_router)
 app.include_router(project_router)
 app.include_router(public_router)
 app.include_router(cp_profile_router)
+app.include_router(repo_profile_router)
 
 
 @app.get("/")

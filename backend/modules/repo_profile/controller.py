@@ -1,34 +1,34 @@
 from fastapi import APIRouter, Depends, Request
-from .service import CPProfileService
+from .service import RepoProfileService
 from database import get_db, get_redis
 from sqlalchemy.ext.asyncio import AsyncSession
 from redis.asyncio import Redis
 from utils import DependenciesService, APIResponse
 from utils.limiter import limiter
 
-cp_profile_router = APIRouter(prefix="/cp-profile", tags=["CP Profile"])
+repo_profile_router = APIRouter(prefix="/repo-profile", tags=["Repo Profile"])
 
 
-def get_cp_profile_service():
-    return CPProfileService()
+def get_repo_profile_service():
+    return RepoProfileService()
 
 
 def get_dependencies_service():
     return DependenciesService()
 
 
-@cp_profile_router.get("/fetch/{platform}/{handle}")
+@repo_profile_router.get("/fetch/{platform}/{handle}")
 @limiter.limit("20/hour")
-async def fetch_cp_profile(
+async def fetch_repo_profile(
     request: Request,
     platform: str,
     handle: str,
     db: AsyncSession = Depends(get_db),
     redis_client: Redis = Depends(get_redis),
-    cp_profile_service: CPProfileService = Depends(get_cp_profile_service),
+    repo_profile_service: RepoProfileService = Depends(get_repo_profile_service),
     auth_check: str = Depends(get_dependencies_service().verifyJWT),
 ):
-    response = await cp_profile_service.fetch_cp_profile(
+    response = await repo_profile_service.fetch_repo_profile(
         request.state.user.id,
         handle,
         platform,
@@ -36,5 +36,5 @@ async def fetch_cp_profile(
         redis_client,
     )
     return APIResponse(
-        message="CP profile fetched successfully", status=200, data=response
+        message="Repo profile fetched successfully", status=200, data=response
     )

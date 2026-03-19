@@ -157,6 +157,7 @@ class Repo_Profile(Base):
     user_id = Column(String, ForeignKey("users.id"), primary_key=True)
     platform = Column(SQLEnum(Repo_Platform), primary_key=True)
 
+    handle = Column(String, nullable=False)
     profile_link = Column(String, nullable=False)
     followers_count = Column(Integer, nullable=True)
     organizations = Column(ARRAY(String), nullable=True)
