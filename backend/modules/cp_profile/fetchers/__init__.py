@@ -1,4 +1,4 @@
-from .cf_fetch import fetch_codeforces_profile, CodeforcesProfile
-from .lc_fetch import fetch_leetcode_profile, LeetCodeProfile
-from .cc_fetch import fetch_codechef_profile, CodeChefProfile
-from .ac_fetch import fetch_atcoder_profile, AtCoderProfile
+from .codeforces_fetch import fetch_codeforces_profile, CodeforcesProfile
+from .leetcode_fetch import fetch_leetcode_profile, LeetCodeProfile
+from .codechef_fetch import fetch_codechef_profile, CodeChefProfile
+from .atcoder_fetch import fetch_atcoder_profile, AtCoderProfile
