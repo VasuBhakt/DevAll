@@ -44,12 +44,12 @@ class AuthUtilService:
         }
         access_token = jwt.encode(
             access_token_payload,
-            os.getenv("JWT_ACCESS_TOKEN", "hello"),
+            os.getenv("JWT_ACCESS_SECRET", "hello"),
             algorithm="HS256",
         )
         refresh_token = jwt.encode(
             refresh_token_payload,
-            os.getenv("JWT_REFRESH_TOKEN", "hello"),
+            os.getenv("JWT_REFRESH_SECRET", "hello"),
             algorithm="HS256",
         )
         return JWTTokens(access_token=access_token, refresh_token=refresh_token)
