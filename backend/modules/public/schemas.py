@@ -39,14 +39,14 @@ class PublicProject(BaseModel):
 class PublicCPProfile(BaseModel):
     platform: str
     handle: str
-    profile_link: str
     rating: Optional[int]
     max_rating: Optional[int]
     hard_problems: Optional[int]
     medium_problems: Optional[int]
     easy_problems: Optional[int]
     problems_solved: Optional[int]
-    badge: Optional[str]
+    rank: Optional[str]
+    max_rank: Optional[str]
 
 
 class PublicRepoProfile(BaseModel):

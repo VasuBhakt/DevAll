@@ -91,7 +91,8 @@ class PublicService:
             CP_Profile.medium_problems,
             CP_Profile.easy_problems,
             CP_Profile.problems_solved,
-            CP_Profile.badge,
+            CP_Profile.rank,
+            CP_Profile.max_rank,
         ).where(CP_Profile.user_id == user.id)
         cp_res = await db.execute(cp_query)
         cp_rows = cp_res.all()
@@ -170,7 +171,12 @@ class PublicService:
                     handle=cp.handle,
                     rating=cp.rating,
                     max_rating=cp.max_rating,
+                    rank=cp.rank,
+                    max_rank=cp.max_rank,
                     problems_solved=cp.problems_solved,
+                    hard_problems=cp.hard_problems,
+                    medium_problems=cp.medium_problems,
+                    easy_problems=cp.easy_problems,
                 )
                 for cp in cp_rows
             ],
@@ -179,6 +185,7 @@ class PublicService:
                     platform=repo.platform,
                     profile_link=repo.profile_link,
                     followers_count=repo.followers_count,
+                    public_repo_count=repo.public_repo_count,
                 )
                 for repo in repo_rows
             ],
