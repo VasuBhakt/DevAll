@@ -4,7 +4,12 @@ from fastapi import Depends
 from database import CP_Profile, get_db
 import logging
 from sqlalchemy.dialects.postgresql import insert
-from .fetchers import fetch_codeforces_profile, CodeforcesProfile
+from .fetchers import (
+    fetch_codeforces_profile,
+    CodeforcesProfile,
+    fetch_leetcode_profile,
+    LeetCodeProfile,
+)
 import json
 
 logging.basicConfig(
@@ -22,48 +27,54 @@ class CPProfileService:
         platform: str,
         db: AsyncSession,
         redis_client=None,
-    ) -> CodeforcesProfile:
+    ):
         cache_key = f"cp_profile:{platform}:{handle}"
 
-        # 1. Check Cache
+        # 1. Determine which model to use
+        if platform == "codeforces":
+            platform_model = CodeforcesProfile
+        elif platform == "leetcode":
+            platform_model = LeetCodeProfile
+        else:
+            raise APIException(400, "Invalid platform")
+
+        # 2. Check Cache
         if redis_client:
             cached_data = await redis_client.get(cache_key)
             if cached_data:
                 logger.info(f"Cache hit for {cache_key}")
-                return CodeforcesProfile.model_validate_json(cached_data)
+                return platform_model.model_validate_json(cached_data)
 
-        # 2. Fetch if not in cache
+        # 3. Fetch if not in cache
+        profile = None
         if platform == "codeforces":
             profile = await fetch_codeforces_profile(handle, redis_client)
-            profile_data = profile.model_dump()
+        elif platform == "leetcode":
+            profile = await fetch_leetcode_profile(handle, redis_client)
 
-            # 3. Update DB (Background sync)
-            stmt = insert(CP_Profile).values(
-                user_id=user_id, platform=platform, **profile_data
-            )
-            stmt = stmt.on_conflict_do_update(
-                index_elements=["user_id", "platform"],
-                set_={
-                    "handle": profile_data["handle"],
-                    "profile_link": profile_data["profile_link"],
-                    "rating": profile_data["rating"],
-                    "max_rating": profile_data["max_rating"],
-                    "rank": profile_data["rank"],
-                    "max_rank": profile_data["max_rank"],
-                    "contests": profile_data["contests"],
-                },
-            )
-            await db.execute(stmt)
-            await db.commit()
+        if not profile:
+            return None
 
-            # 4. Save to Cache
-            if redis_client:
-                # Cache for 6 hours
-                await redis_client.set(
-                    cache_key, profile.model_dump_json(), ex=3600 * 6  # 6 hours
-                )
-                logger.info(f"Cached data for {cache_key}")
+        # 4. Update DB (Background sync)
+        profile_data = profile.model_dump(mode="json")
+        stmt = insert(CP_Profile).values(
+            user_id=user_id, platform=platform, **profile_data
+        )
 
-            return profile
+        # Build update set dynamically from profile data
+        update_set = {k: v for k, v in profile_data.items() if k != "user_id"}
 
-        return None
+        stmt = stmt.on_conflict_do_update(
+            index_elements=["user_id", "platform"],
+            set_=update_set,
+        )
+        await db.execute(stmt)
+        await db.commit()
+
+        # 5. Save to Cache
+        if redis_client:
+            # Cache for 6 hours
+            await redis_client.set(cache_key, profile.model_dump_json(), ex=3600 * 6)
+            logger.info(f"Cached data for {cache_key}")
+
+        return profile
