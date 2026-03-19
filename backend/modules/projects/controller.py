@@ -16,15 +16,15 @@ def get_dependencies_service():
     return DependenciesService()
 
 
-@project_router.get("/{user_id}")
+@project_router.get("/{username}")
 async def get_user_projects(
-    user_id: str,
+    username: str,
     db: AsyncSession = Depends(get_db),
     project_service: ProjectService = Depends(get_project_service),
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
 ) -> APIResponse:
-    projects = await project_service.get_projects(user_id, page, limit, db)
+    projects = await project_service.get_projects(username, page, limit, db)
     return APIResponse(data=projects, status=200)
 
 
@@ -88,7 +88,7 @@ async def get_current_user_projects(
             error_code="UNAUTHORIZED",
         )
     projects = await project_service.get_projects(
-        request.state.user.id, page, limit, db
+        request.state.user.username, page, limit, db
     )
     return APIResponse(data=projects, status=200)
 

@@ -17,15 +17,15 @@ def get_dependencies_service():
     return DependenciesService()
 
 
-@achievement_router.get("/{user_id}")
+@achievement_router.get("/{username}")
 async def get_achievements(
-    user_id: str,
+    username: str,
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
     achievement_service: AchievementService = Depends(get_achievement_service),
 ) -> APIResponse:
-    achievements = await achievement_service.get_achievements(user_id, page, limit, db)
+    achievements = await achievement_service.get_achievements(username, page, limit, db)
     return APIResponse(data=achievements, status=200)
 
 
@@ -89,7 +89,7 @@ async def get_current_user_achievements(
             error_code="UNAUTHORIZED",
         )
     achievements = await achievement_service.get_achievements(
-        request.state.user.id, page, limit, db
+        request.state.user.username, page, limit, db
     )
     return APIResponse(data=achievements, status=200)
 

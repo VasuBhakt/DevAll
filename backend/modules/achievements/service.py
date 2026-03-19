@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from fastapi import Depends, Request
 from database import Achievement, get_db
-from utils import APIException
+from utils import APIException, get_user_from_username
 from .schemas import (
     CreateAchievementRequest,
     UpdateAchievementRequest,
@@ -82,12 +82,13 @@ class AchievementService:
     # Get Achievements (Offset Pagination)
     async def get_achievements(
         self,
-        user_id: str,
+        username: str,
         page: int = 1,
         limit: int = 10,
         db: AsyncSession = Depends(get_db),
     ) -> PaginatedAchievementResponse:
         try:
+            user_id = await get_user_from_username(username, db)
             # Calculate offset
             offset = (page - 1) * limit
             # Get items

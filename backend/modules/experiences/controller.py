@@ -16,15 +16,15 @@ def get_dependencies_service():
     return DependenciesService()
 
 
-@experience_router.get("/{user_id}")
+@experience_router.get("/{username}")
 async def get_user_experiences(
-    user_id: str,
+    username: str,
     db: AsyncSession = Depends(get_db),
     experience_service: ExperienceService = Depends(get_experience_service),
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
 ) -> APIResponse:
-    experiences = await experience_service.get_experiences(user_id, page, limit, db)
+    experiences = await experience_service.get_experiences(username, page, limit, db)
     return APIResponse(data=experiences, status=200)
 
 
@@ -88,7 +88,7 @@ async def get_current_user_experiences(
             error_code="UNAUTHORIZED",
         )
     experiences = await experience_service.get_experiences(
-        request.state.user.id, page, limit, db
+        request.state.user.username, page, limit, db
     )
     return APIResponse(data=experiences, status=200)
 

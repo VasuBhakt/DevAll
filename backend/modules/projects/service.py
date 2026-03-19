@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from fastapi import Depends, Request
 from database import Project, get_db
-from utils import APIException
+from utils import APIException, get_user_from_username
 from .schemas import (
     CreateProjectRequest,
     UpdateProjectRequest,
@@ -78,12 +78,13 @@ class ProjectService:
     # Get Project
     async def get_projects(
         self,
-        user_id: str,
+        username: str,
         page: int = 1,
         limit: int = 10,
         db: AsyncSession = Depends(get_db),
     ) -> PaginatedProjectResponse:
         try:
+            user_id = await get_user_from_username(username, db)
             offset = (page - 1) * limit
 
             query = (

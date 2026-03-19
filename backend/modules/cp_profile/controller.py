@@ -17,6 +17,22 @@ def get_dependencies_service():
     return DependenciesService()
 
 
+@cp_profile_router.get("/{username}")
+async def get_cp_profiles(
+    username: str,
+    db: AsyncSession = Depends(get_db),
+    redis_client: Redis = Depends(get_redis),
+    cp_profile_service: CPProfileService = Depends(get_cp_profile_service),
+):
+    response = await cp_profile_service.get_cp_profiles(username, db, redis_client)
+    return APIResponse(
+        message="CP profiles fetched successfully", status=200, data=response
+    )
+
+
+# PRIVATE ROUTE
+
+
 @cp_profile_router.get("/fetch/{platform}/{handle}")
 @limiter.limit("20/hour")
 async def fetch_cp_profile(
