@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 import asyncio
-from database import Repo_Profile, get_db
+from database import Repo_Profile, User, get_db
 from fastapi import Depends
 import logging
 from sqlalchemy.dialects.postgresql import insert
@@ -11,7 +11,7 @@ from .fetchers import (
     fetch_hugging_face_profile,
     HuggingFaceProfile,
 )
-from utils import APIException, get_user_from_username
+from utils import APIException
 from .schemas import RepoProfileResponse
 import json
 
@@ -96,18 +96,34 @@ class RepoProfileService:
         self, username: str, db: AsyncSession = Depends(get_db), redis_client=None
     ) -> RepoProfileResponse:
         """Fetches all repo profiles for a user. If not refreshed in 24 hours, fetches from API."""
-        user_id = await get_user_from_username(username, db)
+        # 1. Fetch User ID and existing profiles in one query
+        query = (
+            select(User.id, Repo_Profile)
+            .outerjoin(Repo_Profile, User.id == Repo_Profile.user_id)
+            .where(User.username == username)
+        )
+        result = await db.execute(query)
+        rows = result.all()
+
+        if not rows:
+            raise APIException(
+                status=404, message="User not found", error_code="USER_NOT_FOUND"
+            )
+
+        user_id = rows[0].id
+        # Filter out None values from the outer join if user has no profiles
+        db_profiles = {
+            row.Repo_Profile.platform: row.Repo_Profile
+            for row in rows
+            if row.Repo_Profile
+        }
+
         fresh_key = f"repo_profiles:fresh:{username}"
 
-        # 1. Check if data is "fresh" (within 24 hours)
+        # 2. Check if data is "fresh" (within 24 hours)
         is_fresh = False
         if redis_client:
             is_fresh = await redis_client.get(fresh_key)
-
-        # 2. Fetch existing profiles from DB
-        query = select(Repo_Profile).where(Repo_Profile.user_id == user_id)
-        result = await db.execute(query)
-        db_profiles = {p.platform: p for p in result.scalars().all()}
 
         # 3. If NOT fresh, refresh all existing platforms in parallel
         if not is_fresh:
@@ -127,10 +143,9 @@ class RepoProfileService:
                         logger.error(
                             f"Background refresh failed for {platforms[i]}: {str(res)}"
                         )
-
-            # Re-fetch from DB after refresh
-            result = await db.execute(query)
-            db_profiles = {p.platform: p for p in result.scalars().all()}
+                    else:
+                        # Update local dict with new data to avoid re-fetching from DB
+                        db_profiles[platforms[i]] = res
 
         # 4. Map to RepoProfileResponse
         response = RepoProfileResponse()

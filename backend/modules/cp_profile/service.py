@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 import asyncio
 from fastapi import Depends
-from database import CP_Profile, get_db
+from database import CP_Profile, User, get_db
 import logging
 from sqlalchemy.dialects.postgresql import insert
 from .fetchers import (
@@ -16,7 +16,7 @@ from .fetchers import (
     AtCoderProfile,
 )
 import json
-from utils import APIException, get_user_from_username
+from utils import APIException
 from .schemas import CPProfileResponse
 
 logging.basicConfig(
@@ -110,18 +110,32 @@ class CPProfileService:
         self, username: str, db: AsyncSession, redis_client=None
     ) -> CPProfileResponse:
         """Fetches all CP profiles for a user. If not refreshed in 24 hours, fetches from API."""
-        user_id = await get_user_from_username(username, db)
+        # 1. Fetch User ID and existing profiles in one query
+        query = (
+            select(User.id, CP_Profile)
+            .outerjoin(CP_Profile, User.id == CP_Profile.user_id)
+            .where(User.username == username)
+        )
+        result = await db.execute(query)
+        rows = result.all()
+
+        if not rows:
+            raise APIException(
+                status=404, message="User not found", status_code="USER_NOT_FOUND"
+            )
+
+        user_id = rows[0].id
+        # Filter out None values from the outer join if user has no profiles
+        db_profiles = {
+            row.CP_Profile.platform: row.CP_Profile for row in rows if row.CP_Profile
+        }
+
         fresh_key = f"cp_profiles:fresh:{username}"
 
-        # 1. Check if data is "fresh" (within 24 hours)
+        # 2. Check if data is "fresh" (within 24 hours)
         is_fresh = False
         if redis_client:
             is_fresh = await redis_client.get(fresh_key)
-
-        # 2. Fetch existing profiles from DB
-        query = select(CP_Profile).where(CP_Profile.user_id == user_id)
-        result = await db.execute(query)
-        db_profiles = {p.platform: p for p in result.scalars().all()}
 
         # 3. If NOT fresh, refresh all existing platforms in parallel
         if not is_fresh:
@@ -141,10 +155,9 @@ class CPProfileService:
                         logger.error(
                             f"Background refresh failed for {platforms[i]}: {str(res)}"
                         )
-
-            # Re-fetch from DB after refresh
-            result = await db.execute(query)
-            db_profiles = {p.platform: p for p in result.scalars().all()}
+                    else:
+                        # Update local dict with new data to avoid re-fetching from DB
+                        db_profiles[platforms[i]] = res
 
         # 4. Map to CPProfileResponse
         response = CPProfileResponse()

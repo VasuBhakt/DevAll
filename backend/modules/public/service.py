@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.orm import joinedload
 from sqlalchemy import desc
 from database.models import (
     User,
@@ -26,8 +27,12 @@ class PublicService:
     async def get_public_profile(
         self, username: str, db: AsyncSession
     ) -> PublicProfileResponse:
-        # 1. Fetch User
-        user_query = select(User).where(User.username == username)
+        # 1 & 2. Fetch User and Profile in a single query using joinedload
+        user_query = (
+            select(User)
+            .options(joinedload(User.profile))
+            .where(User.username == username)
+        )
         result = await db.execute(user_query)
         user = result.scalars().first()
 
@@ -38,11 +43,7 @@ class PublicService:
                 error_code="USER_NOT_FOUND",
             )
 
-        # 2. Fetch Profile
-        profile_query = select(Profile).where(Profile.user_id == user.id)
-        profile_res = await db.execute(profile_query)
-        profile = profile_res.scalars().first()
-
+        profile = user.profile
         if not profile:
             raise APIException(
                 message="Profile details not found",
