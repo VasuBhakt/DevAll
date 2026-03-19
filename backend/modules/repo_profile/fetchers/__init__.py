@@ -1,1 +1,2 @@
 from .github_fetch import fetch_github_profile, GithubProfile
+from .hugging_face_fetch import fetch_hugging_face_profile, HuggingFaceProfile

@@ -6,6 +6,8 @@ from sqlalchemy.dialects.postgresql import insert
 from .fetchers import (
     fetch_github_profile,
     GithubProfile,
+    fetch_hugging_face_profile,
+    HuggingFaceProfile,
 )
 from utils import APIException
 import json
@@ -31,6 +33,8 @@ class RepoProfileService:
         # 1. Determine which model to use
         if platform == "github":
             platform_model = GithubProfile
+        elif platform == "hugging_face":
+            platform_model = HuggingFaceProfile
         else:
             raise APIException(
                 status=400, message="Invalid platform", error_code="INVALID_PLATFORM"
@@ -47,6 +51,8 @@ class RepoProfileService:
         profile = None
         if platform == "github":
             profile = await fetch_github_profile(handle, redis_client)
+        elif platform == "hugging_face":
+            profile = await fetch_hugging_face_profile(handle, redis_client)
 
         if not profile:
             raise APIException(
