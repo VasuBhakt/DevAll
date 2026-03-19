@@ -30,7 +30,7 @@ from modules.achievements import achievement_router
 from modules.experiences import experience_router
 from modules.projects import project_router
 from modules.public import public_router
-from modules.cp_profile.controller import cp_profile_router
+from modules.cp_profile import cp_profile_router
 
 app.include_router(auth_router)
 app.include_router(profile_router)
