@@ -7,7 +7,7 @@ import {
 } from "./schema";
 import { APIResponse } from "@/src/utils/apiResponse";
 
-export class AuthService {
+class AuthService {
   async signup(request: SignupRequest): Promise<APIResponse<null>> {
     try {
       logger.info("Signup flow started...");
@@ -109,3 +109,7 @@ export class AuthService {
     }
   }
 }
+
+const authService = new AuthService();
+
+export default authService;
