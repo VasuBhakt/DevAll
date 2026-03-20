@@ -104,7 +104,7 @@ async def fetch_hugging_face_profile(handle: str, redis_client=None):
 async def _fetch_hf_raw(handle: str):
     user_url = f"{HF_API_BASE}{handle}/overview" # HF uses /overview for more detail
     
-    async with httpx.AsyncClient(timeout=15.0) as client:
+    async with httpx.AsyncClient(timeout=5.0) as client:
         try:
             # Hugging Face usually doesn't require a token for public stats,
             # but we use a User-Agent for safety.

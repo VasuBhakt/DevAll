@@ -111,7 +111,7 @@ async def _fetch_lc_raw(handle: str):
     }
     """
 
-    async with httpx.AsyncClient(timeout=15.0) as client:
+    async with httpx.AsyncClient(timeout=5.0) as client:
         try:
             response = await client.post(
                 LEETCODE_GQL_URL,

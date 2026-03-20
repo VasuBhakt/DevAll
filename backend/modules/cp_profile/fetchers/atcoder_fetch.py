@@ -79,7 +79,7 @@ async def _fetch_ac_raw(handle: str):
     profile_url = f"https://atcoder.jp/users/{handle}"
     history_url = f"https://atcoder.jp/users/{handle}/history/json"
 
-    async with httpx.AsyncClient(timeout=15.0) as client:
+    async with httpx.AsyncClient(timeout=5.0) as client:
         try:
             # Fire both requests at once
             profile_task = client.get(profile_url)

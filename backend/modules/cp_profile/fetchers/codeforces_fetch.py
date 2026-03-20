@@ -82,7 +82,7 @@ async def fetch_codeforces_profile(handle: str, redis_client=None):
 
 async def _fetch_cf_raw(handle: str):
     """Internal helper to do the actual network IO concurrently."""
-    async with httpx.AsyncClient(timeout=15.0) as client:
+    async with httpx.AsyncClient(timeout=5.0) as client:
         user_url = f"{BASE_URL}user.info?handles={handle}"
         contest_url = f"{BASE_URL}user.rating?handle={handle}"
 

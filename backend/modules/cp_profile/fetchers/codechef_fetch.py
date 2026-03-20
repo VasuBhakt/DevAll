@@ -79,7 +79,7 @@ async def fetch_codechef_profile(handle: str, redis_client=None):
 async def _fetch_cc_raw(handle: str):
     profile_url = f"https://www.codechef.com/users/{handle}"
 
-    async with httpx.AsyncClient(timeout=15.0) as client:
+    async with httpx.AsyncClient(timeout=8.0) as client:
         try:
             response = await client.get(
                 profile_url,
