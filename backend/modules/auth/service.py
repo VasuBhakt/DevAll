@@ -4,7 +4,7 @@ from .schemas import (
     SignupRequest,
     SigninRequest,
     JWTTokens,
-    ForgetPasswordRequest,
+    ForgotPasswordRequest,
     ResetPasswordRequest,
 )
 from database import User, get_db
@@ -287,9 +287,9 @@ class AuthService:
             )
         return "Email verified successfully"
 
-    # forget password
-    async def forget_password(
-        self, request: ForgetPasswordRequest, db: AsyncSession = Depends(get_db)
+    # forgot password
+    async def forgot_password(
+        self, request: ForgotPasswordRequest, db: AsyncSession = Depends(get_db)
     ) -> str:
         query = select(User).where(User.email == request.email)
         result = await db.execute(query)
@@ -304,15 +304,15 @@ class AuthService:
                 status=401,
                 error_code="USER_NOT_VERIFIED",
             )
-        forget_password_token_expiry = datetime.utcnow() + timedelta(hours=1)
-        forget_password_token = self.util_service.generate_token()
-        user.forget_password_token = forget_password_token.hashed_token
-        user.forget_password_token_expiry = forget_password_token_expiry
-        forget_password_url = f"{os.getenv('FRONTEND_URL', 'http://localhost:3000')}/forgot-password/{forget_password_token.raw_token}"
+        forgot_password_token_expiry = datetime.utcnow() + timedelta(hours=1)
+        forgot_password_token = self.util_service.generate_token()
+        user.forgot_password_token = forgot_password_token.hashed_token
+        user.forgot_password_token_expiry = forgot_password_token_expiry
+        forgot_password_url = f"{os.getenv('FRONTEND_URL', 'http://localhost:3000')}/forgot-password/{forgot_password_token.raw_token}"
         message = f"""<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
             <h2 style="color: #4F46E5;">Reset your password</h2>
             <p>You have requested to reset your password. Click the button below to proceed:</p>
-            <a href="{forget_password_url}" style="display: inline-block; background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 16px 0;">Reset Password</a>
+            <a href="{forgot_password_url}" style="display: inline-block; background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 16px 0;">Reset Password</a>
             <p style="font-size: 0.9em; color: #666;">This link is valid for 1 hour. If you did not request this, please ignore this email.</p>
         </div>"""
         email_sent = await self.email_service.send_email(
@@ -330,13 +330,13 @@ class AuthService:
             await db.refresh(user)
         except Exception as e:
             await db.rollback()
-            logger.error(f"Database error during forget password: {e}")
+            logger.error(f"Database error during forgot password: {e}")
             raise APIException(
-                message="An error occurred while forgetting password",
+                message="An error occurred while forgotting password",
                 status=500,
                 error_code="SERVER_ERROR",
             )
-        return "Forget password token generated and email sent successfully"
+        return "Forgot password token generated and email sent successfully"
 
     async def reset_password(
         self,
@@ -345,7 +345,7 @@ class AuthService:
         db: AsyncSession = Depends(get_db),
     ) -> str:
         hashed_password_token = self.util_service.hash_token(token)
-        query = select(User).where(User.forget_password_token == hashed_password_token)
+        query = select(User).where(User.forgot_password_token == hashed_password_token)
         result = await db.execute(query)
         user = result.scalars().first()
         if not user:
@@ -354,15 +354,15 @@ class AuthService:
                 status=401,
                 error_code="INVALID_RESET_PASSWORD_TOKEN",
             )
-        if user.forget_password_token_expiry < datetime.utcnow():
+        if user.forgot_password_token_expiry < datetime.utcnow():
             raise APIException(
                 "Reset password token expired",
                 status=401,
                 error_code="RESET_PASSWORD_TOKEN_EXPIRED",
             )
         user.password = await self.util_service.hash_password(request.new_password)
-        user.forget_password_token = None
-        user.forget_password_token_expiry = None
+        user.forgot_password_token = None
+        user.forgot_password_token_expiry = None
         try:
             db.add(user)
             await db.commit()

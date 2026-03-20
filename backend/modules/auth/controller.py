@@ -4,7 +4,7 @@ from database import get_db
 from .schemas import (
     SignupRequest,
     SigninRequest,
-    ForgetPasswordRequest,
+    ForgotPasswordRequest,
     ResetPasswordRequest,
 )
 from .service import AuthService
@@ -73,13 +73,13 @@ async def verify_email(
     return APIResponse(message=message, status=200)
 
 
-@auth_router.post("/forget-password")
-async def forget_password(
-    request: ForgetPasswordRequest,
+@auth_router.post("/forgot-password")
+async def forgot_password(
+    request: ForgotPasswordRequest,
     db: AsyncSession = Depends(get_db),
     auth_service: AuthService = Depends(get_auth_service),
 ) -> APIResponse:
-    message = await auth_service.forget_password(request, db)
+    message = await auth_service.forgot_password(request, db)
     return APIResponse(message=message, status=200)
 
 

@@ -25,7 +25,7 @@ class JWTTokens(BaseModel):
     refresh_token: str
 
 
-class ForgetPasswordRequest(BaseModel):
+class ForgotPasswordRequest(BaseModel):
     email: str
 
 
