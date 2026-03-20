@@ -205,7 +205,7 @@ class AuthService:
             )
         decoded_token = jwt.decode(
             token,
-            os.getenv("JWT_REFRESH_TOKEN", "hello"),
+            os.getenv("JWT_REFRESH_SECRET", "hello"),
             algorithms=["HS256"],
         )
         user_id = decoded_token.get("id")
@@ -308,7 +308,7 @@ class AuthService:
         forget_password_token = self.util_service.generate_token()
         user.forget_password_token = forget_password_token.hashed_token
         user.forget_password_token_expiry = forget_password_token_expiry
-        forget_password_url = f"{os.getenv('FRONTEND_URL', 'http://localhost:3000')}/forgot-password/{forgot_password_token.token}"
+        forget_password_url = f"{os.getenv('FRONTEND_URL', 'http://localhost:3000')}/forgot-password/{forget_password_token.raw_token}"
         message = f"""<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
             <h2 style="color: #4F46E5;">Reset your password</h2>
             <p>You have requested to reset your password. Click the button below to proceed:</p>

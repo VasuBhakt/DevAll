@@ -20,7 +20,7 @@ class DependenciesService:
             raise APIException("Unauthorized", status=401, error_code="UNAUTHORIZED")
         try:
             decoded_token = jwt.decode(
-                token, os.getenv("JWT_ACCESS_TOKEN", "hello"), algorithms=["HS256"]
+                token, os.getenv("JWT_ACCESS_SECRET", "hello"), algorithms=["HS256"]
             )
             user_id = decoded_token.get("id")
 
