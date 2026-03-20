@@ -158,6 +158,9 @@ class CPProfileService:
                     else:
                         # Update local dict with new data to avoid re-fetching from DB
                         db_profiles[platforms[i]] = res
+            # Set fresh flag for 24 hours
+            if redis_client:
+                await redis_client.set(fresh_key, "true", ex=24 * 3600)
 
         # 4. Map to CPProfileResponse
         response = CPProfileResponse()
@@ -172,8 +175,5 @@ class CPProfileService:
                 response.codechef = CodeChefProfile.model_validate(profile)
             elif platform == "atcoder":
                 response.atcoder = AtCoderProfile.model_validate(profile)
-        # Set fresh flag for 24 hours
-        if redis_client:
-            await redis_client.set(fresh_key, "true", ex=24 * 3600)
 
         return response

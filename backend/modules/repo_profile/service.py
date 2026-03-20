@@ -146,7 +146,9 @@ class RepoProfileService:
                     else:
                         # Update local dict with new data to avoid re-fetching from DB
                         db_profiles[platforms[i]] = res
-
+            # Set fresh flag for 24 hours
+            if redis_client:
+                await redis_client.set(fresh_key, "true", ex=24 * 3600)
         # 4. Map to RepoProfileResponse
         response = RepoProfileResponse()
         for platform, profile in db_profiles.items():
@@ -156,7 +158,5 @@ class RepoProfileService:
                 response.github = GithubProfile.model_validate(profile)
             elif platform == "hugging_face":
                 response.hugging_face = HuggingFaceProfile.model_validate(profile)
-        # Set fresh flag for 24 hours
-        if redis_client:
-            await redis_client.set(fresh_key, "true", ex=24 * 3600)
+
         return response
