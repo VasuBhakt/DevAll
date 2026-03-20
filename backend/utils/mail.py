@@ -24,7 +24,7 @@ class EmailService:
                 subject=subject,
                 html_content=html_content,
                 sender=SendTransacEmailRequestSender(
-                    name="Streamify", email=os.getenv("BREVO_FROM_EMAIL")
+                    name="DevAll", email=os.getenv("BREVO_FROM_EMAIL")
                 ),
                 to=[SendTransacEmailRequestToItem(email=to_email)],
             )

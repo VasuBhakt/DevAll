@@ -71,8 +71,8 @@ class AuthService:
         verify_url = f"{os.getenv('FRONTEND_URL', 'http://localhost:3000')}/verify-email/{verify_token.raw_token}"
 
         message = f"""<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; border: 1px solid #e5e7eb; border-radius: 8px; padding: 24px;">
-                <h2 style="color: #4F46E5; margin-bottom: 16px;">Welcome to Streamify!</h2>
-                <p style="font-size: 16px; line-height: 1.5;">Thank you for joining our community. To get started, please verify your email address by clicking the button below:</p>
+                <h2 style="color: #4F46E5; margin-bottom: 16px;">Welcome to DevAll!</h2>
+                <p style="font-size: 16px; line-height: 1.5;">Thank you for joining us. To get started, please verify your email address by clicking the button below:</p>
                 <div style="text-align: center; margin: 32px 0;">
                     <a href="{verify_url}" style="display: inline-block; background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">Verify Email Address</a>
                 </div>

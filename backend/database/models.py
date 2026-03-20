@@ -96,7 +96,7 @@ class Profile(Base):
     __tablename__ = "profiles"
 
     id = Column(String, primary_key=True, index=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), unique=True)
+    user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), unique=True)
 
     name = Column(String, nullable=False)
     bio = Column(String, nullable=True)
@@ -128,7 +128,7 @@ class CP_Profile(Base):
     __tablename__ = "cp_profiles"
 
     # Composite Primary Key (matches Prisma @@id)
-    user_id = Column(String, ForeignKey("users.id"), primary_key=True)
+    user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
     platform = Column(SQLEnum(CP_Platform), primary_key=True)
 
     handle = Column(String, nullable=False)
@@ -154,7 +154,7 @@ class CP_Profile(Base):
 class Repo_Profile(Base):
     __tablename__ = "repo_profiles"
 
-    user_id = Column(String, ForeignKey("users.id"), primary_key=True)
+    user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
     platform = Column(SQLEnum(Repo_Platform), primary_key=True)
 
     handle = Column(String, nullable=False)
@@ -180,7 +180,7 @@ class Project(Base):
     __tablename__ = "projects"
 
     id = Column(String, primary_key=True, index=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), index=True)
+    user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), index=True)
 
     name = Column(String, nullable=False)
     description = Column(String, nullable=False)
@@ -201,7 +201,7 @@ class Achievement(Base):
     __tablename__ = "achievements"
 
     id = Column(String, primary_key=True, index=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), index=True)
+    user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), index=True)
 
     title = Column(String, nullable=False)
     description = Column(String, nullable=True)
@@ -221,7 +221,7 @@ class Experience(Base):
     __tablename__ = "experiences"
 
     id = Column(String, primary_key=True, index=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), index=True)
+    user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), index=True)
 
     organization = Column(String, nullable=False)
     start_date = Column(Date, nullable=False)
