@@ -34,3 +34,6 @@ class RepoService {
     }
   }
 }
+
+const repoService = new RepoService();
+export default repoService;
