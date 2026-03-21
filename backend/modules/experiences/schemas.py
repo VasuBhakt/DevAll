@@ -25,9 +25,6 @@ class UpdateExperienceRequest(CreateExperienceRequest):
 
 
 class ExperienceResponse(ExperienceBase):
-    id: str
-    user_id: str
-
     class Config:
         from_attributes = True
 
