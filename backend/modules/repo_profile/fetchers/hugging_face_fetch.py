@@ -16,7 +16,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-async def _throttle_hf_request(redis_client, cooldown=1.0):
+async def _throttle_hf_request(redis_client, cooldown=1.5):
     """Distributed throttle using Redis to space out requests globally."""
     if not redis_client:
         return
