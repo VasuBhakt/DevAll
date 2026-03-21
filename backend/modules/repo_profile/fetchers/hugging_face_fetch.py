@@ -5,6 +5,10 @@ import httpx
 from pydantic import BaseModel, Field, ConfigDict
 from utils import APIException
 from typing import List, Optional
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -26,7 +30,9 @@ async def _throttle_hf_request(redis_client, cooldown=1.0):
             elapsed = now - float(last_request)
             if elapsed < cooldown:
                 wait_time = cooldown - elapsed
-                logger.info(f"Throttling: Spacing out Hugging Face requests by {wait_time:.2f}s")
+                logger.info(
+                    f"Throttling: Spacing out Hugging Face requests by {wait_time:.2f}s"
+                )
                 await asyncio.sleep(wait_time)
                 continue
 
@@ -41,7 +47,6 @@ class HFModel(BaseModel):
     likes: int
     downloads: int = 0
     pipeline_tag: Optional[str] = None
-    last_modified: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -51,7 +56,6 @@ class HFSpace(BaseModel):
     name: str
     likes: int
     sdk: Optional[str] = None
-    last_modified: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -61,7 +65,6 @@ class HFDataset(BaseModel):
     name: str
     likes: int
     downloads: int = 0
-    last_modified: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -79,7 +82,7 @@ class HuggingFaceProfile(BaseModel):
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
 
-HF_API_BASE = "https://huggingface.co/api/users/"
+HF_API_BASE = "https://huggingface.co/api"
 
 
 async def fetch_hugging_face_profile(handle: str, redis_client=None):
@@ -102,89 +105,117 @@ async def fetch_hugging_face_profile(handle: str, redis_client=None):
 
 
 async def _fetch_hf_raw(handle: str):
-    user_url = f"{HF_API_BASE}{handle}/overview" # HF uses /overview for more detail
-    
-    async with httpx.AsyncClient(timeout=5.0) as client:
-        try:
-            # Hugging Face usually doesn't require a token for public stats,
-            # but we use a User-Agent for safety.
-            response = await client.get(
-                user_url,
-                headers={"User-Agent": "DevAll-Backend"}
-            )
 
-            if response.status_code == 404:
+    headers = {
+        "User-Agent": "DevAll-Backend",
+        "Authorization": f"Bearer {os.getenv('HUGGING_FACE_ACCESS_TOKEN')}",
+    }
+
+    # Endpoints as per Hugging Face REST API
+    # We fetch the top 6 of each resource type sorted by likes (standard 'top' metric)
+    urls = {
+        "user": f"{HF_API_BASE}/users/{handle}/overview",
+        "models": f"{HF_API_BASE}/models?author={handle}&sort=likes&direction=-1&limit=6",
+        "datasets": f"{HF_API_BASE}/datasets?author={handle}&sort=likes&direction=-1&limit=6",
+        "spaces": f"{HF_API_BASE}/spaces?author={handle}&sort=likes&direction=-1&limit=6",
+    }
+
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        try:
+            # 1. Fetch all concurrently
+            keys = ["user", "models", "datasets", "spaces"]
+            fetch_tasks = [client.get(urls[k], headers=headers) for k in keys]
+            responses = await asyncio.gather(*fetch_tasks, return_exceptions=True)
+
+            # Map responses back to keys
+            results = dict(zip(keys, responses))
+
+            # 2. Check for user existence
+            user_resp = results["user"]
+            if isinstance(user_resp, Exception):
+                raise APIException(
+                    status=400,
+                    message=f"Failed to connect to Hugging Face: {str(user_resp)}",
+                    error_code="FAILED_REQUEST",
+                )
+
+            if user_resp.status_code == 404:
                 raise APIException(
                     status=404,
                     message="Hugging Face user not found",
                     error_code="NOT_FOUND",
                 )
-            
-            if response.status_code != 200:
+
+            if user_resp.status_code != 200:
                 raise APIException(
                     status=400,
-                    message="Failed to connect to Hugging Face",
+                    message="Failed to fetch Hugging Face user overview",
                     error_code="FAILED_REQUEST",
                 )
 
-            data = response.json()
-            
-            # Extract basic stats
-            followers = data.get("numFollowers", 0)
-            # HF might not give total likes in a simple field, we'll sum them if needed
-            total_likes = 0
-            
-            # 1. Models
+            user_data = user_resp.json()
+
+            # 3. Process Models (Top 6)
             models_list = []
-            for m in data.get("models", []):
-                hfm = HFModel(
-                    id=m.get("id"),
-                    name=m.get("id", "").split("/")[-1],
-                    likes=m.get("likes", 0),
-                    downloads=m.get("downloads", 0),
-                    pipeline_tag=m.get("pipeline_tag"),
-                    last_modified=m.get("lastModified"),
-                )
-                models_list.append(hfm)
-                total_likes += hfm.likes
+            m_resp = results["models"]
+            if not isinstance(m_resp, Exception) and m_resp.status_code == 200:
+                for m in m_resp.json():
+                    models_list.append(
+                        HFModel(
+                            id=m.get("id"),
+                            name=m.get("id", "").split("/")[-1],
+                            likes=m.get("likes", 0),
+                            downloads=m.get("downloads", 0),
+                            pipeline_tag=m.get("pipeline_tag"),
+                        )
+                    )
 
-            # 2. Spaces
-            spaces_list = []
-            for s in data.get("spaces", []):
-                hfs = HFSpace(
-                    id=s.get("id"),
-                    name=s.get("id", "").split("/")[-1],
-                    likes=s.get("likes", 0),
-                    sdk=s.get("sdk"),
-                    last_modified=s.get("lastModified"),
-                )
-                spaces_list.append(hfs)
-                total_likes += hfs.likes
-
-            # 3. Datasets
+            # 4. Process Datasets (Top 6)
             datasets_list = []
-            for d in data.get("datasets", []):
-                hfd = HFDataset(
-                    id=d.get("id"),
-                    name=d.get("id", "").split("/")[-1],
-                    likes=d.get("likes", 0),
-                    downloads=d.get("downloads", 0),
-                    last_modified=d.get("lastModified"),
-                )
-                datasets_list.append(hfd)
-                total_likes += hfd.likes
+            d_resp = results["datasets"]
+            if not isinstance(d_resp, Exception) and d_resp.status_code == 200:
+                for d in d_resp.json():
+                    datasets_list.append(
+                        HFDataset(
+                            id=d.get("id"),
+                            name=d.get("id", "").split("/")[-1],
+                            likes=d.get("likes", 0),
+                            downloads=d.get("downloads", 0),
+                        )
+                    )
 
-            total_public_items = len(models_list) + len(spaces_list) + len(datasets_list)
+            # 5. Process Spaces (Top 6)
+            spaces_list = []
+            s_resp = results["spaces"]
+            if not isinstance(s_resp, Exception) and s_resp.status_code == 200:
+                for s in s_resp.json():
+                    spaces_list.append(
+                        HFSpace(
+                            id=s.get("id"),
+                            name=s.get("id", "").split("/")[-1],
+                            likes=s.get("likes", 0),
+                            sdk=s.get("sdk"),
+                        )
+                    )
+
+            # 6. Aggregate metadata from overview
+            # Overview provides the total counts even if we only fetch 6 records separately.
+            total_models = user_data.get("numModels")
+            total_datasets = user_data.get("numDatasets")
+            total_spaces = user_data.get("numSpaces")
+
+            # nb_likes is the total likes across all resources
+            total_likes = user_data.get("numLikes")
 
             return HuggingFaceProfile(
                 handle=handle,
                 profile_link=f"https://huggingface.co/{handle}",
-                followers_count=followers,
+                followers_count=user_data.get("numFollowers", 0),
                 likes_count=total_likes,
-                public_repo_count=total_public_items,
+                public_repo_count=total_models + total_datasets + total_spaces,
                 models=models_list,
                 spaces=spaces_list,
-                datasets=datasets_list
+                datasets=datasets_list,
             )
 
         except APIException:

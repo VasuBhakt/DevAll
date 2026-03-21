@@ -6,6 +6,9 @@ import httpx
 from pydantic import BaseModel, Field, ConfigDict
 from utils import APIException
 from typing import List, Optional
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
