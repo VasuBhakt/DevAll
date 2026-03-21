@@ -77,9 +77,9 @@ class PublicExperience(BaseModel):
 class PublicProfileResponse(BaseModel):
     username: str
     email: str
-    profile: PublicProfileData
-    projects: List[PublicProject]
-    achievements: List[PublicAchievement]
-    experience: List[PublicExperience]
-    cp_profiles: List[PublicCPProfile]
-    repo_profiles: List[PublicRepoProfile]
+    profile: Optional[PublicProfileData] = None
+    projects: List[PublicProject] = []
+    achievements: List[PublicAchievement] = []
+    experience: List[PublicExperience] = []
+    cp_profiles: List[PublicCPProfile] = []
+    repo_profiles: List[PublicRepoProfile] = []
