@@ -54,6 +54,7 @@ class PublicRepoProfile(BaseModel):
     profile_link: str
     followers_count: Optional[int]
     public_repo_count: Optional[int]
+    likes_count: Optional[int]
 
 
 class PublicAchievement(BaseModel):
