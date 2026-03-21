@@ -6,7 +6,7 @@ import {
 } from "./schema";
 import { APIResponse } from "@/src/utils/apiResponse";
 
-class AchievementsService {
+class AchievementService {
   async createAchievement(
     request: CreateAchievementRequest
   ): Promise<APIResponse<null>> {
@@ -96,5 +96,5 @@ class AchievementsService {
   }
 }
 
-const achievementsService = new AchievementsService();
-export default achievementsService;
+const achievementService = new AchievementService();
+export default achievementService;
