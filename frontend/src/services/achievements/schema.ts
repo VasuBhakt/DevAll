@@ -12,12 +12,10 @@ export interface UpdateAchievementRequest extends Partial<CreateAchievementReque
 
 export interface AchievementResponse {
   title: string;
-  description: string | null;
-  certificate_link: string | null;
-  organization: string | null;
-  event: string | null;
-  event_date: Date | null;
-  event_link: string | null;
-  id: string;
-  user_id: string;
+  description?: string | null;
+  certificate_link?: string | null;
+  organization?: string | null;
+  event?: string | null;
+  event_date?: Date | null;
+  event_link?: string | null;
 }
