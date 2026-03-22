@@ -1,11 +1,11 @@
-import { axios, logger } from "@/src/utils";
+import { axios, logger } from "@/utils";
 import {
   ResetPasswordRequest,
   SigninRequest,
   SignupRequest,
   User,
 } from "./schema";
-import { APIResponse } from "@/src/utils/apiResponse";
+import { APIResponse } from "@/utils/apiResponse";
 
 class AuthService {
   async signup(request: SignupRequest): Promise<APIResponse<null>> {

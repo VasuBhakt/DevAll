@@ -1,6 +1,6 @@
-import { APIResponse } from "@/src/utils/apiResponse";
+import { APIResponse } from "@/utils/apiResponse";
 import { RepoProfile } from "./schema";
-import { axios, logger } from "@/src/utils";
+import { axios, logger } from "@/utils";
 
 class RepoService {
   async fetchRepoProfile(

@@ -1,10 +1,10 @@
-import { axios, logger } from "@/src/utils";
+import { axios, logger } from "@/utils";
 import {
   AchievementResponse,
   CreateAchievementRequest,
   UpdateAchievementRequest,
 } from "./schema";
-import { APIResponse } from "@/src/utils/apiResponse";
+import { APIResponse } from "@/utils/apiResponse";
 
 class AchievementService {
   async createAchievement(

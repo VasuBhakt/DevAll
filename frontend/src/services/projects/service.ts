@@ -1,10 +1,10 @@
-import { APIResponse } from "@/src/utils/apiResponse";
+import { APIResponse } from "@/utils/apiResponse";
 import {
   CreateProjectRequest,
   ProjectResponse,
   UpdateProjectRequest,
 } from "./schema";
-import { axios, logger } from "@/src/utils";
+import { axios, logger } from "@/utils";
 
 class ProjectService {
   async createProject(

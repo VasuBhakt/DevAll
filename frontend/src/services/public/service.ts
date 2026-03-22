@@ -1,6 +1,6 @@
-import { APIResponse } from "@/src/utils/apiResponse";
+import { APIResponse } from "@/utils/apiResponse";
 import { PublicProfileResponse } from "./schema";
-import { axios, logger } from "@/src/utils";
+import { axios, logger } from "@/utils";
 
 class PublicService {
   async getPublicProfile(
