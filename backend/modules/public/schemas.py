@@ -63,9 +63,11 @@ class PublicRepoProfile(BaseModel):
 class PublicAchievement(BaseModel):
     title: str
     description: Optional[str] = None
+    certificate_link: Optional[str] = None
     organization: Optional[str] = None
     event: Optional[str] = None
     event_date: Optional[date] = None
+    event_link: Optional[str] = None
 
 
 class PublicExperience(BaseModel):

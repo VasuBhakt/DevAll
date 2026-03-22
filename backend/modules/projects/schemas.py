@@ -11,6 +11,7 @@ class ProjectBase(BaseModel):
     languages: Optional[list[str]] = None
     github_link: Optional[str] = None
     project_link: Optional[str] = None
+    project_date: Optional[date] = None
 
 
 class CreateProjectRequest(ProjectBase):
