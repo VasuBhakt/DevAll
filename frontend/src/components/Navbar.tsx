@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/hooks";
 import Link from "next/link";
-import { LogOut } from "lucide-react";
+import { List, LogOut } from "lucide-react";
 import { ThemeToggle } from "./buttons";
 import { Button } from "./ui/button";
 
@@ -12,19 +12,29 @@ export function Navbar() {
   return (
     <>
       <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-8">
+        <div className="container mx-auto flex h-22 items-center justify-between px-4 sm:px-8">
           {/*Left side*/}
-          <Link
-            href="/"
-            className="flex items-center font-bold text-xl tracking-tighter"
-          >
-            <span className="bg-black text-white px-5 py-2 rounded-md dark:rounded-r-none transition-all duration-300">
-              Dev
-            </span>
-            <span className="bg-white text-black px-5 py-2 rounded-md light:rounded-l-none transition-all duration-300">
-              All
-            </span>
-          </Link>
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon-lg">
+              <List />
+            </Button>
+            <div className="flex flex-col items-center gap-1">
+              <Link
+                href="/"
+                className="flex items-center font-bold text-xl tracking-tighter"
+              >
+                <span className="bg-black text-white px-5 py-2 rounded-md dark:rounded-r-none transition-all duration-300">
+                  Dev
+                </span>
+                <span className="bg-white text-black px-5 py-2 rounded-md light:rounded-l-none transition-all duration-300">
+                  All
+                </span>
+              </Link>
+              <span className="text-sm text-secondary-foreground">
+                By Maadhava
+              </span>
+            </div>
+          </div>
           {/*Right side*/}
           <div className="flex items-center gap-4">
             {isLoading ? (
