@@ -128,7 +128,9 @@ class CP_Profile(Base):
     __tablename__ = "cp_profiles"
 
     # Composite Primary Key (matches Prisma @@id)
-    user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+    user_id = Column(
+        String, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
     platform = Column(SQLEnum(CP_Platform), primary_key=True)
 
     handle = Column(String, nullable=False)
@@ -154,15 +156,19 @@ class CP_Profile(Base):
 class Repo_Profile(Base):
     __tablename__ = "repo_profiles"
 
-    user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+    user_id = Column(
+        String, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
     platform = Column(SQLEnum(Repo_Platform), primary_key=True)
 
     handle = Column(String, nullable=False)
+    avatar = Column(String, nullable=True)
     profile_link = Column(String, nullable=False)
     followers_count = Column(Integer, nullable=True)
     organizations = Column(ARRAY(String), nullable=True)
     public_repo_count = Column(Integer, nullable=True)
     likes_count = Column(Integer, nullable=True)
+    contribution_count = Column(Integer, nullable=True)
 
     # Using JSONB for complex nested data from GitHub/HF
     pinned_repos = Column(ARRAY(JSONB), nullable=True)

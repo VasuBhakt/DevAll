@@ -104,6 +104,9 @@ class PublicService:
             Repo_Profile.profile_link,
             Repo_Profile.followers_count,
             Repo_Profile.public_repo_count,
+            Repo_Profile.likes_count,
+            Repo_Profile.contribution_count,
+            Repo_Profile.avatar,
         ).where(Repo_Profile.user_id == user.id)
         repo_res = await db.execute(repo_query)
         repo_rows = repo_res.all()
@@ -187,6 +190,9 @@ class PublicService:
                     profile_link=repo.profile_link,
                     followers_count=repo.followers_count,
                     public_repo_count=repo.public_repo_count,
+                    likes_count=repo.likes_count,
+                    contribution_count=repo.contribution_count,
+                    avatar=repo.avatar,
                 )
                 for repo in repo_rows
             ],

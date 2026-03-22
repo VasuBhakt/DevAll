@@ -57,8 +57,10 @@ class GithubProfile(BaseModel):
     profile_link: str
     followers_count: int
     public_repo_count: int
+    contribution_count: int = 0
     organizations: List[str]
     pinned_repos: List[GithubPinnedRepo]
+    avatar: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
@@ -99,12 +101,19 @@ async def _fetch_gh_raw(handle: str):
     query getUserProfile($login: String!) {
       user(login: $login) {
         url
+        avatarUrl
         followers {
           totalCount
         }
         repositories(first: 100, isFork: false) {
           totalCount
         }
+        contributionsCollection {
+          contributionCalendar {
+            totalContributions
+          }
+        }
+
         pinnedItems(first: 6, types: [REPOSITORY]) {
           nodes {
             ... on Repository {
@@ -177,6 +186,12 @@ async def _fetch_gh_raw(handle: str):
             # Extract counts
             followers = user_data["followers"]["totalCount"]
             repos = user_data["repositories"]["totalCount"]
+            avatar = user_data["avatarUrl"]
+
+            # Extract contributions
+            contributions = user_data["contributionsCollection"][
+                "contributionCalendar"
+            ]["totalContributions"]
 
             # Extract pinned repositories
             pinned_nodes = user_data["pinnedItems"]["nodes"]
@@ -205,8 +220,10 @@ async def _fetch_gh_raw(handle: str):
                 profile_link=user_data["url"],
                 followers_count=followers,
                 public_repo_count=repos,
+                contribution_count=contributions,
                 organizations=orgs,
                 pinned_repos=pinned_repos,
+                avatar=avatar,
             )
 
         except APIException:

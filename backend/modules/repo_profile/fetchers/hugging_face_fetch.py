@@ -71,10 +71,12 @@ class HFDataset(BaseModel):
 
 class HuggingFaceProfile(BaseModel):
     handle: str
+    avatar: Optional[str] = None
     profile_link: str
     followers_count: int = 0
     likes_count: int = Field(0, description="Total likes across all resources")
     public_repo_count: int = 0
+    contribution_count: int = 0
     models: List[HFModel] = []
     spaces: List[HFSpace] = []
     datasets: List[HFDataset] = []
@@ -210,6 +212,7 @@ async def _fetch_hf_raw(handle: str):
             return HuggingFaceProfile(
                 handle=handle,
                 profile_link=f"https://huggingface.co/{handle}",
+                avatar=user_data.get("avatarUrl"),
                 followers_count=user_data.get("numFollowers", 0),
                 likes_count=total_likes,
                 public_repo_count=total_models + total_datasets + total_spaces,
