@@ -50,6 +50,7 @@ class PublicCPProfile(BaseModel):
 
 
 class PublicRepoProfile(BaseModel):
+    handle: str
     platform: str
     profile_link: str
     followers_count: Optional[int]

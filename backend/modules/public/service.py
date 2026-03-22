@@ -100,6 +100,7 @@ class PublicService:
 
         # 7. Fetch Repo Profiles (Optimized: fetch specific fields only to avoid large JSONB bloat)
         repo_query = select(
+            Repo_Profile.handle,
             Repo_Profile.platform,
             Repo_Profile.profile_link,
             Repo_Profile.followers_count,
@@ -186,6 +187,7 @@ class PublicService:
             ],
             repo_profiles=[
                 PublicRepoProfile(
+                    handle=repo.handle,
                     platform=repo.platform,
                     profile_link=repo.profile_link,
                     followers_count=repo.followers_count,
