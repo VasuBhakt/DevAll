@@ -158,7 +158,7 @@ class PublicService:
                 )
                 for a in achievements
             ],
-            experience=[
+            experiences=[
                 PublicExperience(
                     organization=e.organization,
                     start_date=e.start_date,

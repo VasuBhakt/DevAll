@@ -86,6 +86,6 @@ class PublicProfileResponse(BaseModel):
     profile: Optional[PublicProfileData] = None
     projects: List[PublicProject] = []
     achievements: List[PublicAchievement] = []
-    experience: List[PublicExperience] = []
+    experiences: List[PublicExperience] = []
     cp_profiles: List[PublicCPProfile] = []
     repo_profiles: List[PublicRepoProfile] = []
