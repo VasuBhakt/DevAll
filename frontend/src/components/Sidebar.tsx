@@ -43,7 +43,7 @@ const SidebarItem = ({
         "hover:bg-sidebar-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
         isActive
           ? "bg-sidebar-primary text-sidebar-primary-foreground font-semibold shadow-md shadow-primary/10"
-          : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+          : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground",
         isCollapsed && "justify-center px-1.5"
       )}
     >
