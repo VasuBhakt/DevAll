@@ -11,17 +11,14 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto flex h-22 items-center justify-between px-4 sm:px-8">
+      <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container mx-auto flex h-[88px] items-center justify-between px-4 sm:px-8">
           {/*Left side*/}
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon-lg">
-              <List />
-            </Button>
-            <div className="flex flex-col items-center gap-1">
+            <div className="flex flex-col items-center">
               <Link
                 href="/"
-                className="flex items-center font-bold text-xl tracking-tighter"
+                className="flex items-center font-bold text-xl tracking-tighter transition-transform hover:scale-105"
               >
                 <span className="bg-black text-white px-5 py-2 rounded-md dark:rounded-r-none transition-all duration-300">
                   Dev
@@ -30,9 +27,9 @@ export function Navbar() {
                   All
                 </span>
               </Link>
-              <span className="text-sm text-secondary-foreground">
+              <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-secondary-foreground mt-1">
                 By Maadhava
-              </span>
+              </p>
             </div>
           </div>
           {/*Right side*/}

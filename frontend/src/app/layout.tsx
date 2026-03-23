@@ -4,6 +4,7 @@ import "./globals.css";
 import { QueryProvider } from "../providers";
 import { ThemeProvider } from "../providers/ThemeProvider";
 import { Navbar } from "@/components/Navbar";
+import { Sidebar } from "@/components/Sidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,7 +45,12 @@ export default function RootLayout({
         >
           <QueryProvider>
             <Navbar />
-            <main className="flex-1">{children}</main>
+            <div className="flex flex-1 overflow-hidden h-[calc(100vh-88px)]">
+              <Sidebar />
+              <main className="flex-1 overflow-y-auto bg-secondary/10 dark:bg-secondary/5 translate-z-0">
+                {children}
+              </main>
+            </div>
           </QueryProvider>
         </ThemeProvider>
       </body>
