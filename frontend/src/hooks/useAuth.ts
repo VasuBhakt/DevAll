@@ -16,15 +16,15 @@ export const useAuth = () => {
     retry: false,
   });
 
-  // Mutations (Standard Login/Logout)
-  const loginMutation = useMutation({
+  // Mutations (Standard signin/signout)
+  const signinMutation = useMutation({
     mutationFn: AuthService.signin,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["me"] });
     },
   });
 
-  const logoutMutation = useMutation({
+  const signoutMutation = useMutation({
     mutationFn: AuthService.signout,
     onSuccess: () => {
       queryClient.setQueryData(["me"], null);
@@ -33,11 +33,14 @@ export const useAuth = () => {
 
   return {
     user: user?.data ?? null,
-    isLoggedIn: !!user?.data,
+    isSignedIn: !!user?.data,
     isLoading,
     isError,
-    login: loginMutation.mutate,
-    logout: logoutMutation.mutate,
-    loginStatus: loginMutation.status,
+    signin: signinMutation.mutate,
+    signinAsync: signinMutation.mutateAsync,
+    signout: signoutMutation.mutate,
+    signoutAsync: signoutMutation.mutateAsync,
+    signinStatus: signinMutation.status,
   };
 };
+

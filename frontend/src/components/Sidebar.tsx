@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard,
   Code2,
   Trophy,
   Briefcase,
@@ -79,14 +78,13 @@ const SidebarItem = ({
 export function Sidebar() {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const { user, isLoggedIn, logout } = useAuth() || {
+  const { user, isSignedIn, signout } = useAuth() || {
     user: null,
-    isLoggedIn: false,
-    logout: () => {},
+    isSignedIn: false,
+    signout: () => {},
   };
 
   const menuItems = [
-    { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
     { icon: Code2, label: "Profiles", href: "/profiles" },
     { icon: Trophy, label: "Achievements", href: "/achievements" },
     { icon: Briefcase, label: "Experience", href: "/experience" },
@@ -100,7 +98,7 @@ export function Sidebar() {
   ];
 
   return (
-    isLoggedIn && (
+    isSignedIn && (
       <>
         <aside
           className={cn(
@@ -161,7 +159,7 @@ export function Sidebar() {
           </div>
 
           {/* Footer/Profile */}
-          {isLoggedIn && (
+          {/*{isSignedIn && (
             <div
               className={cn(
                 "pt-4 mb-2 mt-auto border-t border-sidebar-border flex flex-col gap-2",
@@ -183,27 +181,13 @@ export function Sidebar() {
                       {user?.username}
                     </span>
                     <span className="text-[11px] text-muted-foreground truncate leading-tight">
-                      Pro Developer
+                      
                     </span>
                   </div>
                 )}
               </div>
-
-              <Button
-                onClick={() => logout()}
-                variant="ghost"
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-xl text-destructive hover:bg-destructive/10 transition-all",
-                  isCollapsed ? "justify-center px-2" : "mt-1"
-                )}
-              >
-                <LogOut size={18} />
-                {!isCollapsed && (
-                  <span className="text-sm font-medium">Logout</span>
-                )}
-              </Button>
             </div>
-          )}
+          )}*/}
         </aside>
       </>
     )

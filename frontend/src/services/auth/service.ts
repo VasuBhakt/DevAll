@@ -20,12 +20,12 @@ class AuthService {
     }
   }
 
-  async signin(request: SigninRequest): Promise<APIResponse<null>> {
+  async signin(request: SigninRequest): Promise<APIResponse<User>> {
     try {
       logger.info("Signin flow started...");
       const response = await axios.post("/auth/signin", request);
       logger.info("Signin successful!");
-      return response.data;
+      return response.data.data;
     } catch (error) {
       logger.error("Signin failed :: error :: ", error);
       throw error;
