@@ -42,10 +42,8 @@ export function Navbar() {
                   </span>
                 </div>
                 <Button
-                  variant="outline"
-                  size="sm"
                   onClick={() => signout()}
-                  className="gap-2"
+                  className="px-4 py-5 text-md bg-destructive"
                 >
                   <LogOut size={14} />
                   Logout
