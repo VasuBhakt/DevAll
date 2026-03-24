@@ -6,6 +6,7 @@ from .schemas import (
     JWTTokens,
     ForgotPasswordRequest,
     ResetPasswordRequest,
+    SigninResponse,
 )
 from database import User, get_db
 from utils import APIException, EmailService, UserDetails
@@ -112,7 +113,7 @@ class AuthService:
     # user signin
     async def signin(
         self, request: SigninRequest, db: AsyncSession = Depends(get_db)
-    ) -> JWTTokens:
+    ) -> SigninResponse:
         query = select(User).where(
             (User.email == request.identifier) | (User.username == request.identifier)
         )
@@ -161,7 +162,7 @@ class AuthService:
                 error_code="SERVER_ERROR",
             )
 
-        return tokens
+        return SigninResponse(tokens=tokens, user_details=user_response)
 
     # signout
     async def signout(

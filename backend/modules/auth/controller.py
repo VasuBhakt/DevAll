@@ -45,9 +45,11 @@ async def login(
     auth_service: AuthService = Depends(get_auth_service),
     util_service: AuthUtilService = Depends(get_auth_util_service),
 ) -> APIResponse:
-    tokens = await auth_service.signin(request, db)
-    util_service.set_auth_cookies(response, tokens)
-    return APIResponse(message="Signin successful", status=200)
+    response_data = await auth_service.signin(request, db)
+    util_service.set_auth_cookies(response, response_data.tokens)
+    return APIResponse(
+        message="Signin successful", status=200, data=response_data.user_details
+    )
 
 
 @auth_router.post("/refresh-token")

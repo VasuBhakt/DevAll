@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from utils import UserDetails
 
 
 class AuthRequest(BaseModel):
@@ -31,3 +32,8 @@ class ForgotPasswordRequest(BaseModel):
 
 class ResetPasswordRequest(BaseModel):
     new_password: str
+
+
+class SigninResponse(BaseModel):
+    tokens: JWTTokens
+    user_details: UserDetails
