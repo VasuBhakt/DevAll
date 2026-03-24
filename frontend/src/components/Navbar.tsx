@@ -5,13 +5,14 @@ import Link from "next/link";
 import { List, LogOut } from "lucide-react";
 import { ThemeToggle } from "./buttons";
 import { Button } from "./ui/button";
+import { Logo } from "./Logo";
 
 export function Navbar() {
   const { user, isLoggedIn, isLoading, isError, logout } = useAuth();
 
   return (
     <>
-      <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <nav className="sticky top-0 z-50 w-full bg-background backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto flex h-[88px] items-center justify-between px-4 sm:px-8">
           {/*Left side*/}
           <div className="flex items-center gap-4">
@@ -20,16 +21,8 @@ export function Navbar() {
                 href="/"
                 className="flex items-center font-bold text-xl tracking-tighter transition-transform hover:scale-105"
               >
-                <span className="bg-black text-white px-5 py-2 rounded-md dark:rounded-r-none transition-all duration-300">
-                  Dev
-                </span>
-                <span className="bg-white text-black px-5 py-2 rounded-md light:rounded-l-none transition-all duration-300">
-                  All
-                </span>
+                <Logo />
               </Link>
-              <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-secondary-foreground mt-1">
-                By Maadhava
-              </p>
             </div>
           </div>
           {/*Right side*/}

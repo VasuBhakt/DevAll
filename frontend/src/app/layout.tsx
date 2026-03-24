@@ -5,6 +5,7 @@ import { QueryProvider } from "../providers";
 import { ThemeProvider } from "../providers/ThemeProvider";
 import { Navbar } from "@/components/Navbar";
 import { Sidebar } from "@/components/Sidebar";
+import { Footer } from "@/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -51,6 +52,7 @@ export default function RootLayout({
                 {children}
               </main>
             </div>
+            <Footer />
           </QueryProvider>
         </ThemeProvider>
       </body>
