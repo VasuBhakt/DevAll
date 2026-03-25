@@ -71,7 +71,9 @@ export default function SignupPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <Field>
               <div className="flex items-center justify-between">
-                <FieldLabel htmlFor="username">Username</FieldLabel>
+                <FieldLabel htmlFor="username">
+                  Username (cannot be changed later)
+                </FieldLabel>
               </div>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-primary transition-colors">
