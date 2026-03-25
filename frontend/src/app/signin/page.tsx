@@ -9,12 +9,16 @@ import { Eye, EyeOff, Lock, Mail, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Input, Button, Field, FieldLabel, FieldError } from "@/components";
 import { cn } from "@/lib/utils";
+import { StateStatus } from "@/utils";
 
 export default function SigninPage() {
   const router = useRouter();
   const { isSignedIn, signinAsync, signinStatus } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [status, setStatus] = useState<StateStatus>({
+    type: null,
+    message: null,
+  });
 
   const {
     register,
@@ -30,7 +34,7 @@ export default function SigninPage() {
   }, [isSignedIn, router]);
 
   const onSubmit = async (data: SigninRequest) => {
-    setErrorMsg(null);
+    setStatus({ type: null, message: null });
     try {
       await signinAsync(data);
       router.replace("/dashboard");
@@ -39,7 +43,7 @@ export default function SigninPage() {
         err.response?.data?.message ||
         err.message ||
         "Invalid credentials. Please try again.";
-      setErrorMsg(message);
+      setStatus({ type: "error", message });
     }
   };
 
@@ -119,9 +123,14 @@ export default function SigninPage() {
               {errors.password && <FieldError errors={[errors.password]} />}
             </Field>
 
-            {errorMsg && (
-              <div className="bg-destructive/10 border border-destructive/20 text-destructive text-sm py-3 px-4 rounded-xl text-center">
-                {errorMsg}
+            {status.type && (
+              <div
+                className={cn(
+                  status.type === "error" &&
+                    "bg-destructive/10 border border-destructive/20 text-destructive text-sm py-3 px-4 rounded-xl text-center"
+                )}
+              >
+                {status.message}
               </div>
             )}
 
@@ -133,7 +142,7 @@ export default function SigninPage() {
               {isLoading ? (
                 <>
                   <Loader2 className="animate-spin mr-2" size={18} />
-                  Logging in...
+                  Signing in...
                 </>
               ) : (
                 "Sign In"

@@ -10,13 +10,16 @@ import Link from "next/link";
 import { Input, Button, Field, FieldLabel, FieldError } from "@/components";
 import { cn } from "@/lib/utils";
 import { AuthService } from "@/services/auth";
+import { StateStatus } from "@/utils";
 
 export default function SignupPage() {
   const router = useRouter();
   const { isSignedIn } = useAuth();
+  const [status, setStatus] = useState<StateStatus>({
+    type: null,
+    message: null,
+  });
   const [showPassword, setShowPassword] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -33,18 +36,20 @@ export default function SignupPage() {
   }, [isSignedIn, router]);
 
   const onSubmit = async (data: SignupRequest) => {
-    setErrorMessage(null);
-    setMessage(null);
+    setStatus({ type: null, message: null });
     setIsLoading(true);
     try {
-      await AuthService.signup(data);
-      setMessage("Account created successfully. Please verify your email.");
+      const response = await AuthService.signup(data);
+      setStatus({
+        type: "success",
+        message: response.message,
+      });
     } catch (err: any) {
       const message =
         err.response?.data?.message ||
         err.message ||
         "Invalid credentials. Please try again.";
-      setErrorMessage(message);
+      setStatus({ type: "error", message });
     } finally {
       setIsLoading(false);
     }
@@ -98,6 +103,10 @@ export default function SignupPage() {
                 <Input
                   {...register("email", {
                     required: "Email is required",
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "Invalid email address",
+                    },
                   })}
                   id="email"
                   type="text"
@@ -122,6 +131,12 @@ export default function SignupPage() {
                 <Input
                   {...register("password", {
                     required: "Password is required",
+                    pattern: {
+                      value:
+                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                      message:
+                        "Password must be at least 8 characters, include one uppercase, one lowercase, one number, and one special character",
+                    },
                   })}
                   id="password"
                   type={showPassword ? "text" : "password"}
@@ -142,15 +157,16 @@ export default function SignupPage() {
               {errors.password && <FieldError errors={[errors.password]} />}
             </Field>
 
-            {errorMessage && (
-              <div className="bg-destructive/10 border border-destructive/20 text-destructive text-sm py-3 px-4 rounded-xl text-center">
-                {errorMessage}
-              </div>
-            )}
-
-            {message && (
-              <div className="bg-success/10 border border-success/20 text-success text-sm py-3 px-4 rounded-xl text-center">
-                {message}
+            {status.type && (
+              <div
+                className={cn(
+                  status.type === "error" &&
+                    "bg-destructive/10 border border-destructive/20 text-destructive text-sm py-3 px-4 rounded-xl text-center",
+                  status.type === "success" &&
+                    "bg-success/10 border border-success/20 text-success text-sm py-3 px-4 rounded-xl text-center"
+                )}
+              >
+                {status.message}
               </div>
             )}
 

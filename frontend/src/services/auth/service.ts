@@ -56,10 +56,10 @@ class AuthService {
     }
   }
 
-  async forgetPassword(email: string): Promise<APIResponse<null>> {
+  async forgotPassword(email: string): Promise<APIResponse<null>> {
     try {
       logger.info("Forgot password flow started...");
-      const response = await axios.post("/auth/forget-password", { email });
+      const response = await axios.post("/auth/forgot-password", { email });
       logger.info("Forgot password successful!");
       return response.data;
     } catch (error) {
