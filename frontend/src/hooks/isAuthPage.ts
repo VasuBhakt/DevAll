@@ -1,5 +1,3 @@
-import { usePathname } from "next/navigation";
-
 export const isAuthPage = (pathname: string) => {
   const authPages = [
     "/signin",

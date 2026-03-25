@@ -25,7 +25,7 @@ export default function LoginPage() {
   // Redirect if already signed in
   useEffect(() => {
     if (isSignedIn) {
-      router.push("/");
+      router.push("/dashboard");
     }
   }, [isSignedIn, router]);
 
@@ -33,7 +33,7 @@ export default function LoginPage() {
     setErrorMsg(null);
     try {
       await signinAsync(data);
-      router.push("/");
+      router.push("/dashboard");
     } catch (err: any) {
       const message =
         err.response?.data?.message ||
@@ -55,7 +55,7 @@ export default function LoginPage() {
       <div className="w-full max-w-[600px] z-10">
         <div className="bg-card/70 backdrop-blur-xl border border-border/80 rounded-2xl p-8 shadow-xl transition-all duration-300 hover:border-border">
           <div className="text-center mb-10">
-            <h1 className="text-4xl font-extrabold tracking-tight text-foreground mb-2 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-extrabold tracking-tight text-foreground mb-2 text-primary">
               Welcome Back
             </h1>
             <p className="text-muted-foreground text-md">

@@ -12,8 +12,8 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
-  LogOut,
   HelpCircle,
+  LayoutDashboard,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks";
@@ -78,13 +78,12 @@ const SidebarItem = ({
 export function Sidebar() {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const { user, isSignedIn, signout } = useAuth() || {
-    user: null,
+  const { isSignedIn } = useAuth() || {
     isSignedIn: false,
-    signout: () => {},
   };
 
   const menuItems = [
+    { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
     { icon: Code2, label: "Profiles", href: "/profiles" },
     { icon: Trophy, label: "Achievements", href: "/achievements" },
     { icon: Briefcase, label: "Experience", href: "/experience" },
