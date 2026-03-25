@@ -66,7 +66,6 @@ class AuthService:
             username=request.username.lower(),
             password=hashed_password,
             verification_token=verify_token.hashed_token,
-            verify_token_expiry=expiry_time,
         )
 
         verify_url = f"{os.getenv('FRONTEND_URL', 'http://localhost:3000')}/verify-email/{verify_token.raw_token}"
@@ -77,10 +76,10 @@ class AuthService:
                 <div style="text-align: center; margin: 32px 0;">
                     <a href="{verify_url}" style="display: inline-block; background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">Verify Email Address</a>
                 </div>
-                <p style="font-size: 14px; color: #666;">This link is valid for <strong>3 hours</strong>. For security reasons, unverified accounts will be automatically deleted after this period.</p>
                 <hr style="border: 0; border-top: 1px solid #eee; margin: 24px 0;" />
                 <p style="font-size: 12px; color: #999;">If you didn't create an account, we recommend you ignore this email.</p>
             </div>"""
+        # <p style="font-size: 14px; color: #666;">This link is valid for <strong>3 hours</strong>. For security reasons, unverified accounts will be automatically deleted after this period.</p>
 
         email_sent = await self.email_service.send_email(
             to_email=request.email, subject="Verify your email", html_content=message
@@ -265,12 +264,12 @@ class AuthService:
                 status=401,
                 error_code="INVALID_VERIFICATION_TOKEN",
             )
-        if user.verify_token_expiry < datetime.utcnow():
+        """if user.verify_token_expiry < datetime.utcnow():
             raise APIException(
                 "Verification token expired",
                 status=401,
                 error_code="VERIFICATION_TOKEN_EXPIRED",
-            )
+            )"""
         user.is_verified = True
         user.verification_token = None
         user.verify_token_expiry = None
@@ -309,11 +308,11 @@ class AuthService:
         forgot_password_token = self.util_service.generate_token()
         user.forgot_password_token = forgot_password_token.hashed_token
         user.forgot_password_token_expiry = forgot_password_token_expiry
-        forgot_password_url = f"{os.getenv('FRONTEND_URL', 'http://localhost:3000')}/forgot-password/{forgot_password_token.raw_token}"
+        reset_password_url = f"{os.getenv('FRONTEND_URL', 'http://localhost:3000')}/reset-password/{forgot_password_token.raw_token}"
         message = f"""<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
             <h2 style="color: #4F46E5;">Reset your password</h2>
             <p>You have requested to reset your password. Click the button below to proceed:</p>
-            <a href="{forgot_password_url}" style="display: inline-block; background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 16px 0;">Reset Password</a>
+            <a href="{reset_password_url}" style="display: inline-block; background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 16px 0;">Reset Password</a>
             <p style="font-size: 0.9em; color: #666;">This link is valid for 1 hour. If you did not request this, please ignore this email.</p>
         </div>"""
         email_sent = await self.email_service.send_email(

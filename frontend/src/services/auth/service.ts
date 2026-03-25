@@ -75,7 +75,7 @@ class AuthService {
     try {
       logger.info("Reset password flow started...");
       const response = await axios.post(`/auth/reset-password/${token}`, {
-        password,
+        new_password: password,
       });
       logger.info("Reset password successful!");
       return response.data;

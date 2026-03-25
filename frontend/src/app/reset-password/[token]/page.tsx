@@ -6,6 +6,7 @@ import { AuthService } from "@/services/auth";
 import { StateStatus } from "@/utils";
 import { Eye, EyeOff, Loader2, Lock, LockOpen } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { use, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -23,6 +24,7 @@ export default function ResetPasswordPage({
 }: {
   params: Promise<ParamProps>;
 }) {
+  const router = useRouter();
   const decodedParams = use(params);
   const token = decodedParams.token;
 
@@ -51,6 +53,9 @@ export default function ResetPasswordPage({
         token,
       });
       setStatus({ type: "success", message: response.message });
+      setTimeout(() => {
+        router.push("/signin");
+      }, 4000);
     } catch (err: any) {
       const message =
         err.response?.data?.message ||
@@ -194,6 +199,8 @@ export default function ResetPasswordPage({
                   <Loader2 className="animate-spin mr-2" size={18} />
                   Reseting Your Password...
                 </>
+              ) : status.type === "success" ? (
+                "Redirecting to Signin Page..."
               ) : (
                 "Reset Password"
               )}
