@@ -313,9 +313,9 @@ export function AddEditExperienceModal({
                   Saving...
                 </>
               ) : isEditing ? (
-                "Update Project"
+                "Update Experience"
               ) : (
-                "Save Project"
+                "Save Experience"
               )}
             </Button>
           </DialogFooter>

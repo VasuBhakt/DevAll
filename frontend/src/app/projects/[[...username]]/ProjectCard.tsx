@@ -10,7 +10,6 @@ import {
   Trash2,
   Code2,
   Layers,
-  Terminal,
 } from "lucide-react";
 import { Button, Badge } from "@/components/ui";
 import { cn } from "@/lib/utils";
@@ -31,7 +30,9 @@ export function ProjectCard({
   onDelete,
   className,
 }: ProjectCardProps) {
-  const projectDate = project.project_date ? new Date(project.project_date) : null;
+  const projectDate = project.project_date
+    ? new Date(project.project_date)
+    : null;
 
   return (
     <div
@@ -56,47 +57,46 @@ export function ProjectCard({
               )}
             </div>
           </div>
-
-          <div className="flex items-center gap-2">
-            {project.github_link && (
-              <Button
-                variant="outline"
-                size="icon-xs"
-                asChild
-                className="rounded-full hover:bg-foreground hover:text-background transition-all"
-              >
-                <Link
-                  href={project.github_link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Github size={14} />
-                </Link>
-              </Button>
-            )}
-            {project.project_link && (
-              <Button
-                variant="outline"
-                size="icon-xs"
-                asChild
-                className="rounded-full hover:bg-primary hover:text-primary-foreground transition-all"
-              >
-                <Link
-                  href={project.project_link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Globe size={14} />
-                </Link>
-              </Button>
-            )}
-          </div>
         </div>
 
         {/* Content Section */}
-        <p className="text-muted-foreground text-sm leading-relaxed whitespace-pre-wrap max-w-2xl">
+        <p className="text-muted-foreground text-[16px] leading-relaxed whitespace-pre-wrap max-w-2xl">
           {project.description}
         </p>
+
+        <div className="space-y-1">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-muted-foreground text-sm font-medium">
+            {project.github_link && (
+              <div className="flex items-center gap-1.5">
+                <div className="relative flex items-center gap-1.5 border border-border rounded-md px-2 py-1">
+                  <Github size={16} className="text-primary/70" />
+                  <Link
+                    href={project.github_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-primary transition-colors text-sm"
+                  >
+                    Github Link
+                  </Link>
+                </div>
+              </div>
+            )}
+            {project.project_link && (
+              <div className="flex items-center gap-1.5">
+                <div className="relative flex items-center gap-1.5 border border-border rounded-md px-2 py-1">
+                  <Globe size={16} className="text-primary/70" />
+                  <Link
+                    href={project.project_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Live Project Link
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
 
         {/* Tags Section */}
         <div className="space-y-4">
@@ -106,36 +106,55 @@ export function ProjectCard({
                 <Badge
                   key={tech}
                   variant="secondary"
-                  className="px-3 py-1 bg-primary/5 hover:bg-primary/10 border-primary/10 text-primary/80 transition-all cursor-default text-[10px] tracking-wider font-bold"
+                  className="px-3 py-1 bg-primary/5 hover:bg-primary/10 border-primary/10 text-primary/80 transition-all cursor-pointer text-[14px] tracking-wider"
                 >
                   {tech}
                 </Badge>
               ))}
             </div>
           )}
-
-          <div className="flex flex-wrap gap-6 pt-2 border-t border-border/40">
+          <div className="flex flex-col gap-3 pt-3 border-t border-border/40">
+            {/* Languages Row */}
             {project.languages && project.languages.length > 0 && (
               <div className="flex items-center gap-2">
-                <Code2 size={14} className="text-primary/60" />
-                <div className="flex flex-wrap gap-1.5">
-                  {project.languages.map((lang) => (
-                    <span key={lang} className="text-[11px] font-medium text-muted-foreground/80 uppercase tracking-tight">
-                      {lang}
-                    </span>
+                <Code2 size={14} className="text-primary/60 shrink-0" />
+                <div className="flex flex-wrap items-center gap-x-1.5">
+                  {project.languages.map((lang, index) => (
+                    <div key={lang} className="flex items-center gap-1.5">
+                      <span className="text-[11px] font-medium text-muted-foreground/80 uppercase tracking-tight">
+                        {lang}
+                      </span>
+                      {/* Render dot only if it's not the last item */}
+                      {project.languages?.length &&
+                        index < project.languages.length - 1 && (
+                          <span className="text-[10px] text-muted-foreground/40">
+                            •
+                          </span>
+                        )}
+                    </div>
                   ))}
                 </div>
               </div>
             )}
 
+            {/* Domains Row */}
             {project.domains && project.domains.length > 0 && (
               <div className="flex items-center gap-2">
-                <Layers size={14} className="text-primary/60" />
-                <div className="flex flex-wrap gap-1.5">
-                  {project.domains.map((domain) => (
-                    <span key={domain} className="text-[11px] font-medium text-muted-foreground/80 uppercase tracking-tight italic">
-                      {domain}
-                    </span>
+                <Layers size={14} className="text-primary/60 shrink-0" />
+                <div className="flex flex-wrap items-center gap-x-1.5">
+                  {project.domains.map((domain, index) => (
+                    <div key={domain} className="flex items-center gap-1.5">
+                      <span className="text-[11px] font-medium text-muted-foreground/80 uppercase tracking-tight">
+                        {domain}
+                      </span>
+                      {/* Render dot only if it's not the last item */}
+                      {project.domains?.length &&
+                        index < project.domains.length - 1 && (
+                          <span className="text-[10px] text-muted-foreground/40">
+                            •
+                          </span>
+                        )}
+                    </div>
                   ))}
                 </div>
               </div>

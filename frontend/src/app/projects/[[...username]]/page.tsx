@@ -18,7 +18,14 @@ import {
 } from "@/app/projects/[[...username]]/ProjectCard";
 import { AddEditProjectModal } from "@/app/projects/[[...username]]/AddEditProjectModal";
 import { Button } from "@/components/ui/button";
-import { Plus, FolderKanban, MousePointer2, Loader2, Info, Rocket } from "lucide-react";
+import {
+  Plus,
+  FolderKanban,
+  MousePointer2,
+  Loader2,
+  Info,
+  Rocket,
+} from "lucide-react";
 
 interface PageProps {
   params: Promise<{ username?: string[] }>;
@@ -141,14 +148,14 @@ export default function ProjectsPage({ params }: PageProps) {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-4">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-primary/10 text-primary border border-primary/20 shadow-lg shadow-primary/5">
+            <div className="p-2.5 rounded-xl bg-primary/10 text-primary border border-primary/20">
               <FolderKanban size={28} />
             </div>
             <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
               {isOwner ? "My Projects" : `${effectiveUsername}'s Projects`}
             </h1>
           </div>
-          <p className="text-muted-foreground text-lg max-w-lg font-medium">
+          <p className="text-muted-foreground text-lg max-w-lg">
             {isOwner
               ? "Share your latest engineering projects and technical prototypes."
               : `Take a look at what ${effectiveUsername} has been building.`}
@@ -162,18 +169,18 @@ export default function ProjectsPage({ params }: PageProps) {
               setIsModalOpen(true);
             }}
             size="lg"
-            className="rounded-full px-7 h-11 text-base font-bold hover:scale-[1.02] active:scale-[0.98] transition-all bg-primary hover:bg-primary/90 shadow-xl shadow-primary/20 group"
+            className="rounded-full px-7 h-11 text-base font-bold hover:scale-[1.02] active:scale-[0.98] transition-all bg-primary hover:bg-primary/90"
           >
-            <Plus className="mr-2 group-hover:rotate-90 transition-transform duration-300" size={20} />
+            <Plus className="mr-2" size={20} />
             Add Project
           </Button>
         )}
       </div>
 
       {/* Main List Section */}
-      <div className="relative space-y-8 min-h-[400px]">
+      <div className="relative space-y-6 min-h-[400px]">
         {status === "pending" && (
-          <div className="space-y-8">
+          <div className="space-y-6">
             <ProjectCardSkeleton />
             <ProjectCardSkeleton />
           </div>
@@ -184,7 +191,10 @@ export default function ProjectsPage({ params }: PageProps) {
         )}
 
         {status === "success" && allProjects.length > 0 && (
-          <div className="grid grid-cols-1 gap-8 relative pb-20">
+          <div className="grid grid-cols-1 gap-6 relative">
+            {/* Subtle vertical line for visual flow on larger screens */}
+            <div className="absolute left-[30px] top-6 bottom-6 w-[2px] bg-gradient-to-b from-primary/10 via-border/40 to-primary/10 hidden md:block" />
+
             {allProjects.map((proj) => (
               <ProjectCard
                 key={proj.id}
@@ -192,6 +202,7 @@ export default function ProjectsPage({ params }: PageProps) {
                 isOwner={isOwner}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                className="md:ml-12"
               />
             ))}
           </div>
@@ -200,24 +211,21 @@ export default function ProjectsPage({ params }: PageProps) {
         {/* Infinite Scroll Trigger */}
         <div
           ref={observerTarget}
-          className="h-20 flex items-center justify-center -mt-8"
+          className="h-20 flex items-center justify-center pt-8"
         >
-          {isFetchingNextPage ? (
-            <div className="flex flex-col items-center gap-3 text-muted-foreground">
-              <Loader2 size={40} className="animate-spin text-primary" />
-              <span className="text-sm font-bold tracking-wider animate-pulse uppercase">
+          {isFetchingNextPage && (
+            <div className="flex flex-col items-center gap-2 text-muted-foreground">
+              <Loader2 size={32} className="animate-spin text-primary" />
+              <span className="text-xs font-medium nimate-pulse">
                 Fetching more projects
               </span>
             </div>
-          ) : (
-            <>
-              {!hasNextPage && allProjects.length > 0 && (
-                <div className="text-muted-foreground text-sm font-semibold flex items-center gap-3 bg-secondary/30 backdrop-blur-md px-6 py-3 rounded-full border border-border/60 shadow-inner">
-                  <Rocket size={18} className="text-primary/70 animate-bounce" />
-                  <span>You've reached the end of the roadmap!</span>
-                </div>
-              )}
-            </>
+          )}
+          {!hasNextPage && allProjects.length > 0 && (
+            <div className="text-muted-foreground text-sm flex items-center gap-2 bg-secondary/20 px-4 py-2 rounded-full border border-border/40">
+              <Info size={16} />
+              <span>You've reached the end of the roadmap!</span>
+            </div>
           )}
         </div>
       </div>
@@ -238,12 +246,9 @@ export default function ProjectsPage({ params }: PageProps) {
 
 function LoadingState() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] space-y-6">
-      <div className="relative">
-        <Loader2 size={64} className="animate-spin text-primary opacity-30" />
-        <FolderKanban size={32} className="absolute inset-0 m-auto text-primary animate-pulse" />
-      </div>
-      <span className="text-2xl font-black text-foreground/70 animate-pulse tracking-tight">
+    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+      <Loader2 size={48} className="animate-spin text-primary" />
+      <span className="text-lg font-semibold text-muted-foreground animate-pulse tracking-wide">
         Loading Projects Portfolio...
       </span>
     </div>
@@ -259,7 +264,7 @@ function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center justify-center min-h-[400px] border-2 border-dashed border-border/60 rounded-3xl bg-secondary/5 space-y-6 text-center p-8">
-      <div className="p-6 rounded-full bg-secondary/20 border border-border/40 text-muted-foreground/40 group-hover:scale-110 group-hover:text-primary transition-all duration-500">
+      <div className="p-6 rounded-full bg-secondary/20 border border-border/40 text-muted-foreground/40">
         <FolderKanban size={48} strokeWidth={1.5} />
       </div>
       <div className="space-y-2 max-w-sm mx-auto">
@@ -268,8 +273,8 @@ function EmptyState({
         </h3>
         <p className="text-muted-foreground leading-relaxed">
           {isOwner
-            ? "Your engineering roadmap is waiting to be built. Launch your first project today."
-            : "This builder hasn't published any public projects yet."}
+            ? "Launch your first project today."
+            : "This user hasn't published any public projects yet."}
         </p>
       </div>
       {isOwner && (
@@ -287,19 +292,19 @@ function EmptyState({
 
 function SignInRequiredState() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] space-y-8 text-center px-6">
-      <div className="p-8 rounded-[2.5rem] bg-primary/10 text-primary border border-primary/20 shadow-2xl relative group">
-        <MousePointer2 size={64} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-        <div className="absolute -top-2 -right-2 h-6 w-6 bg-primary rounded-full animate-ping" />
+    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6 text-center px-6">
+      <div className="p-6 rounded-full bg-primary/10 text-primary border border-primary/20">
+        <MousePointer2 size={48} />
       </div>
-      <div className="space-y-3 max-w-lg">
-        <h2 className="text-4xl font-black tracking-tighter uppercase italic">Access Denied</h2>
-        <p className="text-muted-foreground text-xl font-medium tracking-tight">
-          Builders only beyond this point. Sign in to view and manage your full project portfolio.
+      <div className="space-y-3 max-w-md">
+        <h2 className="text-3xl font-bold tracking-tight">Access Restricted</h2>
+        <p className="text-muted-foreground text-lg">
+          Builders only beyond this point. Sign in to view and manage your full
+          project portfolio.
         </p>
       </div>
       <Button
-        className="rounded-full px-12 h-16 text-xl font-black hover:scale-[1.05] transition-all shadow-2xl shadow-primary/30"
+        className="rounded-full px-10 h-12 text-lg font-bold"
         onClick={() => (window.location.href = "/signin")}
       >
         Gain Access

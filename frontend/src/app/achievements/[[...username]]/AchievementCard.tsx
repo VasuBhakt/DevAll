@@ -103,7 +103,7 @@ export function AchievementCard({
           </div>
 
           {achievement.description && (
-            <p className="text-muted-foreground text-sm leading-relaxed max-w-2xl whitespace-pre-wrap">
+            <p className="text-muted-foreground text-[16px] leading-relaxed max-w-2xl whitespace-pre-wrap">
               {achievement.description}
             </p>
           )}

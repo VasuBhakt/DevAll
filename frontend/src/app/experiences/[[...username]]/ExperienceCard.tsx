@@ -58,7 +58,7 @@ export function ExperienceCard({
             <span>{endDate ? format(endDate, "MMM yyyy") : "Present"}</span>
           </div>
 
-          <p className="text-muted-foreground text-sm leading-relaxed max-w-2xl whitespace-pre-wrap">
+          <p className="text-muted-foreground text-[16px] leading-relaxed max-w-2xl whitespace-pre-wrap">
             {experience.description}
           </p>
 
@@ -68,7 +68,7 @@ export function ExperienceCard({
                 <Badge
                   key={skill}
                   variant="secondary"
-                  className="px-3 py-1 bg-primary/5 hover:bg-primary/10 border-primary/10 text-primary/80 transition-all cursor-default text-[10px] tracking-wider font-bold"
+                  className="px-3 py-1 bg-primary/5 hover:bg-primary/10 border-primary/10 text-primary/80 transition-all cursor-pointer text-[14px] tracking-wider"
                 >
                   {skill}
                 </Badge>

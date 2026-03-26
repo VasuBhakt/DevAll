@@ -14,6 +14,7 @@ import {
   ChevronRight,
   HelpCircle,
   LayoutDashboard,
+  BrainCircuit,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks";
@@ -84,11 +85,15 @@ export function Sidebar() {
 
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-    { icon: Code2, label: "Profiles", href: "/profiles" },
-    { icon: Trophy, label: "Achievements", href: "/achievements" },
+    { icon: Code2, label: "Repo Profiles", href: "/repo-profiles" },
+    {
+      icon: BrainCircuit,
+      label: "Competitive Programming",
+      href: "/cp-profiles",
+    },
     { icon: Briefcase, label: "Experience", href: "/experiences" },
     { icon: FolderKanban, label: "Projects", href: "/projects" },
-    { icon: Hammer, label: "Skills", href: "/skills" },
+    { icon: Trophy, label: "Achievements", href: "/achievements" },
   ];
 
   const bottomItems = [
