@@ -1,6 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from typing import Optional
 from datetime import date, datetime
+from utils import parse_date
 
 
 class ExperienceBase(BaseModel):
@@ -30,6 +31,9 @@ class UpdateExperienceRequest(CreateExperienceRequest):
 
 
 class ExperienceResponse(ExperienceBase):
+    id: str
+    user_id: str
+
     class Config:
         from_attributes = True
 
