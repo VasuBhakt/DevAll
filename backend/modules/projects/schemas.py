@@ -13,6 +13,11 @@ class ProjectBase(BaseModel):
     project_link: Optional[str] = None
     project_date: Optional[date] = None
 
+    @field_validator("project_date", mode="before")
+    @classmethod
+    def format_date(cls, v):
+        return parse_date(cls, v)
+
 
 class CreateProjectRequest(ProjectBase):
     pass

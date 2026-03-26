@@ -12,6 +12,11 @@ class AchievementBase(BaseModel):
     event_date: Optional[date] = None
     event_link: Optional[str] = None
 
+    @field_validator("event_date", mode="before")
+    @classmethod
+    def format_date(cls, v):
+        return parse_date(cls, v)
+
 
 class CreateAchievementRequest(AchievementBase):
     pass

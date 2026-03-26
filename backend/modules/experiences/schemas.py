@@ -12,6 +12,11 @@ class ExperienceBase(BaseModel):
     skills: Optional[list[str]] = None
     location: Optional[str] = None
 
+    @field_validator("start_date", "end_date", mode="before")
+    @classmethod
+    def format_date(cls, v):
+        return parse_date(cls, v)
+
 
 class CreateExperienceRequest(ExperienceBase):
     pass

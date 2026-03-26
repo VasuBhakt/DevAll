@@ -1,6 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from typing import List, Optional
 from datetime import date, datetime
+from utils import parse_date
 
 
 class PublicProfileData(BaseModel):
@@ -34,6 +35,11 @@ class PublicProject(BaseModel):
     github_link: Optional[str] = None
     project_link: Optional[str] = None
     project_date: Optional[date] = None
+
+    @field_validator("project_date", mode="before")
+    @classmethod
+    def format_date(cls, v):
+        return parse_date(cls, v)
 
 
 class PublicCPProfile(BaseModel):
@@ -69,6 +75,11 @@ class PublicAchievement(BaseModel):
     event_date: Optional[date] = None
     event_link: Optional[str] = None
 
+    @field_validator("event_date", mode="before")
+    @classmethod
+    def format_date(cls, v):
+        return parse_date(cls, v)
+
 
 class PublicExperience(BaseModel):
     organization: str
@@ -78,6 +89,11 @@ class PublicExperience(BaseModel):
     description: str
     skills: Optional[list[str]] = None
     location: Optional[str] = None
+
+    @field_validator("start_date", "end_date", mode="before")
+    @classmethod
+    def format_date(cls, v):
+        return parse_date(cls, v)
 
 
 class PublicProfileResponse(BaseModel):
