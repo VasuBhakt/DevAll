@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 
 
@@ -30,3 +30,11 @@ class CreateProfileRequest(ProfileBase):
 
 class UpdateProfileRequest(CreateProfileRequest):
     name: Optional[str] = None
+
+
+class ProfileResponse(ProfileBase):
+    email: str
+    username: str
+
+    class Config:
+        from_attributes = True

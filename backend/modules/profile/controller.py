@@ -60,7 +60,7 @@ async def update_profile(
     return APIResponse(message=message, status=200)
 
 
-"""@profile_router.get("/current")
+@profile_router.get("/")
 async def get_current_profile(
     request: Request,
     db: AsyncSession = Depends(get_db),
@@ -75,13 +75,3 @@ async def get_current_profile(
         )
     profile = await profile_service.get_profile(request.state.user.username, db)
     return APIResponse(data=profile, status=200)
-
-
-@profile_router.get("/{username}")
-async def get_profile(
-    username: str,
-    db: AsyncSession = Depends(get_db),
-    profile_service: ProfileService = Depends(get_profile_service),
-) -> APIResponse:
-    profile = await profile_service.get_profile(username, db)
-    return APIResponse(data=profile, status=200)"""

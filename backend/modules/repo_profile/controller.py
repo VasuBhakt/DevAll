@@ -24,7 +24,9 @@ async def get_repo_profiles(
     redis_client: Redis = Depends(get_redis),
     repo_profile_service: RepoProfileService = Depends(get_repo_profile_service),
 ):
-    response = await repo_profile_service.get_repo_profiles(username, db, redis_client)
+    response = await repo_profile_service.get_repo_profiles(
+        username.lower(), db, redis_client
+    )
     return APIResponse(
         message="Repo profiles fetched successfully", status=200, data=response
     )

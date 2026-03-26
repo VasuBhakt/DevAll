@@ -1,10 +1,12 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from fastapi import Depends, Request
-from database import Profile, get_db
+from database import Profile, User, get_db
 from utils import APIException
-from .schemas import CreateProfileRequest, UpdateProfileRequest
+from .schemas import CreateProfileRequest, UpdateProfileRequest, ProfileResponse
 import logging
+from sqlalchemy.orm import joinedload
+
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -85,18 +87,37 @@ class ProfileService:
         return "Profile updated successfully"
 
     # get profile
-    """async def get_profile(
+    async def get_profile(
         self,
         username: str,
         db: AsyncSession = Depends(get_db),
-    ) -> ProfileBase:
-        query = select(Profile).where(Profile.username == username)
-        result = await db.execute(query)
-        profile = result.scalars().first()
-        if not profile:
+    ) -> ProfileResponse:
+        user_query = (
+            select(User)
+            .options(joinedload(User.profile))
+            .where(User.username == username)
+        )
+        result = await db.execute(user_query)
+        user = result.scalars().first()
+
+        if not user:
             raise APIException(
-                message="Profile not found",
+                message="User not found",
+                status=404,
+                error_code="USER_NOT_FOUND",
+            )
+
+        if not user.profile:
+            raise APIException(
+                message="Profile details not found",
                 status=404,
                 error_code="PROFILE_NOT_FOUND",
             )
-        return ProfileBase(**profile.model_dump())"""
+
+        profile_dict = {
+            c.name: getattr(user.profile, c.name)
+            for c in user.profile.__table__.columns
+        }
+        profile_dict.update({"email": user.email, "username": user.username})
+
+        return ProfileResponse.model_validate(profile_dict)

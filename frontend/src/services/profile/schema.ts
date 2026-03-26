@@ -20,3 +20,8 @@ export interface CreateProfileRequest {
 }
 
 export interface UpdateProfileRequest extends Partial<CreateProfileRequest> {}
+
+export interface ProfileResponse extends CreateProfileRequest {
+  email: string;
+  username: string;
+}

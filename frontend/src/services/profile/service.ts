@@ -1,5 +1,9 @@
 import { axios, logger } from "@/utils";
-import { CreateProfileRequest, UpdateProfileRequest } from "./schema";
+import {
+  CreateProfileRequest,
+  ProfileResponse,
+  UpdateProfileRequest,
+} from "./schema";
 import { APIResponse } from "@/utils/apiResponse";
 
 class ProfileService {
@@ -27,6 +31,18 @@ class ProfileService {
       return response.data;
     } catch (error) {
       logger.error("Update profile failed :: error :: ", error);
+      throw error;
+    }
+  }
+
+  async getCurrentUserProfile(): Promise<APIResponse<ProfileResponse>> {
+    try {
+      logger.info("Get current user profile flow started...");
+      const response = await axios.get(`/profile`);
+      logger.info("Get current user profile successful!");
+      return response.data;
+    } catch (error) {
+      logger.error("Get current user profile failed :: error :: ", error);
       throw error;
     }
   }
