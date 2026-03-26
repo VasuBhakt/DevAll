@@ -30,6 +30,8 @@ class UpdateProjectRequest(CreateProjectRequest):
 
 
 class ProjectResponse(ProjectBase):
+    id: str
+    user_id: str
 
     class Config:
         from_attributes = True

@@ -101,7 +101,7 @@ export function AddEditAchievementModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-[95vw] sm:max-w-[800px] w-full bg-card/80 backdrop-blur-3xl border-border/60 rounded-[2.5rem] p-10 overflow-hidden flex flex-col">
+      <DialogContent className="max-w-[95vw] sm:max-w-[900px] lg:max-w-[1000px] w-full h-[90vh] bg-card/80 backdrop-blur-3xl border-border/60 rounded-[2.5rem] p-10 overflow-hidden flex flex-col shadow-2xl">
         <DialogHeader className="mb-8 shrink-0">
           <DialogTitle className="text-4xl font-extrabold tracking-tight text-primary">
             {isEditing ? "Edit Achievement" : "Add Achievement"}

@@ -1,2 +1,5 @@
 export { default as ProjectService } from "./service";
-export { type ProjectResponse } from "./schema";
+export {
+  type ProjectResponse,
+  type CreateProjectRequest,
+} from "./schema";

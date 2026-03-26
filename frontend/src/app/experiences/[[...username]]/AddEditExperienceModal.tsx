@@ -127,7 +127,7 @@ export function AddEditExperienceModal({
                 id="organization"
                 placeholder="Organization..."
                 className={cn(
-                  "bg-background/50 mx-1",
+                  "bg-background/50 h-11 mx-1",
                   "placeholder:text-foreground/30"
                 )}
               />
@@ -147,7 +147,7 @@ export function AddEditExperienceModal({
                 id="job_title"
                 placeholder="Senior Backend Engineer..."
                 className={cn(
-                  "bg-background/50 mx-1",
+                  "bg-background/50 h-11 mx-1",
                   "placeholder:text-foreground/30"
                 )}
               />
@@ -201,7 +201,7 @@ export function AddEditExperienceModal({
               id="location"
               placeholder="San Francisco, Hybrid, Remote..."
               className={cn(
-                "bg-background/50 mx-1",
+                "bg-background/50 h-11 mx-1",
                 "placeholder:text-foreground/30"
               )}
             />
@@ -230,7 +230,7 @@ export function AddEditExperienceModal({
                       }}
                       placeholder="Add a skill (e.g. React, Python) and press Enter..."
                       className={cn(
-                        "bg-background/50 mx-1",
+                        "bg-background/50 h-11 mx-1",
                         "placeholder:text-foreground/30"
                       )}
                     />
@@ -282,41 +282,40 @@ export function AddEditExperienceModal({
               id="description"
               rows={4}
               className={cn(
-                "bg-background/50 mx-1",
+                "bg-background/50 h-11 mx-1",
                 "placeholder:text-foreground/30"
               )}
               placeholder="Describe your achievements and responsibilities..."
             />
             {errors.description && <FieldError errors={[errors.description]} />}
           </Field>
-
           <DialogFooter className="pt-4 gap-3">
-            <span className="text-destructive text-sm mr-auto ml-2">
-              * indicates required fields
+            <span className="text-destructive text-sm mr-auto ml-2 font-medium">
+              * indicate required fields
             </span>
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               onClick={onClose}
               disabled={isSubmitting}
-              className="rounded-full px-6"
+              className="rounded-full px-10 h-11 hover:scale-[1.02] active:scale-[0.98] transition-all font-bold group"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="rounded-full px-8 hover:scale-[1.02] active:scale-[0.98] transition-all font-semibold"
+              className="rounded-full px-10 h-11 hover:scale-[1.02] active:scale-[0.98] transition-all font-bold group"
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                   Saving...
                 </>
               ) : isEditing ? (
-                "Update Experience"
+                "Update Project"
               ) : (
-                "Save Experience"
+                "Save Project"
               )}
             </Button>
           </DialogFooter>
