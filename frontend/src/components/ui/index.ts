@@ -4,4 +4,9 @@ export * from "./field";
 export * from "./label";
 export * from "./separator";
 export * from "./dropdown-menu";
-
+export { DatePicker } from "./date-picker";
+export * from "./dialog";
+export * from "./popover";
+export * from "./calendar";
+export * from "./badge";
+export * from "./textarea";

@@ -1,2 +1,5 @@
 export { default as ExperienceService } from "./service";
-export { type ExperienceResponse } from "./schema";
+export {
+  type ExperienceResponse,
+  type CreateExperienceRequest,
+} from "./schema";

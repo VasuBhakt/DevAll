@@ -86,7 +86,7 @@ export function Sidebar() {
     { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
     { icon: Code2, label: "Profiles", href: "/profiles" },
     { icon: Trophy, label: "Achievements", href: "/achievements" },
-    { icon: Briefcase, label: "Experience", href: "/experience" },
+    { icon: Briefcase, label: "Experience", href: "/experiences" },
     { icon: FolderKanban, label: "Projects", href: "/projects" },
     { icon: Hammer, label: "Skills", href: "/skills" },
   ];
@@ -101,7 +101,7 @@ export function Sidebar() {
       <>
         <aside
           className={cn(
-            "sticky top-[88px] left-0 h-[calc(100vh-88px)] border-r border-sidebar-border/40 bg-sidebar backdrop-blur supports-[backdrop-filter]:bg-sidebar/60 transition-all duration-500 ease-in-out z-40 flex flex-col group/sidebar overflow-visible pb-4 px-3",
+            "sticky top-0 left-0 h-[calc(100vh-88px)] border-r border-sidebar-border/40 bg-sidebar backdrop-blur supports-[backdrop-filter]:bg-sidebar/60 transition-all duration-500 ease-in-out z-40 flex flex-col group/sidebar overflow-visible pb-4 px-3",
             isCollapsed ? "w-20" : "w-64"
           )}
         >
