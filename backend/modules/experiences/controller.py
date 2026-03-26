@@ -24,7 +24,9 @@ async def get_user_experiences(
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
 ) -> APIResponse:
-    experiences = await experience_service.get_experiences(username, page, limit, db)
+    experiences = await experience_service.get_experiences(
+        username.lower(), page, limit, db
+    )
     return APIResponse(data=experiences, status=200)
 
 

@@ -17,5 +17,5 @@ async def get_public_profile(
     public_service: PublicService = Depends(get_public_service),
     db: AsyncSession = Depends(get_db),
 ) -> APIResponse:
-    response = await public_service.get_public_profile(username, db)
+    response = await public_service.get_public_profile(username.lower(), db)
     return APIResponse(data=response, status=200)

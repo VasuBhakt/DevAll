@@ -24,7 +24,7 @@ async def get_user_projects(
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
 ) -> APIResponse:
-    projects = await project_service.get_projects(username, page, limit, db)
+    projects = await project_service.get_projects(username.lower(), page, limit, db)
     return APIResponse(data=projects, status=200)
 
 

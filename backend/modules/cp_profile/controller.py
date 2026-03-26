@@ -24,7 +24,9 @@ async def get_cp_profiles(
     redis_client: Redis = Depends(get_redis),
     cp_profile_service: CPProfileService = Depends(get_cp_profile_service),
 ):
-    response = await cp_profile_service.get_cp_profiles(username, db, redis_client)
+    response = await cp_profile_service.get_cp_profiles(
+        username.lower(), db, redis_client
+    )
     return APIResponse(
         message="CP profiles fetched successfully", status=200, data=response
     )

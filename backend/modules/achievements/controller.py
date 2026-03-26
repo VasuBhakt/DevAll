@@ -25,7 +25,9 @@ async def get_achievements(
     db: AsyncSession = Depends(get_db),
     achievement_service: AchievementService = Depends(get_achievement_service),
 ) -> APIResponse:
-    achievements = await achievement_service.get_achievements(username, page, limit, db)
+    achievements = await achievement_service.get_achievements(
+        username.lower(), page, limit, db
+    )
     return APIResponse(data=achievements, status=200)
 
 
