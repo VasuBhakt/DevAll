@@ -28,6 +28,8 @@ class UpdateAchievementRequest(CreateAchievementRequest):
 
 
 class AchievementResponse(AchievementBase):
+    id: str
+    user_id: str
 
     class Config:
         from_attributes = True

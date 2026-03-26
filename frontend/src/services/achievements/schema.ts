@@ -11,6 +11,7 @@ export interface CreateAchievementRequest {
 export interface UpdateAchievementRequest extends Partial<CreateAchievementRequest> {}
 
 export interface AchievementResponse {
+  id: string;
   title: string;
   description?: string | null;
   certificate_link?: string | null;

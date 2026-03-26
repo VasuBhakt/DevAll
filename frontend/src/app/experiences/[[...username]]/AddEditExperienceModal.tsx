@@ -117,7 +117,8 @@ export function AddEditExperienceModal({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Field>
               <FieldLabel htmlFor="organization">
-                Organization / Company
+                Organization / Company{" "}
+                <span className="text-destructive">*</span>
               </FieldLabel>
               <Input
                 {...register("organization", {
@@ -136,7 +137,9 @@ export function AddEditExperienceModal({
             </Field>
 
             <Field>
-              <FieldLabel htmlFor="job_title">Job Title</FieldLabel>
+              <FieldLabel htmlFor="job_title">
+                Job Title <span className="text-destructive">*</span>
+              </FieldLabel>
               <Input
                 {...register("job_title", {
                   required: "Job title is required",
@@ -154,7 +157,9 @@ export function AddEditExperienceModal({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mx-1">
             <Field>
-              <FieldLabel>Start Date</FieldLabel>
+              <FieldLabel>
+                Start Date <span className="text-destructive">*</span>
+              </FieldLabel>
               <Controller
                 control={control}
                 name="start_date"
@@ -171,7 +176,7 @@ export function AddEditExperienceModal({
             </Field>
 
             <Field>
-              <FieldLabel>End Date (Optional)</FieldLabel>
+              <FieldLabel>End Date</FieldLabel>
               <Controller
                 control={control}
                 name="end_date"
@@ -190,7 +195,7 @@ export function AddEditExperienceModal({
           </div>
 
           <Field>
-            <FieldLabel htmlFor="location">Location (Optional)</FieldLabel>
+            <FieldLabel htmlFor="location">Location</FieldLabel>
             <Input
               {...register("location")}
               id="location"
@@ -267,7 +272,9 @@ export function AddEditExperienceModal({
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="description">Job Description</FieldLabel>
+            <FieldLabel htmlFor="description">
+              Job Description <span className="text-destructive">*</span>
+            </FieldLabel>
             <Textarea
               {...register("description", {
                 required: "Description is required",
@@ -284,6 +291,9 @@ export function AddEditExperienceModal({
           </Field>
 
           <DialogFooter className="pt-4 gap-3">
+            <span className="text-destructive text-sm mr-auto ml-2">
+              * indicates required fields
+            </span>
             <Button
               type="button"
               variant="ghost"

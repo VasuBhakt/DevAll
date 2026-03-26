@@ -7,16 +7,16 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useAuth } from "@/hooks";
-import { ExperienceService } from "@/services/experiences";
+import { AchievementService } from "@/services/achievements";
 import {
-  ExperienceResponse,
-  CreateExperienceRequest,
-} from "@/services/experiences";
+  AchievementResponse,
+  CreateAchievementRequest,
+} from "@/services/achievements";
 import {
-  ExperienceCard,
-  ExperienceCardSkeleton,
-} from "@/app/experiences/[[...username]]/ExperienceCard";
-import { AddEditExperienceModal } from "@/app/experiences/[[...username]]/AddEditExperienceModal";
+  AchievementCard,
+  AchievementCardSkeleton,
+} from "@/app/achievements/[[...username]]/AchievementCard";
+import { AddEditAchievementModal } from "@/app/achievements/[[...username]]/AddEditAchievementModal";
 import { Button } from "@/components/ui/button";
 import { Plus, Briefcase, MousePointer2, Loader2, Info } from "lucide-react";
 
@@ -24,7 +24,7 @@ interface PageProps {
   params: Promise<{ username?: string[] }>;
 }
 
-export default function ExperiencesPage({ params }: PageProps) {
+export default function AchievementsPage({ params }: PageProps) {
   const resolvedParams = use(params);
   const targetUsername = resolvedParams.username?.[0]?.toLowerCase();
   const { user, isSignedIn, isLoading: authLoading } = useAuth();
@@ -37,18 +37,18 @@ export default function ExperiencesPage({ params }: PageProps) {
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingExperience, setEditingExperience] =
-    useState<ExperienceResponse | null>(null);
+  const [editingAchievement, setEditingAchievement] =
+    useState<AchievementResponse | null>(null);
 
-  // Infinite Query for Experiences
+  // Infinite Query for Achievements
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
     useInfiniteQuery({
-      queryKey: ["experiences", effectiveUsername],
+      queryKey: ["achievements", effectiveUsername],
       queryFn: ({ pageParam = 1 }) => {
         if (!effectiveUsername) return Promise.resolve([]);
         return isOwner
-          ? ExperienceService.getCurrentUserExperiences(pageParam, 10)
-          : ExperienceService.getUserExperiences(
+          ? AchievementService.getCurrentUserAchievements(pageParam, 10)
+          : AchievementService.getUserAchievements(
               effectiveUsername,
               pageParam,
               10
@@ -84,11 +84,11 @@ export default function ExperiencesPage({ params }: PageProps) {
 
   // Mutations
   const createMutation = useMutation({
-    mutationFn: (data: CreateExperienceRequest) =>
-      ExperienceService.createExperience(data),
+    mutationFn: (data: CreateAchievementRequest) =>
+      AchievementService.createAchievement(data),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["experiences", effectiveUsername],
+        queryKey: ["achievements", effectiveUsername],
       });
       setIsModalOpen(false);
     },
@@ -96,20 +96,20 @@ export default function ExperiencesPage({ params }: PageProps) {
 
   const updateMutation = useMutation({
     mutationFn: (data: { id: string; req: any }) =>
-      ExperienceService.updateExperience(data.req, data.id),
+      AchievementService.updateAchievement(data.req, data.id),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["experiences", effectiveUsername],
+        queryKey: ["achievements", effectiveUsername],
       });
-      setEditingExperience(null);
+      setEditingAchievement(null);
       setIsModalOpen(false);
     },
   });
 
-  const handleSave = async (formData: CreateExperienceRequest) => {
-    if (editingExperience) {
+  const handleSave = async (formData: CreateAchievementRequest) => {
+    if (editingAchievement) {
       await updateMutation.mutateAsync({
-        id: editingExperience.id,
+        id: editingAchievement.id,
         req: formData,
       });
     } else {
@@ -117,16 +117,16 @@ export default function ExperiencesPage({ params }: PageProps) {
     }
   };
 
-  const handleEdit = (exp: ExperienceResponse) => {
-    setEditingExperience(exp);
+  const handleEdit = (exp: AchievementResponse) => {
+    setEditingAchievement(exp);
     setIsModalOpen(true);
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this experience?")) {
-      await ExperienceService.deleteExperience(id);
+    if (window.confirm("Are you sure you want to delete this achievement?")) {
+      await AchievementService.deleteAchievement(id);
       queryClient.invalidateQueries({
-        queryKey: ["experiences", effectiveUsername],
+        queryKey: ["achievements", effectiveUsername],
       });
     }
   };
@@ -135,7 +135,7 @@ export default function ExperiencesPage({ params }: PageProps) {
   if (!effectiveUsername && !authLoading && status === "pending")
     return <SignInRequiredState />;
 
-  const allExperiences = data?.pages.flat() || [];
+  const allAchievements = data?.pages.flat() || [];
 
   return (
     <div className="container max-w-5xl mx-auto px-4 py-12 space-y-10 relative">
@@ -147,26 +147,28 @@ export default function ExperiencesPage({ params }: PageProps) {
               <Briefcase size={28} />
             </div>
             <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
-              {isOwner ? "My Experiences" : `${effectiveUsername}'s Journey`}
+              {isOwner
+                ? "My Achievements"
+                : `${effectiveUsername}'s Achievements`}
             </h1>
           </div>
           <p className="text-muted-foreground text-lg max-w-lg">
             {isOwner
-              ? "Tell the story of your professional path."
-              : `Explore how ${effectiveUsername} has made an impact across organizations.`}
+              ? "Tell the story of your key achievements."
+              : `Explore what ${effectiveUsername} has achieved.`}
           </p>
         </div>
 
         {isOwner && (
           <Button
             onClick={() => {
-              setEditingExperience(null);
+              setEditingAchievement(null);
               setIsModalOpen(true);
             }}
             className="rounded-full px-7 h-11 text-base font-bold hover:scale-[1.02] active:scale-[0.98] transition-all bg-primary hover:bg-primary/90"
           >
             <Plus className="mr-2" size={20} />
-            Add Experience
+            Add Achievement
           </Button>
         )}
       </div>
@@ -175,25 +177,25 @@ export default function ExperiencesPage({ params }: PageProps) {
       <div className="relative space-y-6 min-h-[400px]">
         {status === "pending" && (
           <div className="space-y-6">
-            <ExperienceCardSkeleton />
-            <ExperienceCardSkeleton />
-            <ExperienceCardSkeleton />
+            <AchievementCardSkeleton />
+            <AchievementCardSkeleton />
+            <AchievementCardSkeleton />
           </div>
         )}
 
-        {status === "success" && allExperiences.length === 0 && (
+        {status === "success" && allAchievements.length === 0 && (
           <EmptyState isOwner={isOwner} onAdd={() => setIsModalOpen(true)} />
         )}
 
-        {status === "success" && allExperiences.length > 0 && (
+        {status === "success" && allAchievements.length > 0 && (
           <div className="grid grid-cols-1 gap-6 relative">
             {/* Subtle vertical line for visual flow on larger screens */}
             <div className="absolute left-[30px] top-6 bottom-6 w-[2px] bg-gradient-to-b from-primary/10 via-border/40 to-primary/10 hidden md:block" />
 
-            {allExperiences.map((exp) => (
-              <ExperienceCard
+            {allAchievements.map((exp) => (
+              <AchievementCard
                 key={exp.id}
-                experience={exp}
+                achievement={exp}
                 isOwner={isOwner}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
@@ -212,27 +214,27 @@ export default function ExperiencesPage({ params }: PageProps) {
             <div className="flex flex-col items-center gap-2 text-muted-foreground">
               <Loader2 size={32} className="animate-spin text-primary" />
               <span className="text-xs font-medium animate-pulse">
-                Gathering more experience...
+                Gathering more achievements...
               </span>
             </div>
           )}
-          {!hasNextPage && allExperiences.length > 0 && (
+          {!hasNextPage && allAchievements.length > 0 && (
             <div className="text-muted-foreground text-sm flex items-center gap-2 bg-secondary/20 px-4 py-2 rounded-full border border-border/40">
               <Info size={16} />
-              <span>That's all the experiences for now!</span>
+              <span>That's all the achievements for now!</span>
             </div>
           )}
         </div>
       </div>
 
       {/* Modals */}
-      <AddEditExperienceModal
+      <AddEditAchievementModal
         isOpen={isModalOpen}
         onClose={() => {
           setIsModalOpen(false);
-          setEditingExperience(null);
+          setEditingAchievement(null);
         }}
-        experience={editingExperience}
+        achievement={editingAchievement}
         onSave={handleSave}
       />
     </div>
@@ -244,7 +246,7 @@ function LoadingState() {
     <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
       <Loader2 size={48} className="animate-spin text-primary" />
       <span className="text-lg font-semibold text-muted-foreground animate-pulse tracking-wide">
-        Gathering experiences...
+        Gathering achievements...
       </span>
     </div>
   );
@@ -264,12 +266,12 @@ function EmptyState({
       </div>
       <div className="space-y-2 max-w-sm mx-auto">
         <h3 className="text-2xl font-bold tracking-tight text-foreground">
-          No experiences found
+          No achievements found
         </h3>
         <p className="text-muted-foreground leading-relaxed">
           {isOwner
-            ? "Add your first experience to showcase your skills."
-            : "This user hasn't added any professional experiences yet."}
+            ? "Add your first achievement."
+            : "This user hasn't added any professional achievements yet."}
         </p>
       </div>
       {isOwner && (
@@ -278,7 +280,7 @@ function EmptyState({
           variant="outline"
           className="rounded-full px-8 hover:bg-primary/5 hover:text-primary transition-colors border-primary/20"
         >
-          Add Your First Experience
+          Add Your First Achievement
         </Button>
       )}
     </div>
@@ -294,7 +296,7 @@ function SignInRequiredState() {
       <div className="space-y-2 max-w-md">
         <h2 className="text-3xl font-bold tracking-tight">Access Restricted</h2>
         <p className="text-muted-foreground text-lg">
-          You need to be signed in to view or manage experiences. Join our
+          You need to be signed in to view or manage achievements. Join our
           community of builders to showcase yours.
         </p>
       </div>

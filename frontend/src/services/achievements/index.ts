@@ -1,2 +1,5 @@
 export { default as AchievementService } from "./service";
-export { type AchievementResponse } from "./schema";
+export {
+  type AchievementResponse,
+  type CreateAchievementRequest,
+} from "./schema";
