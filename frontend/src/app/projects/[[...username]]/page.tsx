@@ -307,7 +307,7 @@ function SignInRequiredState() {
         className="rounded-full px-10 h-12 text-lg font-bold"
         onClick={() => (window.location.href = "/signin")}
       >
-        Gain Access
+        Go to Sign In
       </Button>
     </div>
   );

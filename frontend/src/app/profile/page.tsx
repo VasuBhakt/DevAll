@@ -3,16 +3,11 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  ProfileService,
-  type ProfileResponse,
-  type UpdateProfileRequest,
-} from "@/services/profile";
+import { ProfileService, type UpdateProfileRequest } from "@/services/profile";
 import { useAuth } from "@/hooks";
 import {
   Mail,
   MapPin,
-  Building2,
   Globe,
   Github,
   Linkedin,
@@ -22,21 +17,15 @@ import {
   Bot,
   Gamepad2,
   MessageSquare,
-  LogOut,
   Edit3,
   Check,
   X,
   Loader2,
   Camera,
   User as UserIcon,
+  MousePointer2,
 } from "lucide-react";
-import {
-  Button,
-  Input,
-  Textarea,
-  Badge,
-  MarkdownRenderer,
-} from "@/components";
+import { Button, Input, Textarea, Badge, MarkdownRenderer } from "@/components";
 import { cn } from "@/lib/utils";
 
 export default function ProfilePage() {
@@ -564,21 +553,22 @@ function ProfileLoading() {
 
 function ProfileError() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6">
-      <div className="p-6 rounded-full bg-destructive/10 text-destructive border border-destructive/20 shadow-xl">
-        <X size={64} />
+    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6 text-center px-6">
+      <div className="p-6 rounded-full bg-primary/10 text-primary border border-primary/20">
+        <MousePointer2 size={48} />
       </div>
-      <h2 className="text-2xl font-black uppercase italic">
-        Authentication Required
-      </h2>
-      <p className="text-muted-foreground text-center max-w-sm">
-        We couldn't retrieve your profile. Please make sure you are signed in.
-      </p>
+      <div className="space-y-3 max-w-md">
+        <h2 className="text-3xl font-bold tracking-tight">Access Restricted</h2>
+        <p className="text-muted-foreground text-lg">
+          Builders only beyond this point. Sign in to view and manage your full
+          project portfolio.
+        </p>
+      </div>
       <Button
-        className="rounded-full px-12 h-12 font-bold"
+        className="rounded-full px-10 h-12 text-lg font-bold"
         onClick={() => (window.location.href = "/signin")}
       >
-        Take Me to Sign In
+        Go to Sign In
       </Button>
     </div>
   );
