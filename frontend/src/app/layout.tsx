@@ -37,7 +37,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col relative">
+      <body className="h-screen flex flex-col relative overflow-hidden">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -47,12 +47,15 @@ export default function RootLayout({
           <QueryProvider>
             <InteractiveBackground />
             <Navbar />
-            <div className="flex flex-1 overflow-hidden h-[calc(100vh-88px)]">
+            <div className="flex flex-1 overflow-hidden">
               <Sidebar />
-              <main className="flex-1 overflow-y-auto flex flex-col bg-transparent translate-z-0">
-                {/* flex-1 ensures the children take up space, pushing footer to bottom */}
-                <div className="flex-1">{children}</div>
-                <Footer />
+              <main className="flex-1 flex flex-col bg-transparent min-h-0 overflow-hidden">
+                <div className="flex-1 overflow-y-auto p-6 relative">
+                  <div className="min-h-full flex flex-col">
+                    <div className="flex-1">{children}</div>
+                    <Footer />
+                  </div>
+                </div>
               </main>
             </div>
           </QueryProvider>

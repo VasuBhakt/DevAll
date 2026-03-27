@@ -127,7 +127,7 @@ export function Sidebar() {
           </Button>
 
           {/* Content */}
-          <div className="flex-1 mt-6 space-y-6 overflow-hidden">
+          <div className="flex-1 mt-6 space-y-6 overflow-y-auto overflow-x-hidden pr-1">
             {/* Main Navigation */}
             <div className="space-y-1.5">
               {!isCollapsed && (
