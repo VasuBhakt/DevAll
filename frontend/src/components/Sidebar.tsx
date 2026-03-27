@@ -106,7 +106,7 @@ export function Sidebar() {
       <>
         <aside
           className={cn(
-            "sticky top-0 left-0 h-[calc(100vh-88px)] border-r border-sidebar-border/40 bg-sidebar backdrop-blur supports-[backdrop-filter]:bg-sidebar/60 transition-all duration-500 ease-in-out z-40 flex flex-col group/sidebar overflow-visible pb-4 px-3",
+            "h-full border-r border-sidebar-border/40 bg-sidebar backdrop-blur supports-[backdrop-filter]:bg-sidebar/60 transition-all duration-500 ease-in-out z-40 flex flex-col group/sidebar overflow-visible pb-4 px-3",
             isCollapsed ? "w-20" : "w-64"
           )}
         >

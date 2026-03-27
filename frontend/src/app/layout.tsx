@@ -47,17 +47,17 @@ export default function RootLayout({
           <QueryProvider>
             <InteractiveBackground />
             <Navbar />
-            <div className="flex flex-1 overflow-hidden h-[calc(100vh-88px)] relative z-10">
+            <div className="flex flex-1 overflow-hidden h-[calc(100vh-88px)]">
               <Sidebar />
-              <main className="flex-1 overflow-y-auto bg-transparent translate-z-0">
-                {children}
+              <main className="flex-1 overflow-y-auto flex flex-col bg-transparent translate-z-0">
+                {/* flex-1 ensures the children take up space, pushing footer to bottom */}
+                <div className="flex-1">{children}</div>
+                <Footer />
               </main>
             </div>
-            <Footer />
           </QueryProvider>
         </ThemeProvider>
       </body>
     </html>
   );
 }
-

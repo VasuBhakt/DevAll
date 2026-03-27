@@ -4,3 +4,4 @@ export * from "./Footer";
 export * from "./Navbar";
 export * from "./buttons";
 export * from "./Sidebar";
+export * from "./MarkdownRenderer";

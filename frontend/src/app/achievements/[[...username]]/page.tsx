@@ -18,7 +18,7 @@ import {
 } from "@/app/achievements/[[...username]]/AchievementCard";
 import { AddEditAchievementModal } from "@/app/achievements/[[...username]]/AddEditAchievementModal";
 import { Button } from "@/components/ui/button";
-import { Plus, Briefcase, MousePointer2, Loader2, Info } from "lucide-react";
+import { Plus, Trophy, MousePointer2, Loader2, Info } from "lucide-react";
 
 interface PageProps {
   params: Promise<{ username?: string[] }>;
@@ -144,7 +144,7 @@ export default function AchievementsPage({ params }: PageProps) {
         <div className="space-y-2">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-primary/10 text-primary border border-primary/20">
-              <Briefcase size={28} />
+              <Trophy size={28} />
             </div>
             <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
               {isOwner
@@ -262,7 +262,7 @@ function EmptyState({
   return (
     <div className="flex flex-col items-center justify-center min-h-[400px] border-2 border-dashed border-border/60 rounded-3xl bg-secondary/5 space-y-6 text-center p-8">
       <div className="p-6 rounded-full bg-secondary/20 border border-border/40 text-muted-foreground/40">
-        <Briefcase size={48} strokeWidth={1.5} />
+        <Trophy size={48} strokeWidth={1.5} />
       </div>
       <div className="space-y-2 max-w-sm mx-auto">
         <h3 className="text-2xl font-bold tracking-tight text-foreground">
