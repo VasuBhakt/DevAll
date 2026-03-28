@@ -38,7 +38,7 @@ class CPProfileService:
         redis_client=None,
         force: bool = False,
     ):
-        cache_key = f"cp_profile:{platform}:{handle}"
+        cache_key = f"cp_profile:{platform}:{user_id}"
 
         # 1. Determine which model to use
         if platform == "codeforces":
