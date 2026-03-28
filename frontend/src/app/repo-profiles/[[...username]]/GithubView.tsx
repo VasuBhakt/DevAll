@@ -90,11 +90,15 @@ export function GithubView({ profile, isOwner, username }: GithubViewProps) {
         <div className="flex flex-col md:flex-row items-center md:items-start gap-10 relative z-10">
           <div className="relative shrink-0">
             <div className="w-32 h-32 rounded-3xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent flex items-center justify-center border border-primary/20 backdrop-blur-sm group-hover:scale-105 transition-transform duration-500">
-              <img
-                src={profile?.avatar || ""}
-                alt={profile?.handle?.at(0)?.toUpperCase()}
-                className="w-full h-full object-cover rounded-3xl"
-              />
+              {profile?.avatar ? (
+                <img
+                  src={profile?.avatar || ""}
+                  alt={profile?.handle?.at(0)?.toUpperCase()}
+                  className="w-full h-full object-cover rounded-3xl"
+                />
+              ) : (
+                <Github size={64} className="opacity-30" />
+              )}
             </div>
             <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex flex-col items-center">
               <Badge className="bg-background/90 text-primary border-primary/20 px-4 py-1 text-[12px] font-semibold tracking-widest backdrop-blur-md">
@@ -360,18 +364,18 @@ function EmptyPlatformState({
         </div>
       </div>
       <div className="space-y-4 max-w-sm relative z-10">
-        <h3 className="text-3xl font-black tracking-tighter text-foreground uppercase italic px-4">
-          {platform} Absent
+        <h3 className="text-2xl font-black  text-foreground px-4">
+          {platform} Not Synced
         </h3>
         <p className="text-muted-foreground/80 leading-relaxed italic font-medium">
           {isOwner
-            ? `Your ${platform} forge is silent. Connect it here to propagate your technical legacy.`
-            : `This builder hasn't synchronized their ${platform} repository yet. Check their other stacks!`}
+            ? `Connect your ${platform} profile here to propagate your technical legacy.`
+            : `This builder hasn't synchronized their ${platform} profile yet. Check their other stacks!`}
         </p>
       </div>
       {isOwner && (
         <Button
-          className="rounded-full px-12 h-14 bg-primary text-primary-foreground hover:scale-105 transition-all font-black tracking-[0.2em] uppercase text-xs shadow-2xl relative z-10"
+          className="rounded-full px-8 h-10 bg-primary text-primary-foreground hover:scale-102 transition-all font-black tracking-widest relative z-10"
           onClick={onSyncClick}
         >
           Sync {platform}
