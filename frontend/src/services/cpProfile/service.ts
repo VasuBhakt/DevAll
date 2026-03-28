@@ -31,6 +31,18 @@ class CPService {
       throw error;
     }
   }
+
+  async deleteCPProfile(platform: string): Promise<APIResponse<null>> {
+    try {
+      logger.info("Delete CP profile flow started...");
+      const response = await axios.delete(`/cp-profile/${platform}`);
+      logger.info("Delete CP profile successful!");
+      return response.data;
+    } catch (error) {
+      logger.error("Delete CP profile failed :: error :: ", error);
+      throw error;
+    }
+  }
 }
 
 const cpService = new CPService();

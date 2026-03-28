@@ -14,4 +14,5 @@ export interface GithubProfile {
   public_repo_count: number;
   organizations: string[];
   pinned_repos: GithubPinnedRepo[];
+  avatar?: string | null;
 }
