@@ -392,7 +392,7 @@ export default function ProfilePage() {
                       {profile.readme ? (
                         <MarkdownRenderer
                           content={profile.readme}
-                          className="min-h-[100px]"
+                          className="min-h-[100px] max-h-[600px] overflow-y-auto"
                         />
                       ) : (
                         <span className="italic text-muted-foreground/40">
