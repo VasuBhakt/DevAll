@@ -160,3 +160,30 @@ class RepoProfileService:
                 response.hugging_face = HuggingFaceProfile.model_validate(profile)
 
         return response
+
+    async def delete_repo_profile(
+        self, user_id: str, platform: str, db: AsyncSession, redis_client=None
+    ):
+        query = select(Repo_Profile).where(
+            Repo_Profile.user_id == user_id, Repo_Profile.platform == platform
+        )
+        result = await db.execute(query)
+        existing_profile = result.scalars().first()
+        if not existing_profile:
+            raise APIException(
+                status=404, message="Profile not found", error_code="PROFILE_NOT_FOUND"
+            )
+        try:
+            await db.delete(existing_profile)
+            await db.commit()
+        except Exception as e:
+            await db.rollback()
+            logger.error(f"Database error during profile deletion: {e}")
+            raise APIException(
+                message="An error occurred while deleting profile",
+                status=500,
+                error_code="SERVER_ERROR",
+            )
+        if redis_client:
+            await redis_client.delete(f"repo_profile:{platform}:{user_id}")
+        return "Profile deleted successfully"

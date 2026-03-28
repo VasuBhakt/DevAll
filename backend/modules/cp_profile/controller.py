@@ -52,3 +52,18 @@ async def fetch_cp_profile(
     return APIResponse(
         message="CP profile fetched successfully", status=200, data=response
     )
+
+
+@cp_profile_router.delete("/{platform}")
+async def delete_cp_profile(
+    request: Request,
+    platform: str,
+    db: AsyncSession = Depends(get_db),
+    redis_client: Redis = Depends(get_redis),
+    cp_profile_service: CPProfileService = Depends(get_cp_profile_service),
+    auth_check: str = Depends(get_dependencies_service().verifyJWT),
+):
+    response = await cp_profile_service.delete_cp_profile(
+        request.state.user.id, platform, db, redis_client
+    )
+    return APIResponse(message=response, status=200)

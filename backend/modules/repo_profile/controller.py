@@ -58,3 +58,18 @@ async def fetch_repo_profile(
     return APIResponse(
         message="Repo profile fetched successfully", status=200, data=response
     )
+
+
+@repo_profile_router.delete("/{platform}")
+async def delete_repo_profile(
+    request: Request,
+    platform: str,
+    db: AsyncSession = Depends(get_db),
+    redis_client: Redis = Depends(get_redis),
+    repo_profile_service: RepoProfileService = Depends(get_repo_profile_service),
+    auth_check: str = Depends(get_dependencies_service().verifyJWT),
+):
+    response = await repo_profile_service.delete_repo_profile(
+        request.state.user.id, platform, db, redis_client
+    )
+    return APIResponse(message=response, status=200)
