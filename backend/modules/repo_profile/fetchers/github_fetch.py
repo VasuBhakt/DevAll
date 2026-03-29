@@ -48,6 +48,7 @@ class GithubPinnedRepo(BaseModel):
     stars: int = Field(validation_alias="stargazerCount")
     languages: List[str] = []
     project_link: Optional[str] = Field(validation_alias="homepageUrl", default=None)
+    topics: List[str] = []
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
@@ -127,10 +128,17 @@ async def _fetch_gh_raw(handle: str):
                   name
                 }
               }
+              repositoryTopics(first: 10) {
+                nodes {
+                    topic {
+                        name
+                    }
+                }
+              }
             }
           }
         }
-        organizations(first: 10) {
+        organizations(first: 8) {
           nodes {
             name
           }
@@ -205,6 +213,10 @@ async def _fetch_gh_raw(handle: str):
                         "stars": node.get("stargazerCount", 0),
                         "languages": [l["name"] for l in node["languages"]["nodes"]],
                         "project_link": node.get("homepageUrl"),
+                        "topics": [
+                            t["topic"]["name"]
+                            for t in node["repositoryTopics"]["nodes"]
+                        ],
                     }
                 )
 
@@ -213,7 +225,7 @@ async def _fetch_gh_raw(handle: str):
                 node["name"]
                 for node in user_data["organizations"]["nodes"]
                 if node.get("name")
-            ]
+            ][:5]
 
             return GithubProfile(
                 handle=handle,

@@ -47,6 +47,8 @@ class HFModel(BaseModel):
     likes: int
     downloads: int = 0
     pipeline_tag: Optional[str] = None
+    tags: List[str] = []
+    url: str
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -56,6 +58,8 @@ class HFSpace(BaseModel):
     name: str
     likes: int
     sdk: Optional[str] = None
+    tags: List[str] = []
+    url: str
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -65,6 +69,9 @@ class HFDataset(BaseModel):
     name: str
     likes: int
     downloads: int = 0
+    tags: List[str] = []
+    description: Optional[str] = None
+    url: str
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -72,10 +79,12 @@ class HFDataset(BaseModel):
 class HuggingFaceProfile(BaseModel):
     handle: str
     avatar: Optional[str] = None
+    organizations: List[str] = []
     profile_link: str
     followers_count: int = 0
     likes_count: int = Field(0, description="Total likes across all resources")
     public_repo_count: int = 0
+    papers_count: int = 0
     contribution_count: int = 0
     models: List[HFModel] = []
     spaces: List[HFSpace] = []
@@ -117,9 +126,9 @@ async def _fetch_hf_raw(handle: str):
     # We fetch the top 6 of each resource type sorted by likes (standard 'top' metric)
     urls = {
         "user": f"{HF_API_BASE}/users/{handle}/overview",
-        "models": f"{HF_API_BASE}/models?author={handle}&sort=likes&direction=-1&limit=6",
-        "datasets": f"{HF_API_BASE}/datasets?author={handle}&sort=likes&direction=-1&limit=6",
-        "spaces": f"{HF_API_BASE}/spaces?author={handle}&sort=likes&direction=-1&limit=6",
+        "models": f"{HF_API_BASE}/models?author={handle}&sort=likes&direction=-1&limit=4",
+        "datasets": f"{HF_API_BASE}/datasets?author={handle}&sort=likes&direction=-1&limit=4",
+        "spaces": f"{HF_API_BASE}/spaces?author={handle}&sort=likes&direction=-1&limit=4",
     }
 
     async with httpx.AsyncClient(timeout=10.0) as client:
@@ -162,13 +171,16 @@ async def _fetch_hf_raw(handle: str):
             m_resp = results["models"]
             if not isinstance(m_resp, Exception) and m_resp.status_code == 200:
                 for m in m_resp.json():
+                    name = m.get("id", "").split("/")[-1]
                     models_list.append(
                         HFModel(
                             id=m.get("id"),
-                            name=m.get("id", "").split("/")[-1],
+                            name=name,
                             likes=m.get("likes", 0),
                             downloads=m.get("downloads", 0),
                             pipeline_tag=m.get("pipeline_tag"),
+                            tags=m.get("tags", [])[:6],
+                            url=f"https://huggingface.co/{handle}/{name}",
                         )
                     )
 
@@ -177,12 +189,16 @@ async def _fetch_hf_raw(handle: str):
             d_resp = results["datasets"]
             if not isinstance(d_resp, Exception) and d_resp.status_code == 200:
                 for d in d_resp.json():
+                    name = d.get("id", "").split("/")[-1]
                     datasets_list.append(
                         HFDataset(
                             id=d.get("id"),
-                            name=d.get("id", "").split("/")[-1],
+                            name=name,
                             likes=d.get("likes", 0),
                             downloads=d.get("downloads", 0),
+                            tags=d.get("tags", [])[:6],
+                            description=d.get("description"),
+                            url=f"https://huggingface.co/datasets/{handle}/{name}",
                         )
                     )
 
@@ -191,15 +207,21 @@ async def _fetch_hf_raw(handle: str):
             s_resp = results["spaces"]
             if not isinstance(s_resp, Exception) and s_resp.status_code == 200:
                 for s in s_resp.json():
+                    name = s.get("id", "").split("/")[-1]
                     spaces_list.append(
                         HFSpace(
                             id=s.get("id"),
-                            name=s.get("id", "").split("/")[-1],
+                            name=name,
                             likes=s.get("likes", 0),
                             sdk=s.get("sdk"),
+                            tags=s.get("tags", [])[:6],
+                            url=f"https://huggingface.co/spaces/{handle}/{name}",
                         )
                     )
 
+            organizations_list = [p.get("fullname") for p in user_data.get("orgs", [])][
+                :5
+            ]
             # 6. Aggregate metadata from overview
             # Overview provides the total counts even if we only fetch 6 records separately.
             total_models = user_data.get("numModels")
@@ -212,9 +234,11 @@ async def _fetch_hf_raw(handle: str):
             return HuggingFaceProfile(
                 handle=handle,
                 profile_link=f"https://huggingface.co/{handle}",
+                organizations=organizations_list,
                 avatar=user_data.get("avatarUrl"),
                 followers_count=user_data.get("numFollowers", 0),
                 likes_count=total_likes,
+                papers_count=user_data.get("numPapers"),
                 public_repo_count=total_models + total_datasets + total_spaces,
                 models=models_list,
                 spaces=spaces_list,

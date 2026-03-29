@@ -1,43 +1,82 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  Github,
-  Star,
-  Users,
-  BookOpen,
+  Database,
+  FolderHeart,
+  Layout,
+  Box,
   ExternalLink,
+  Users,
   RefreshCw,
-  Code2,
   Loader2,
   Check,
-  Trash2,
   X,
+  Trash2,
+  BookOpenIcon,
+  Vote,
+  Code2,
+  ArrowBigUp,
+  FolderCode,
   Building2,
-  Globe,
-  GitBranch,
 } from "lucide-react";
 import { Badge, Button, Input } from "@/components";
 import { cn } from "@/lib/utils";
-import { GithubPinnedRepo, GithubProfile } from "@/services/repoProfile";
+import {
+  HuggingFaceDataset,
+  HuggingFaceModel,
+  HuggingFaceProfile,
+  HuggingFaceSpace,
+} from "@/services/repoProfile/profiles/huggingFace";
 import { RepoService } from "@/services/repoProfile";
 
-interface GithubViewProps {
-  profile?: GithubProfile;
+interface HuggingFaceViewProps {
+  profile?: HuggingFaceProfile;
   isOwner: boolean;
   username: string;
 }
 
-export function GithubView({ profile, isOwner, username }: GithubViewProps) {
+const colorVariants: Record<
+  string,
+  { text: string; bg: string; border: string; hover: string; lightText: string }
+> = {
+  emerald: {
+    text: "text-emerald-500",
+    bg: "bg-emerald-500/10",
+    border: "border-emerald-500/20",
+    hover: "hover:border-emerald-500/40",
+    lightText: "text-emerald-600",
+  },
+  amber: {
+    text: "text-amber-500",
+    bg: "bg-amber-500/10",
+    border: "border-amber-500/20",
+    hover: "hover:border-amber-500/40",
+    lightText: "text-amber-600",
+  },
+  blue: {
+    text: "text-blue-500",
+    bg: "bg-blue-500/10",
+    border: "border-blue-500/20",
+    hover: "hover:border-blue-500/40",
+    lightText: "text-blue-600",
+  },
+};
+
+export function HuggingFaceView({
+  profile,
+  isOwner,
+  username,
+}: HuggingFaceViewProps) {
   const [newHandle, setNewHandle] = useState("");
   const [showSyncInput, setShowSyncInput] = useState(false);
   const queryClient = useQueryClient();
 
   const syncMutation = useMutation({
     mutationFn: (handle: string) =>
-      RepoService.fetchRepoProfile(handle, "github"),
+      RepoService.fetchRepoProfile(handle, "hugging_face"),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["repo-profiles", username] });
-      alert("Profile synchronized successfully!");
+      alert("Hugging Face Profile synchronized successfully!");
       setShowSyncInput(false);
       setNewHandle("");
     },
@@ -47,10 +86,10 @@ export function GithubView({ profile, isOwner, username }: GithubViewProps) {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: () => RepoService.deleteRepoProfile("github"),
+    mutationFn: () => RepoService.deleteRepoProfile("hugging_face"),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["repo-profiles", username] });
-      alert("Profile deleted successfully!");
+      alert("Hugging Face Profile deleted successfully!");
     },
     onError: (error: any) => {
       alert(error.message || "Failed to delete profile");
@@ -73,7 +112,7 @@ export function GithubView({ profile, isOwner, username }: GithubViewProps) {
   if (!profile && !showSyncInput)
     return (
       <EmptyPlatformState
-        platform="GitHub"
+        platform="Hugging Face"
         isOwner={isOwner}
         username={username}
         onSyncClick={() => setShowSyncInput(true)}
@@ -81,14 +120,14 @@ export function GithubView({ profile, isOwner, username }: GithubViewProps) {
     );
 
   return (
-    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out">
+    <div className="space-y-16 animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out">
       {/* Profile Overview Card */}
       <div className="relative p-8 md:p-12 rounded-[2.5rem] bg-card/40 backdrop-blur-xl border border-border/60 shadow-2xl overflow-hidden group">
-        <div className="absolute top-0 right-0 p-12 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-700 pointer-events-none">
-          <Github size={200} />
+        <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-700 pointer-events-none">
+          <span className="text-[150px] drop-shadow-2xl">🤗</span>
         </div>
 
-        <div className="flex flex-col md:flex-row items-center md:items-start gap-10 relative z-10">
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-12 relative z-10">
           <div className="relative shrink-0">
             <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary/10 via-primary/5 to-transparent flex items-center justify-center border border-primary/20 backdrop-blur-sm group-hover:scale-105 transition-transform duration-500">
               {profile?.avatar ? (
@@ -98,7 +137,7 @@ export function GithubView({ profile, isOwner, username }: GithubViewProps) {
                   className="w-full h-full object-cover rounded-full"
                 />
               ) : (
-                <Github size={64} className="opacity-30" />
+                <span className="text-6xl opacity-30">🤗</span>
               )}
             </div>
             <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex flex-col items-center">
@@ -113,7 +152,7 @@ export function GithubView({ profile, isOwner, username }: GithubViewProps) {
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
                 <div className="flex items-center gap-4">
                   <h2 className="text-4xl font-semibold tracking-tight text-foreground">
-                    GitHub Profile
+                    Hugging Face
                   </h2>
                   <a
                     href={profile?.profile_link}
@@ -184,26 +223,30 @@ export function GithubView({ profile, isOwner, username }: GithubViewProps) {
               </div>
 
               {profile && (
-                <div className="flex flex-wrap items-center justify-center md:justify-start gap-8 pt-2">
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-10 pt-2">
+                  <StatItem
+                    icon={FolderHeart}
+                    label="Community Likes"
+                    value={profile.likes_count}
+                  />
                   <StatItem
                     icon={Users}
-                    label="Followers"
+                    label="Network Followers"
                     value={profile.followers_count}
                   />
                   <StatItem
-                    icon={BookOpen}
-                    label="Public Repos"
+                    icon={FolderCode}
+                    label="Total Repositories"
                     value={profile.public_repo_count}
                   />
                   <StatItem
-                    icon={GitBranch}
-                    label="Total Contributions"
-                    value={profile.contribution_count}
+                    icon={BookOpenIcon}
+                    label="Papers"
+                    value={profile.papers_count}
                   />
                 </div>
               )}
             </div>
-
             {profile && (
               <div className="flex flex-col gap-2">
                 {profile.organizations && (
@@ -232,7 +275,7 @@ export function GithubView({ profile, isOwner, username }: GithubViewProps) {
                         )}
                     </div>
                   ))}
-                  {profile.organizations?.length > 4 && (
+                  {profile.organizations.length > 4 && (
                     <span className="text-[11px] font-medium text-muted-foreground/80 tracking-tight">
                       + more
                     </span>
@@ -244,20 +287,34 @@ export function GithubView({ profile, isOwner, username }: GithubViewProps) {
         </div>
       </div>
 
-      {/* Pinned Repos Grid */}
       {profile && (
-        <div className="space-y-8">
-          <div className="flex items-center gap-4">
-            <h3 className="text-3xl font-semibold tracking-tight flex items-center gap-3 text-foreground/80">
-              Featured Repositories
-            </h3>
-          </div>
+        <div className="space-y-20">
+          {/* Models Section */}
+          <HFSection
+            title="Models"
+            icon={Box}
+            items={profile.models}
+            category="model"
+            color={colorVariants.emerald}
+          />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {profile.pinned_repos.map((repo, i) => (
-              <RepoCard key={i} repo={repo} />
-            ))}
-          </div>
+          {/* Datasets Section */}
+          <HFSection
+            title="Datasets"
+            icon={Database}
+            items={profile.datasets}
+            category="dataset"
+            color={colorVariants.amber}
+          />
+
+          {/* Spaces Section */}
+          <HFSection
+            title="Spaces"
+            icon={Layout}
+            items={profile.spaces}
+            category="space"
+            color={colorVariants.blue}
+          />
         </div>
       )}
     </div>
@@ -283,86 +340,146 @@ function StatItem({
           {value.toLocaleString()}
         </span>
       </div>
-      <span className="text-[16px] font-black text-foreground tracking-widest">
+      <span className="text-[12px] font-black text-foreground tracking-widest">
         {label}
       </span>
     </div>
   );
 }
 
-function RepoCard({ repo }: { repo: GithubPinnedRepo }) {
-  return (
-    <div className="group/repo p-8 rounded-[2.5rem] bg-card/30 backdrop-blur-sm border border-border/40 hover:border-primary/40 hover:shadow-2xl transition-all flex flex-col justify-between relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-1.5 h-full bg-primary/70 group-hover/repo:bg-primary transition-colors" />
-      <div className="absolute -right-4 -top-4 w-24 h-24 bg-primary/5 rounded-full blur-3xl group-hover/repo:bg-primary/10 transition-colors" />
+function HFSection({
+  title,
+  icon: Icon,
+  items,
+  category,
+  color,
+}: {
+  title: string;
+  icon: any;
+  items: HuggingFaceModel[] | HuggingFaceDataset[] | HuggingFaceSpace[];
+  category: string;
+  color: (typeof colorVariants)[keyof typeof colorVariants];
+}) {
+  if (items.length === 0) return null;
 
-      <div className="space-y-4 relative z-10">
+  return (
+    <div className="space-y-10">
+      <div className="flex items-center gap-4">
+        <h3
+          className={cn(
+            "text-2xl font-semibold flex items-center gap-4",
+            color.text
+          )}
+        >
+          <Icon size={28} strokeWidth={2.5} />
+          {title}
+        </h3>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        {items.slice(0, 4).map((item, i) => (
+          <HFCard key={i} item={item} category={category} color={color} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function HFCard({
+  item,
+  category,
+  color,
+}: {
+  item: any;
+  category: string;
+  color: (typeof colorVariants)[keyof typeof colorVariants];
+}) {
+  return (
+    <div
+      className={cn(
+        "group/hf p-8 min-h-[250px] rounded-[3rem] bg-card/30 backdrop-blur-md border border-border/40 hover:shadow-2xl transition-all flex flex-col justify-between relative overflow-hidden",
+        color.border
+      )}
+    >
+      <div className="space-y-5 relative z-10">
         <div className="flex items-start justify-between gap-4">
-          <h4 className="font-semibold text-xl leading-tight group-hover/repo:text-primary transition-colors">
-            <a href={repo.url} target="_blank" rel="noopener noreferrer">
-              {repo.name}
-            </a>
+          <h4 className="font-extrabold text-lg line-clamp-2 leading-tight group-hover/hf:text-foreground transition-colors">
+            {item.name || item.title}
           </h4>
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-yellow-500/10 text-yellow-600 border border-yellow-500/20 text-[10px] font-black uppercase tracking-tighter">
-            <Star size={12} fill="currentColor" />
-            {repo.stars}
+          <div className="flex items-center gap-2 px-3 py-1 rounded-xl bg-secondary/30 text-muted-foreground text-[10px] font-black border border-border/20 uppercase tracking-widest whitespace-nowrap shadow-sm">
+            {item.likes ? (
+              <FolderHeart size={12} className="text-destructive" />
+            ) : item.upvotes ? (
+              <ArrowBigUp size={12} className="text-destructive" />
+            ) : null}
+            {item.likes || item.upvotes}
           </div>
         </div>
 
-        <p className="text-sm text-foreground/80 leading-relaxed line-clamp-4 min-h-[40px] font-medium">
-          {repo.description || (
-            <span className="opacity-30">
-              No description found for this forge.
-            </span>
+        <div className="flex flex-wrap gap-2 pt-2">
+          {item.pipeline_tag && (
+            <Badge
+              className={cn(
+                `text-[10px] px-3 py-1 uppercase font-black`,
+                color.bg,
+                color.text,
+                color.border
+              )}
+            >
+              {item.pipeline_tag}
+            </Badge>
           )}
-        </p>
-
-        <div className="flex flex-wrap gap-2 auto-rows-min">
-          {repo.languages.slice(0, 3).map((lang: string) => (
+          {item.sdk && (
             <Badge
-              key={lang}
-              variant="outline"
-              className="text-[10px] px-2.5 py-0.5 bg-background/50 text-foreground/70 border-border/40 uppercase font-black tracking-widest"
+              className={cn(
+                `text-[10px] px-3 py-1 uppercase font-black`,
+                color.bg,
+                color.text,
+                color.border
+              )}
             >
-              {lang}
+              {item.sdk}
             </Badge>
-          ))}
+          )}
+          {item.downloads && (
+            <div className="text-[10px] font-black text-muted-foreground/50 flex items-center gap-2 uppercase tracking-widest pl-1">
+              <span>{item.downloads.toLocaleString()} downloads</span>
+            </div>
+          )}
         </div>
-        <div className="flex flex-wrap gap-2 auto-rows-min">
-          {repo.topics.slice(0, 8).map((topic: string) => (
-            <Badge
-              key={topic}
-              variant="outline"
-              className="text-[10px] px-2.5 py-0.5 bg-background/50 text-foreground/70 border-border/40 uppercase font-black tracking-widest"
-            >
-              {topic}
-            </Badge>
-          ))}
-        </div>
-      </div>
-
-      <div className="flex flex-wrap gap-2 items-center justify-between pt-6 border-t border-border/10 relative z-10">
-        <a
-          href={repo.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[10px] text-primary tracking-[0.2em] hover:text-primary/80 flex items-center gap-2 uppercase transition-all hover:gap-3 group/link"
-        >
-          Explore Repo
-          <ExternalLink size={14} className="group-hover/link:animate-pulse" />
-        </a>
-        {repo.project_link && (
-          <a
-            href={repo.project_link || ""}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[10px] text-primary tracking-[0.2em] hover:text-primary/80 flex items-center gap-2 uppercase transition-all hover:gap-3 group/link"
-          >
-            Explore Live Demo
-            <Globe size={14} className="group-hover/link:animate-pulse" />
-          </a>
+        {(item.description || item.summary) && (
+          <p className="text-sm text-muted-foreground line-clamp-3">
+            {item.description || item.summary}
+          </p>
+        )}
+        {item.tags && (
+          <div className="flex flex-wrap gap-2 pt-2">
+            {item.tags?.slice(0, 4).map((tag: string) => (
+              <Badge
+                key={tag}
+                variant="outline"
+                className="text-[10px] px-2.5 py-0.5 bg-background/50 text-foreground/70 border-border/40 uppercase font-black tracking-widest"
+              >
+                {tag}
+              </Badge>
+            ))}
+          </div>
         )}
       </div>
+      <a
+        href={item.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-6 text-[10px] text-primary tracking-[0.2em] hover:text-primary/80 flex items-center gap-2 uppercase transition-all hover:gap-3 group/link"
+      >
+        Explore{" "}
+        {category == "model"
+          ? "Model"
+          : category == "dataset"
+            ? "Dataset"
+            : "Space"}
+        <ExternalLink size={14} className="group-hover/link:animate-pulse" />
+      </a>
     </div>
   );
 }

@@ -5,6 +5,7 @@ export interface GithubPinnedRepo {
   stars: number;
   languages: string[];
   project_link?: string | null;
+  topics: string[];
 }
 
 export interface GithubProfile {
@@ -15,4 +16,5 @@ export interface GithubProfile {
   organizations: string[];
   pinned_repos: GithubPinnedRepo[];
   avatar?: string | null;
+  contribution_count: number;
 }

@@ -61,7 +61,7 @@ export default function RepoProfilesPage({ params }: PageProps) {
   ];
 
   return (
-    <div className="container max-w-5xl mx-auto px-4 py-12 space-y-12">
+    <div className="container max-w-5xl mx-auto px-4 py-8 space-y-12">
       {/* Header Section */}
       <div className="space-y-3">
         <div className="flex items-center gap-4">
@@ -70,7 +70,7 @@ export default function RepoProfilesPage({ params }: PageProps) {
           </div>
           <div>
             <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
-              {isOwner ? "Your" : `${effectiveUsername}'s`} Repo Hub
+              {isOwner ? "My" : `${effectiveUsername}'s`} Repo Hub
             </h1>
           </div>
         </div>
@@ -89,7 +89,7 @@ export default function RepoProfilesPage({ params }: PageProps) {
               key={p.id}
               onClick={() => setActivePlatform(p.id as Platform)}
               className={cn(
-                "group flex items-center gap-3 px-8 py-3 rounded-2xl font-semibold tracking-widest transition-all duration-500 relative overflow-hidden",
+                "group flex items-center gap-3 px-4 py-3 rounded-2xl font-semibold tracking-widest transition-all duration-500 relative overflow-hidden",
                 p.active
                   ? "bg-background text-primary border border-border/60 scale-[1.02] translate-y-[-2px]"
                   : "text-muted-foreground/60 hover:text-foreground hover:bg-background/20"

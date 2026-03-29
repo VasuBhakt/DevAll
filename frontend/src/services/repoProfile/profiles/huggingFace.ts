@@ -6,6 +6,8 @@ export interface HuggingFaceModel {
   likes: number;
   downloads: number;
   pipeline_tag?: string | null;
+  tags?: string[] | null;
+  url?: string | null;
 }
 
 export interface HuggingFaceSpace {
@@ -13,6 +15,8 @@ export interface HuggingFaceSpace {
   name: string;
   likes: number;
   sdk?: string | null;
+  tags?: string[] | null;
+  url?: string | null;
 }
 
 export interface HuggingFaceDataset {
@@ -20,6 +24,9 @@ export interface HuggingFaceDataset {
   name: string;
   likes: number;
   downloads: number;
+  tags?: string[] | null;
+  description?: string | null;
+  url?: string | null;
 }
 
 export interface HuggingFaceProfile {
@@ -28,7 +35,10 @@ export interface HuggingFaceProfile {
   followers_count: number;
   likes_count: number;
   public_repo_count: number;
+  papers_count: number;
   models: HuggingFaceModel[];
   spaces: HuggingFaceSpace[];
   datasets: HuggingFaceDataset[];
+  avatar: string;
+  organizations: string[];
 }

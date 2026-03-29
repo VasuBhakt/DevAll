@@ -169,6 +169,7 @@ class Repo_Profile(Base):
     public_repo_count = Column(Integer, nullable=True)
     likes_count = Column(Integer, nullable=True)
     contribution_count = Column(Integer, nullable=True)
+    papers_count = Column(Integer, nullable=True)
 
     # Using JSONB for complex nested data from GitHub/HF
     pinned_repos = Column(ARRAY(JSONB), nullable=True)
