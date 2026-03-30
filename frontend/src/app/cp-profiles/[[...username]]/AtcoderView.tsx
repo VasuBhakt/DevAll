@@ -81,10 +81,15 @@ export default function AtcoderView({
   };
 
   const deleteMutation = useMutation({
-    mutationFn: () => CPService.deleteCPProfile("atcoder"),
+    mutationFn: () => {
+      if (confirm("Are you sure you want to delete your AtCoder profile?")) {
+        return CPService.deleteCPProfile("atcoder");
+      }
+      return Promise.reject(new Error("Profile not deleted"));
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cp-profiles", username] });
-      alert("Atcoder Profile deleted successfully!");
+      alert("AtCoder Profile deleted successfully!");
     },
     onError: (error: any) => {
       alert(error.message || "Failed to delete profile");
@@ -118,7 +123,7 @@ export default function AtcoderView({
       {/* Header Card */}
       <div className="relative p-8 md:p-12 rounded-[2.5rem] bg-card/40 backdrop-blur-xl border border-border/60 shadow-2xl overflow-hidden group">
         <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-40 transition-opacity duration-700 pointer-events-none">
-          <img src="/atcoder.png" alt="Atcoder" className="w-32 h-32" />
+          <img src="/atcoder.png" alt="AtCoder" className="w-32 h-32" />
         </div>
 
         <div className="flex flex-col md:flex-row items-center md:items-start gap-12 relative z-10">
@@ -127,13 +132,13 @@ export default function AtcoderView({
               {profile?.avatar ? (
                 <img
                   src={profile?.avatar}
-                  alt="Atcoder"
+                  alt="AtCoder"
                   className="w-full h-full object-cover rounded-full"
                 />
               ) : (
                 <img
                   src="/atcoder.png"
-                  alt="Atcoder"
+                  alt="AtCoder"
                   className="w-full h-full object-cover opacity-50 rounded-full"
                 />
               )}
@@ -150,7 +155,7 @@ export default function AtcoderView({
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
                 <div className="flex items-center gap-4">
                   <h2 className="text-4xl font-semibold tracking-tight text-foreground">
-                    Atcoder
+                    AtCoder
                   </h2>
                   {profile?.profile_link && (
                     <a

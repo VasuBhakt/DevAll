@@ -10,6 +10,7 @@ export interface CodechefProfile {
   profile_link: string;
   rating: number;
   max_rating: number;
-  rank: number;
+  rank: string;
   contests: CodechefContest[];
+  avatar?: string | null;
 }

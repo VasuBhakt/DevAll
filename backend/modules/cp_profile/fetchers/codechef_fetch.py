@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 from pydantic import BaseModel, Field, ConfigDict
 from utils import APIException
 from datetime import date, datetime
+from typing import Optional
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -32,6 +33,7 @@ class CodeChefProfile(BaseModel):
     rank: str = ""  # Stars
     max_rank: str = ""
     contests: list[CodeChefContest] = []
+    avatar: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
@@ -144,6 +146,12 @@ async def _fetch_cc_raw(handle: str):
                             logger.error(f"Failed to parse CodeChef history JSON: {je}")
                     break
 
+            # 5. Avatar
+            avatar = None
+            avatar_tag = soup.select_one("img.profileImage")
+            if avatar_tag:
+                avatar = avatar_tag.get("src")
+
             return CodeChefProfile(
                 handle=handle,
                 profile_link=profile_url,
@@ -152,6 +160,7 @@ async def _fetch_cc_raw(handle: str):
                 rank=stars,
                 max_rank=max_stars,
                 contests=contests,
+                avatar=avatar,
             )
 
         except Exception as e:
