@@ -134,6 +134,7 @@ class CP_Profile(Base):
     platform = Column(SQLEnum(CP_Platform), primary_key=True)
 
     handle = Column(String, nullable=False)
+    avatar = Column(String, nullable=True)
     profile_link = Column(String, nullable=False)
     rating = Column(Integer, nullable=True)
     max_rating = Column(Integer, nullable=True)

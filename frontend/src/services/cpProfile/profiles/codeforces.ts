@@ -11,7 +11,8 @@ export interface CodeforcesProfile {
   profile_link: string;
   rating: number;
   max_rating: number;
-  rank: number;
-  max_rank: number;
+  rank: string;
+  max_rank: string;
   contests: CodeforcesContest[];
+  avatar: string;
 }

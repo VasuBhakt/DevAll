@@ -29,6 +29,7 @@ class CodeforcesProfile(BaseModel):
     rank: str
     max_rank: str
     contests: list[CodeforcesContest]
+    avatar: str
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
@@ -112,4 +113,5 @@ async def _fetch_cf_raw(handle: str):
             rank=user_info.get("rank"),
             max_rank=user_info.get("maxRank"),
             contests=contests,
+            avatar=user_info.get("titlePhoto"),
         )

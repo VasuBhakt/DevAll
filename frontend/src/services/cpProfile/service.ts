@@ -1,5 +1,5 @@
 import { APIResponse } from "@/utils/apiResponse";
-import { CPProfile } from "./schema";
+import { CPProfile, CPProfileResponse } from "./schema";
 import { axios, logger } from "@/utils";
 
 class CPService {
@@ -20,7 +20,7 @@ class CPService {
     }
   }
 
-  async getUserCPProfiles(username: string): Promise<APIResponse<CPProfile[]>> {
+  async getUserCPProfiles(username: string): Promise<CPProfileResponse> {
     try {
       logger.info("Get user CP profiles flow started...");
       const response = await axios.get(`/cp-profile/${username}`);
