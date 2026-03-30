@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 from pydantic import BaseModel, Field, ConfigDict
 from utils import APIException
 from datetime import date, datetime
+from typing import Optional
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -54,6 +55,7 @@ class AtCoderProfile(BaseModel):
     rank: str = ""
     max_rank: str = ""
     contests: list[AtCoderContest] = []
+    avatar: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
@@ -99,7 +101,10 @@ async def _fetch_ac_raw(handle: str):
             max_rating = 0
             rank = ""
             max_rank = ""
-
+            avatar = None
+            avatar_tag = soup.select_one("img.avatar")
+            if avatar_tag:
+                avatar = avatar_tag.get("src")
             # Find the main stats table
             rows = soup.find_all("tr")
             for row in rows:
@@ -162,6 +167,7 @@ async def _fetch_ac_raw(handle: str):
                 rank=rank,
                 max_rank=max_rank,
                 contests=contests,
+                avatar=avatar,
             )
 
         except Exception as e:

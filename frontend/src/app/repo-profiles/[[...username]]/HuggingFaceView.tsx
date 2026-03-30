@@ -123,7 +123,7 @@ export function HuggingFaceView({
     <div className="space-y-16 animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out">
       {/* Profile Overview Card */}
       <div className="relative p-8 md:p-12 rounded-[2.5rem] bg-card/40 backdrop-blur-xl border border-border/60 shadow-2xl overflow-hidden group">
-        <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-700 pointer-events-none">
+        <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-30 transition-opacity duration-700 pointer-events-none">
           <span className="text-[150px] drop-shadow-2xl">🤗</span>
         </div>
 

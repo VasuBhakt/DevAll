@@ -8,68 +8,61 @@ import {
   Loader2,
   Check,
   X,
-  Trash2,
-  Trophy,
   History,
   TrendingUp,
+  TrendingDown,
   Award,
   CircleUser,
-  TrendingDown,
+  Trash2,
 } from "lucide-react";
 import { Badge, Button, Input } from "@/components";
 import { cn } from "@/lib/utils";
 import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
-  AreaChart,
-  Area,
 } from "recharts";
 import { CPService } from "@/services/cpProfile";
-import { CodeforcesProfile } from "@/services/cpProfile/profiles/codeforces";
+import { AtcoderProfile } from "@/services/cpProfile/profiles/atcoder";
 
-interface CodeforcesViewProps {
-  profile?: CodeforcesProfile;
+interface AtcoderViewProps {
+  profile?: AtcoderProfile;
   isOwner: boolean;
   username: string;
 }
 
-export const CodeforcesRankColor = (
-  rank: number
-): { first: string; second: string } => {
-  if (rank < 1200) return { first: "text-gray-500", second: "text-gray-500" };
-  if (rank < 1400) return { first: "text-green-500", second: "text-green-500" };
+export const AtcoderRankColor = (rank: number) => {
+  if (rank < 400) return { first: "text-gray-500", second: "text-gray-500" };
+  if (rank < 800)
+    return { first: "text-orange-900", second: "text-orange-900" };
+  if (rank < 1200) return { first: "text-green-500", second: "text-green-500" };
   if (rank < 1600) return { first: "text-cyan-500", second: "text-cyan-500" };
-  if (rank < 1900) return { first: "text-blue-500", second: "text-blue-500" };
-  if (rank < 2100)
-    return { first: "text-purple-500", second: "text-purple-500" };
-  if (rank < 2300)
-    return { first: "text-orange-500", second: "text-orange-500" };
+  if (rank < 2000) return { first: "text-blue-500", second: "text-blue-500" };
   if (rank < 2400)
-    return { first: "text-orange-700", second: "text-orange-700" };
-  if (rank < 2600) return { first: "text-red-500", second: "text-red-500" };
-  if (rank < 3000) return { first: "text-red-700", second: "text-red-700" };
-  if (rank < 4000) return { first: "text-black", second: "text-red-700" };
-  return { first: "text-black", second: "text-black" };
+    return { first: "text-yellow-500", second: "text-yellow-500" };
+  if (rank < 2800)
+    return { first: "text-orange-500", second: "text-orange-500" };
+  return { first: "text-red-700", second: "text-red-700" };
 };
 
-export default function CodeforcesView({
+export default function AtcoderView({
   profile,
   isOwner,
   username,
-}: CodeforcesViewProps) {
+}: AtcoderViewProps) {
   const [newHandle, setNewHandle] = useState("");
   const [showSyncInput, setShowSyncInput] = useState(false);
   const queryClient = useQueryClient();
 
   const syncMutation = useMutation({
-    mutationFn: (handle: string) =>
-      CPService.fetchCPProfile("codeforces", handle),
+    mutationFn: (handle: string) => CPService.fetchCPProfile("atcoder", handle),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cp-profiles", username] });
-      alert("Codeforces Profile synchronized successfully!");
+      alert("Atcoder Profile synchronized successfully!");
       setShowSyncInput(false);
       setNewHandle("");
     },
@@ -88,10 +81,10 @@ export default function CodeforcesView({
   };
 
   const deleteMutation = useMutation({
-    mutationFn: () => CPService.deleteCPProfile("codeforces"),
+    mutationFn: () => CPService.deleteCPProfile("atcoder"),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cp-profiles", username] });
-      alert("Codeforces Profile deleted successfully!");
+      alert("Atcoder Profile deleted successfully!");
     },
     onError: (error: any) => {
       alert(error.message || "Failed to delete profile");
@@ -105,7 +98,7 @@ export default function CodeforcesView({
   if (!profile && !showSyncInput)
     return (
       <EmptyPlatformState
-        platform="Codeforces"
+        platform="AtCoder"
         isOwner={isOwner}
         onSyncClick={() => setShowSyncInput(true)}
       />
@@ -114,10 +107,10 @@ export default function CodeforcesView({
   const chartData =
     profile?.contests?.map((c, index) => ({
       name: c.contest_name,
-      rating: c.new_rating,
+      rating: c.rating,
       rank: c.rank,
-      diffRating: c.new_rating - c.old_rating,
-      displayDate: `Contest ${index + 1}`,
+      diffRating: index > 0 ? c.rating - profile.contests[index - 1].rating : 0,
+      date: new Date(c.date).toLocaleDateString(),
     })) || [];
 
   return (
@@ -125,7 +118,7 @@ export default function CodeforcesView({
       {/* Header Card */}
       <div className="relative p-8 md:p-12 rounded-[2.5rem] bg-card/40 backdrop-blur-xl border border-border/60 shadow-2xl overflow-hidden group">
         <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-40 transition-opacity duration-700 pointer-events-none">
-          <img src="/codeforces.png" alt="Codeforces" className="w-32 h-32" />
+          <img src="/atcoder.png" alt="Atcoder" className="w-32 h-32" />
         </div>
 
         <div className="flex flex-col md:flex-row items-center md:items-start gap-12 relative z-10">
@@ -134,13 +127,13 @@ export default function CodeforcesView({
               {profile?.avatar ? (
                 <img
                   src={profile?.avatar}
-                  alt="Codeforces"
+                  alt="Atcoder"
                   className="w-full h-full object-cover rounded-full"
                 />
               ) : (
                 <img
-                  src="/codeforces.png"
-                  alt="Codeforces"
+                  src="/atcoder.png"
+                  alt="Atcoder"
                   className="w-full h-full object-cover opacity-50 rounded-full"
                 />
               )}
@@ -157,7 +150,7 @@ export default function CodeforcesView({
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
                 <div className="flex items-center gap-4">
                   <h2 className="text-4xl font-semibold tracking-tight text-foreground">
-                    Codeforces
+                    Atcoder
                   </h2>
                   {profile?.profile_link && (
                     <a
@@ -235,15 +228,13 @@ export default function CodeforcesView({
                     icon={TrendingUp}
                     label="Current Rating"
                     value={profile.rating}
-                    additionalInfo={profile.rank}
-                    color={CodeforcesRankColor(profile.rating)}
+                    color={AtcoderRankColor(profile.rating)}
                   />
                   <StatItem
                     icon={Award}
                     label="Max Rating"
                     value={profile.max_rating}
-                    additionalInfo={profile.max_rank}
-                    color={CodeforcesRankColor(profile.max_rating)}
+                    color={AtcoderRankColor(profile.max_rating)}
                   />
                   <StatItem
                     icon={History}
@@ -258,119 +249,111 @@ export default function CodeforcesView({
         </div>
       </div>
 
-      {profile && profile.contests && profile.contests.length > 0 && (
-        <div className="grid grid-cols-1 gap-12">
-          {/* Rating Chart */}
-          <div className="p-8 md:p-12 rounded-[3rem] bg-card/30 backdrop-blur-md border border-border/40 space-y-8">
-            <div className="flex items-center gap-4">
-              <h3 className="text-3xl font-semibold tracking-tight flex items-center gap-3 text-foreground/80">
-                Contest History
-              </h3>
-            </div>
-            <div className="h-[350px] w-full pt-4">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData}>
-                  <defs>
-                    <linearGradient
-                      id="colorRating"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop
-                        offset="5%"
-                        stopColor="var(--chart)"
-                        stopOpacity={0.3}
-                      />
-                      <stop
-                        offset="95%"
-                        stopColor="var(--chart)"
-                        stopOpacity={0}
-                      />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    vertical={false}
-                    stroke="var(--border)"
-                  />
-                  <XAxis dataKey="displayDate" hide />
-                  <YAxis
-                    domain={["dataMin - 100", "dataMax + 100"]}
-                    axisLine={false}
-                    tickLine={false}
-                    tickCount={12}
-                    allowDecimals={false}
-                    tick={{
-                      fill: "var(--primary)",
-                      fontSize: 10,
-                    }}
-                  />
-                  <Tooltip
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        return (
-                          <div className="bg-card/90 backdrop-blur-md border border-border/60 p-4 rounded-2xl shadow-2xl space-y-1">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-primary">
-                              {payload[0].payload.displayDate}
-                            </p>
-                            <p className="font-bold text-sm leading-tight text-foreground">
-                              {payload[0].payload.name}
-                            </p>
-                            <p className="font-bold text-sm leading-tight text-foreground">
-                              <span className="text-[10px] font-black uppercase tracking-widest text-primary">
-                                Rank{": "}
-                              </span>
-                              {payload[0].payload.rank}
-                            </p>
-                            <div className="flex items-center gap-2 pt-1">
-                              {payload[0].payload.diffRating >= 0 ? (
-                                <TrendingUp
-                                  size={14}
-                                  className="text-success"
-                                />
-                              ) : (
-                                <TrendingDown
-                                  size={14}
-                                  className="text-destructive"
-                                />
-                              )}
-                              <span className="text-lg font-black tabular-nums text-foreground">
-                                {payload[0].value}
-                              </span>
+      {profile && chartData.length > 0 && (
+        <div className="p-8 md:p-12 rounded-[3.5rem] bg-card/25 backdrop-blur-md border border-border/40 space-y-8 min-h-[400px]">
+          <div className="flex items-center gap-4">
+            <h3 className="text-3xl font-semibold tracking-tight flex items-center gap-3 text-foreground/80">
+              Contest History
+            </h3>
+          </div>
+          <div className="h-[300px] w-full pt-4">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData}>
+                <defs>
+                  <linearGradient
+                    id="atcoderRating"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop
+                      offset="5%"
+                      stopColor="var(--chart)"
+                      stopOpacity={0.3}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor="var(--chart)"
+                      stopOpacity={0}
+                    />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="var(--border)"
+                />
+                <XAxis dataKey="date" hide />
+                <YAxis
+                  domain={["dataMin - 100", "dataMax + 100"]}
+                  axisLine={false}
+                  tickLine={false}
+                  tickCount={12}
+                  allowDecimals={false}
+                  tick={{ fill: "var(--primary)", fontSize: 10 }}
+                />
+                <Tooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <div className="bg-card/90 backdrop-blur-md border border-border/60 p-4 rounded-2xl shadow-2xl space-y-1">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-primary">
+                            {payload[0].payload.date}
+                          </p>
+                          <p className="font-bold text-sm leading-tight text-foreground">
+                            {payload[0].payload.name}
+                          </p>
+                          <p className="font-bold text-sm leading-tight text-foreground">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-primary">
+                              Rank{": "}
+                            </span>
+                            {payload[0].payload.rank}
+                          </p>
+                          <div className="flex items-center gap-2 pt-1">
+                            {payload[0].payload.diffRating >= 0 ? (
+                              <TrendingUp size={14} className="text-success" />
+                            ) : (
+                              <TrendingDown
+                                size={14}
+                                className="text-destructive"
+                              />
+                            )}
+                            <span className="text-lg font-black tabular-nums text-foreground">
+                              {payload[0].value}
+                            </span>
+                            {payload[0].payload.diffRating !== 0 && (
                               <span
                                 className={cn(
-                                  "text-lg font-black tabular-nums text-primary",
-                                  payload[0].payload.diffRating > 0 &&
-                                    "text-success",
-                                  payload[0].payload.diffRating < 0 &&
-                                    "text-destructive"
+                                  "text-lg font-black tabular-nums",
+                                  payload[0].payload.diffRating > 0
+                                    ? "text-success"
+                                    : "text-destructive"
                                 )}
                               >
                                 {payload[0].payload.diffRating > 0
                                   ? `+${payload[0].payload.diffRating}`
                                   : payload[0].payload.diffRating}
                               </span>
-                            </div>
+                            )}
                           </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="rating"
-                    stroke="var(--chart)"
-                    strokeWidth={4}
-                    fillOpacity={1}
-                    fill="url(#colorRating)"
-                    animationDuration={2000}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="rating"
+                  stroke="var(--chart)"
+                  strokeWidth={4}
+                  fillOpacity={1}
+                  fill="url(#atcoderRating)"
+                  animationDuration={2000}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </div>
       )}
@@ -397,16 +380,10 @@ function StatItem({
         <div className="p-1.5 rounded-lg bg-primary/5 text-primary/60 group-hover/stat:text-primary transition-colors">
           <Icon size={16} />
         </div>
-        <span className={cn("text-2xl font-semibold tabular-nums")}>
+        <span
+          className={cn("text-2xl font-semibold tabular-nums", color.first)}
+        >
           {value.toLocaleString()}
-        </span>
-      </div>
-      <div className="flex flex-wrap">
-        <span className={cn("text-[16px] font-semibold", color.first)}>
-          {additionalInfo?.at(0)?.toUpperCase()}
-        </span>
-        <span className={cn("text-[16px] font-semibold", color.second)}>
-          {additionalInfo?.slice(1)}
         </span>
       </div>
       <span className="text-[16px] font-black text-foreground tracking-widest">
@@ -428,7 +405,7 @@ function EmptyPlatformState({
   return (
     <div className="flex flex-col items-center justify-center min-h-[500px] border-2 border-dashed border-border/40 rounded-[3rem] bg-secondary/5 space-y-8 text-center p-12">
       <div className="p-10 rounded-full bg-secondary/20 border border-border/40 text-muted-foreground/20">
-        <Trophy size={64} strokeWidth={1} />
+        <Award size={64} strokeWidth={1} />
       </div>
       <div className="space-y-4 max-w-sm">
         <h3 className="text-2xl font-black uppercase tracking-tighter text-foreground italic">
@@ -436,13 +413,13 @@ function EmptyPlatformState({
         </h3>
         <p className="text-muted-foreground italic font-medium">
           {isOwner
-            ? `Sync your ${platform} profile to display your rating progression and contest history.`
+            ? `Sync your ${platform} profile to display your ratings and progression curves.`
             : `This user hasn't synced their ${platform} profile yet.`}
         </p>
       </div>
       {isOwner && (
         <Button
-          className="rounded-full px-8 h-10 bg-primary text-primary-foreground hover:scale-102 transition-all font-black tracking-widest relative z-10"
+          className="rounded-full px-12 h-14 bg-primary text-primary-foreground hover:scale-105 transition-all font-black tracking-widest uppercase text-xs"
           onClick={onSyncClick}
         >
           Sync {platform}
