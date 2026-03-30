@@ -121,7 +121,11 @@ export default function CodechefView({
       rating: c.rating,
       rank: c.rank,
       diffRating: index > 0 ? c.rating - profile.contests[index - 1].rating : 0,
-      date: new Date(c.date).toLocaleDateString(),
+      date: new Date(c.date).toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      }),
     })) || [];
 
   return (
