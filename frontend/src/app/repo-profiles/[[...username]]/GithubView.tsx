@@ -112,7 +112,7 @@ export function GithubView({ profile, isOwner, username }: GithubViewProps) {
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
                 <div className="flex items-center gap-4">
                   <h2 className="text-4xl font-semibold tracking-tight text-foreground">
-                    GitHub Profile
+                    GitHub
                   </h2>
                   <a
                     href={profile?.profile_link}
