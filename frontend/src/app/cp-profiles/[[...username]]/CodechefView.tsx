@@ -265,6 +265,7 @@ export default function CodechefView({
         <div className="p-8 md:p-12 rounded-[3.5rem] bg-card/25 backdrop-blur-md border border-border/40 space-y-8 min-h-[400px]">
           <div className="flex items-center gap-4">
             <h3 className="text-3xl font-semibold tracking-tight flex items-center gap-3 text-foreground/80">
+              <TrendingUp size={24} className="text-primary" />
               Contest History
             </h3>
           </div>
@@ -273,7 +274,7 @@ export default function CodechefView({
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient
-                    id="atcoderRating"
+                    id="codechefRating"
                     x1="0"
                     y1="0"
                     x2="0"
@@ -361,7 +362,7 @@ export default function CodechefView({
                   stroke="var(--chart)"
                   strokeWidth={4}
                   fillOpacity={1}
-                  fill="url(#atcoderRating)"
+                  fill="url(#codechefRating)"
                   animationDuration={2000}
                 />
               </AreaChart>

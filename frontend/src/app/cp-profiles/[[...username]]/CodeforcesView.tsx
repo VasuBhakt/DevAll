@@ -267,17 +267,17 @@ export default function CodeforcesView({
         <div className="grid grid-cols-1 gap-12">
           {/* Rating Chart */}
           <div className="p-8 md:p-12 rounded-[3rem] bg-card/30 backdrop-blur-md border border-border/40 space-y-8">
-            <div className="flex items-center gap-4">
-              <h3 className="text-3xl font-semibold tracking-tight flex items-center gap-3 text-foreground/80">
-                Contest History
-              </h3>
-            </div>
+            <h3 className="text-3xl font-semibold tracking-tight flex items-center gap-3 text-foreground/80">
+              <TrendingUp size={24} className="text-primary" />
+              Contest History
+            </h3>
+
             <div className="h-[350px] w-full pt-4">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData}>
                   <defs>
                     <linearGradient
-                      id="colorRating"
+                      id="codeforcesRating"
                       x1="0"
                       y1="0"
                       x2="0"
@@ -370,7 +370,7 @@ export default function CodeforcesView({
                     stroke="var(--chart)"
                     strokeWidth={4}
                     fillOpacity={1}
-                    fill="url(#colorRating)"
+                    fill="url(#codeforcesRating)"
                     animationDuration={2000}
                   />
                 </AreaChart>

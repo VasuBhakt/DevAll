@@ -15,4 +15,5 @@ export interface LeetcodeProfile {
   hard_problems: number;
   rank: string;
   contests: LeetcodeContest[];
+  avatar?: string | null;
 }

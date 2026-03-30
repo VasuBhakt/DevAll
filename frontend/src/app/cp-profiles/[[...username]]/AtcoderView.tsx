@@ -62,7 +62,7 @@ export default function AtcoderView({
     mutationFn: (handle: string) => CPService.fetchCPProfile("atcoder", handle),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cp-profiles", username] });
-      alert("Atcoder Profile synchronized successfully!");
+      alert("AtCoder Profile synchronized successfully!");
       setShowSyncInput(false);
       setNewHandle("");
     },
@@ -256,11 +256,10 @@ export default function AtcoderView({
 
       {profile && chartData.length > 0 && (
         <div className="p-8 md:p-12 rounded-[3.5rem] bg-card/25 backdrop-blur-md border border-border/40 space-y-8 min-h-[400px]">
-          <div className="flex items-center gap-4">
-            <h3 className="text-3xl font-semibold tracking-tight flex items-center gap-3 text-foreground/80">
-              Contest History
-            </h3>
-          </div>
+          <h3 className="text-3xl font-semibold tracking-tight flex items-center gap-3 text-foreground/80">
+            <TrendingUp size={24} className="text-primary" />
+            Contest History
+          </h3>
           <div className="h-[300px] w-full pt-4">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>

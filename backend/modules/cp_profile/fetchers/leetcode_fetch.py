@@ -5,6 +5,7 @@ import httpx
 from pydantic import BaseModel, Field, ConfigDict
 from utils import APIException
 from datetime import date
+from typing import Optional
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -31,6 +32,7 @@ class LeetCodeProfile(BaseModel):
     hard_problems: int = 0
     rank: str = ""
     contests: list[LeetCodeContest] = []
+    avatar: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
@@ -86,6 +88,9 @@ async def _fetch_lc_raw(handle: str):
     query getUserProfile($username: String!) {
       matchedUser(username: $username) {
         username
+        profile {
+          userAvatar
+        }
         submitStats {
           acSubmissionNum {
             difficulty
@@ -148,6 +153,8 @@ async def _fetch_lc_raw(handle: str):
                 ranking["badge"]["name"] if ranking and ranking.get("badge") else ""
             )
 
+            avatar = data["matchedUser"]["profile"]["userAvatar"]
+
             # Extract contest history (filter for attended=true)
             history = data.get("userContestRankingHistory", [])
             contests = [
@@ -169,8 +176,9 @@ async def _fetch_lc_raw(handle: str):
                 easy_problems=counts.get("Easy", 0),
                 medium_problems=counts.get("Medium", 0),
                 hard_problems=counts.get("Hard", 0),
-                rank=rank_name,
+                rank=rank_name.lower(),
                 contests=contests,
+                avatar=avatar,
             )
         except Exception as e:
             logger.error(f"LeetCode fetch error: {str(e)}")
