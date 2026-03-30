@@ -15,6 +15,8 @@ import {
   HelpCircle,
   LayoutDashboard,
   BrainCircuit,
+  Badge,
+  Award,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks";
@@ -87,7 +89,7 @@ export function Sidebar() {
     { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
     { icon: Code2, label: "Repo Profiles", href: "/repo-profiles" },
     {
-      icon: BrainCircuit,
+      icon: Award,
       label: "Competitive Programming",
       href: "/cp-profiles",
     },

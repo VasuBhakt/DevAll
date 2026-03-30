@@ -433,20 +433,23 @@ function EmptyPlatformState({
     <div className="flex flex-col items-center justify-center min-h-[500px] border-2 border-dashed border-border/40 rounded-[3rem] bg-secondary/5 space-y-8 text-center p-12">
       <div className="p-10 rounded-full bg-secondary/20 border border-border/40 text-muted-foreground/20">
         <Award size={64} strokeWidth={1} />
+        <div className="absolute -bottom-2 -right-2 p-2 rounded-full bg-background border border-border/40 text-primary/40 shadow-xl">
+          <RefreshCw size={24} className="animate-spin-slow" />
+        </div>
       </div>
       <div className="space-y-4 max-w-sm">
-        <h3 className="text-2xl font-black uppercase tracking-tighter text-foreground italic">
+        <h3 className="text-2xl font-black text-foreground">
           {platform} Not Synced
         </h3>
         <p className="text-muted-foreground italic font-medium">
           {isOwner
-            ? `Sync your ${platform} profile to display your ratings and algorithmic efficiency.`
+            ? `Sync your ${platform} profile to display your rating progression and contest history.`
             : `This user hasn't synced their ${platform} profile yet.`}
         </p>
       </div>
       {isOwner && (
         <Button
-          className="rounded-full px-12 h-14 bg-primary text-primary-foreground hover:scale-105 transition-all font-black tracking-widest uppercase text-xs"
+          className="rounded-full px-8 h-10 bg-primary text-primary-foreground hover:scale-102 transition-all font-black tracking-widest relative z-10"
           onClick={onSyncClick}
         >
           Sync {platform}

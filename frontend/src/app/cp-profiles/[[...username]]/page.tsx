@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks";
 import { cn } from "@/lib/utils";
 import { CPService } from "@/services/cpProfile";
 import { useQuery } from "@tanstack/react-query";
-import { BrainCircuit, Loader2, MousePointer2 } from "lucide-react";
+import { Award, BrainCircuit, Loader2, MousePointer2 } from "lucide-react";
 import { use, useState } from "react";
 import CodeforcesView from "./CodeforcesView";
 import LeetcodeView from "./LeetcodeView";
@@ -82,7 +82,7 @@ export default function CPProfilesPage({ params }: PageProps) {
       <div className="space-y-3">
         <div className="flex items-center gap-4">
           <div className="p-3 rounded-2xl bg-primary/10 text-primary border border-primary/20 shadow-sm backdrop-blur-sm">
-            <BrainCircuit size={32} strokeWidth={2.5} />
+            <Award size={32} strokeWidth={2.5} />
           </div>
           <div>
             <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
