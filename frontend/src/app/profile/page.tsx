@@ -35,6 +35,7 @@ import {
   SignInRequiredState,
 } from "@/components";
 import { cn } from "@/lib/utils";
+import { CreateProfileForm } from "../user/[[...username]]/CreateProfileForm";
 
 export default function ProfilePage() {
   const { user: authUser } = useAuth();
@@ -44,10 +45,11 @@ export default function ProfilePage() {
   const {
     data: profileResponse,
     isLoading,
-    error,
+    isError,
   } = useQuery({
     queryKey: ["profile"],
     queryFn: () => ProfileService.getCurrentUserProfile(),
+    retry: false,
   });
 
   const profile = profileResponse?.data;
@@ -96,7 +98,15 @@ export default function ProfilePage() {
   };
 
   if (isLoading) return <ProfileLoading />;
-  if (!profile) return <SignInRequiredState />;
+  if (!authUser) return <SignInRequiredState />;
+
+  if (!profile) {
+    return (
+      <div className="container max-w-2xl mx-auto px-4 py-24">
+        <CreateProfileForm defaultName={authUser.username} />
+      </div>
+    );
+  }
 
   const firstLetter =
     profile.name?.[0]?.toUpperCase() ||
@@ -498,7 +508,7 @@ function InfoItem({
             rel="noopener noreferrer"
             className="hover:text-primary transition-colors hover:underline"
           >
-            {label.replace(/^https?:\/\/(www\.)?/, "")}
+            {label?.replace(/^https?:\/\/(www\.)?/, "")}
           </a>
         ) : (
           <span>{label}</span>
