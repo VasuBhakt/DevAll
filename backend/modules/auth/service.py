@@ -8,7 +8,7 @@ from .schemas import (
     ResetPasswordRequest,
     SigninResponse,
 )
-from database import User, get_db
+from database import User, Profile, get_db
 from utils import APIException, EmailService, UserDetails
 from .utils import AuthUtilService
 import logging
@@ -94,6 +94,15 @@ class AuthService:
 
         try:
             db.add(new_user)
+            await db.flush()  # Get the new_user.id
+
+            # Create the initial profile
+            new_profile = Profile(
+                user_id=new_user.id,
+                name=request.full_name,
+            )
+            db.add(new_profile)
+
             await db.commit()
             await db.refresh(new_user)
         except Exception as e:

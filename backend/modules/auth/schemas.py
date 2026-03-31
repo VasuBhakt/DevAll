@@ -2,13 +2,11 @@ from pydantic import BaseModel
 from utils import UserDetails
 
 
-class AuthRequest(BaseModel):
-    email: str
+class SignupRequest(BaseModel):
     username: str
-
-
-class SignupRequest(AuthRequest):
+    email: str
     password: str
+    full_name: str
 
 
 class SigninRequest(BaseModel):

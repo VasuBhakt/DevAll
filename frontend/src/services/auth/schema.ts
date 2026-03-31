@@ -2,6 +2,7 @@ export interface SignupRequest {
   username: string;
   email: string;
   password: string;
+  full_name: string;
 }
 
 export interface SigninRequest {

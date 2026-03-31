@@ -54,7 +54,6 @@ import CPQuickCard from "./CPQuickCard";
 import RepoQuickCard from "./RepoQuickCard";
 import { SignInRequiredState } from "@/components";
 import { UserNotFoundState } from "@/components/UserNotFound";
-import { CreateProfileForm } from "./CreateProfileForm";
 
 interface PageProps {
   params: Promise<{ username?: string[] }>;
@@ -70,13 +69,18 @@ export default function UserDashboard({ params }: PageProps) {
     !targetUsername || (isSignedIn && user?.username === targetUsername);
   const effectiveUsername = targetUsername || user?.username;
 
-  const { data: profileResponse, isLoading: profileLoading } = useQuery({
+  const {
+    data: profileResponse,
+    isLoading: profileLoading,
+    isError: isProfileError,
+  } = useQuery({
     queryKey: ["public-profile", effectiveUsername],
     queryFn: () => {
       if (!effectiveUsername) return Promise.resolve(null);
       return publicService.getPublicProfile(effectiveUsername);
     },
     enabled: !!effectiveUsername,
+    retry: false, // Don't retry on 404
   });
 
   const profileData = profileResponse;
@@ -88,13 +92,10 @@ export default function UserDashboard({ params }: PageProps) {
   if (!effectiveUsername && !authLoading) {
     return <SignInRequiredState />;
   }
-  if (!profileData && !profileLoading) {
+
+  // API explicitly failed (User not in database)
+  if (isProfileError || (!profileLoading && !profileData)) {
     return <UserNotFoundState username={effectiveUsername!} />;
-  }
-  if (!profileData?.profile) {
-    return (
-      <CreateProfileState isOwner={isOwner} defaultName={user?.username} />
-    );
   }
 
   const {
@@ -491,46 +492,6 @@ function SectionContainer({
             </div>
           )
         : children}
-    </div>
-  );
-}
-
-function CreateProfileState({
-  isOwner,
-  defaultName,
-}: {
-  isOwner: boolean;
-  defaultName?: string;
-}) {
-  if (isOwner) {
-    return (
-      <div className="container max-w-2xl mx-auto px-4 py-12">
-        <CreateProfileForm
-          defaultName={defaultName}
-          onSuccess={() => window.location.reload()}
-        />
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8 text-center px-6 animate-in fade-in zoom-in duration-500">
-      <div className="relative">
-        <div className="p-4 rounded-full bg-primary/10 text-primary border border-primary/20 shadow-2xl relative z-10">
-          <Construction size={48} />
-        </div>
-        <div className="absolute -inset-4 bg-primary/5 blur-2xl rounded-full -z-10" />
-      </div>
-
-      <div className="space-y-4 max-w-md">
-        <h2 className="text-3xl font-black tracking-tight uppercase leading-none">
-          Still Building
-        </h2>
-        <p className="text-muted-foreground text-lg font-medium">
-          This developer is still building their profile! Check back in a few
-          hours!
-        </p>
-      </div>
     </div>
   );
 }

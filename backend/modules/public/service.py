@@ -47,7 +47,7 @@ class PublicService:
         if not profile:
             raise APIException(
                 message="Profile details not found",
-                status=404,
+                status=200,
                 error_code="PROFILE_NOT_FOUND",
             )
 

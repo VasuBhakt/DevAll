@@ -71,17 +71,45 @@ export default function SignupPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <Field>
               <div className="flex items-center justify-between">
-                <FieldLabel htmlFor="username">
-                  Username (cannot be changed later)
-                </FieldLabel>
+                <FieldLabel htmlFor="full_name">Full Name</FieldLabel>
               </div>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-primary transition-colors">
                   <User size={16} />
                 </div>
                 <Input
+                  {...register("full_name", {
+                    required: "Full Name is required",
+                  })}
+                  id="full_name"
+                  type="text"
+                  placeholder="John Doe"
+                  className={cn(
+                    "pl-10 pr-10 h-11 transition-colors duration-200 bg-background/50 text-md",
+                    "placeholder:text-foreground/30"
+                  )}
+                />
+              </div>
+              {errors.full_name && <FieldError errors={[errors.full_name]} />}
+            </Field>
+
+            <Field>
+              <div className="flex items-center justify-between">
+                <FieldLabel htmlFor="username">
+                  Username (cannot be changed later)
+                </FieldLabel>
+              </div>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-primary transition-colors">
+                  <User size={16} className="opacity-50" />
+                </div>
+                <Input
                   {...register("username", {
                     required: "Username is required",
+                    minLength: {
+                      value: 3,
+                      message: "Username must be at least 3 characters",
+                    },
                   })}
                   id="username"
                   type="text"

@@ -35,7 +35,6 @@ import {
   SignInRequiredState,
 } from "@/components";
 import { cn } from "@/lib/utils";
-import { CreateProfileForm } from "../user/[[...username]]/CreateProfileForm";
 
 export default function ProfilePage() {
   const { user: authUser } = useAuth();
@@ -99,14 +98,7 @@ export default function ProfilePage() {
 
   if (isLoading) return <ProfileLoading />;
   if (!authUser) return <SignInRequiredState />;
-
-  if (!profile) {
-    return (
-      <div className="container max-w-2xl mx-auto px-4 py-24">
-        <CreateProfileForm defaultName={authUser.username} />
-      </div>
-    );
-  }
+  if (!profile) return <ProfileLoading />;
 
   const firstLetter =
     profile.name?.[0]?.toUpperCase() ||
