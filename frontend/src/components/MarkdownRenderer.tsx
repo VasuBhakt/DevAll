@@ -7,11 +7,24 @@ interface MarkdownRendererProps {
   className?: string;
 }
 
-export function MarkdownRenderer({ content, className }: MarkdownRendererProps) {
-  if (!content) return <span className="text-muted-foreground/40 italic">No content provided.</span>;
+export function MarkdownRenderer({
+  content,
+  className,
+}: MarkdownRendererProps) {
+  if (!content)
+    return (
+      <span className="text-muted-foreground/40 italic">
+        No content provided.
+      </span>
+    );
 
   return (
-    <div className={cn("text-[16px] leading-relaxed text-foreground/80", className)}>
+    <div
+      className={cn(
+        "text-[16px] leading-relaxed text-foreground/80",
+        className
+      )}
+    >
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
@@ -22,31 +35,17 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
             />
           ),
           h2: ({ ...props }) => (
-            <h2
-              className="text-xl font-bold mt-5 mb-3"
-              {...props}
-            />
+            <h2 className="text-xl font-bold mt-5 mb-3" {...props} />
           ),
           h3: ({ ...props }) => (
-            <h3
-              className="text-lg font-bold mt-4 mb-2"
-              {...props}
-            />
+            <h3 className="text-lg font-bold mt-4 mb-2" {...props} />
           ),
-          p: ({ ...props }) => (
-            <p className="mb-4 last:mb-0" {...props} />
-          ),
+          p: ({ ...props }) => <p className="mb-4 last:mb-0" {...props} />,
           ul: ({ ...props }) => (
-            <ul
-              className="list-disc pl-6 mb-4 space-y-1"
-              {...props}
-            />
+            <ul className="list-disc pl-6 mb-4 space-y-1" {...props} />
           ),
           ol: ({ ...props }) => (
-            <ol
-              className="list-decimal pl-6 mb-4 space-y-1"
-              {...props}
-            />
+            <ol className="list-decimal pl-6 mb-4 space-y-1" {...props} />
           ),
           li: ({ ...props }) => <li {...props} />,
           code: ({ node, inline, ...props }: any) =>
@@ -69,9 +68,15 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
           ),
           a: ({ ...props }) => (
             <a
-              className="text-primary hover:underline"
+              className="text-primary inline  hover:underline"
               target="_blank"
               rel="noopener noreferrer"
+              {...props}
+            />
+          ),
+          img: ({ ...props }) => (
+            <img
+              className="inline-block align-middle mr-1 last:mr-0 my-1"
               {...props}
             />
           ),
@@ -93,10 +98,7 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
             />
           ),
           td: ({ ...props }) => (
-            <td
-              className="border border-border/20 px-4 py-2"
-              {...props}
-            />
+            <td className="border border-border/20 px-4 py-2" {...props} />
           ),
         }}
       >
