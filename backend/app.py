@@ -48,6 +48,17 @@ async def root():
     return {"message": "API IS UP!"}
 
 
+@app.head("/")
+async def root():
+    return {"message": "Server is running"}
+
+
+# Fix for the 404 Not Found (GET /healthcheck)
+@app.get("/healthcheck")
+async def health_check():
+    return {"status": "ok"}
+
+
 @app.exception_handler(APIException)
 async def global_exception_handler(request: Request, exc: APIException):
     status = getattr(exc, "status", 500)

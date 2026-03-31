@@ -6,8 +6,7 @@ import uvicorn
 import logging
 
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -15,6 +14,7 @@ load_dotenv()
 
 from app import app
 from database import engine
+
 
 @asynccontextmanager
 async def lifespan(app):
@@ -26,18 +26,16 @@ async def lifespan(app):
         logger.error(f"Database connection failed: {e}")
         raise e
 
+
 app.router.lifespan_context = lifespan
 
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 4000))
+    port = int(os.getenv("PORT", 10000))
     logger.info(f"Server running on port {port}")
     uvicorn.run(
         "main:app",
-        host="localhost",
+        host=os.getenv("HOST"),
         port=port,
-        reload=True,
-        log_level="info"
+        reload=False,
+        log_level="info",
     )
-
-
-    
