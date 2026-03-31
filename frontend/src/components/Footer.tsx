@@ -35,7 +35,7 @@ export function Footer() {
                 {/*Connect Section*/}
                 <div className="w-1/2 p-6 sm:w-1/3 md:w-1/3 lg:w-auto">
                   <div className="h-full">
-                    <h3 className="tracking-px mb-6 text-xs font-bold uppercase text-foreground/70">
+                    <h3 className="tracking-px mb-6 text-xs font-bold uppercase text-primary/70">
                       Connect
                     </h3>
                     <ul className="flex flex-col gap-3">
@@ -44,7 +44,7 @@ export function Footer() {
                           target="_blank"
                           rel="noreferrer"
                           className="text-foreground/70 hover:text-foreground transition-colors duration-200"
-                          href="#"
+                          href={process.env.NEXT_PUBLIC_DEV_GITHUB || "#"}
                         >
                           Github
                         </a>
@@ -54,9 +54,19 @@ export function Footer() {
                           target="_blank"
                           rel="noreferrer"
                           className="text-foreground/70 hover:text-foreground transition-colors duration-200"
-                          href="#"
+                          href={process.env.NEXT_PUBLIC_DEV_LINKEDIN || "#"}
                         >
                           LinkedIn
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-foreground/70 hover:text-foreground transition-colors duration-200"
+                          href={process.env.NEXT_PUBLIC_DEV_INSTAGRAM || "#"}
+                        >
+                          Instagram
                         </a>
                       </li>
                     </ul>
@@ -74,7 +84,10 @@ export function Footer() {
                           target="_blank"
                           rel="noreferrer"
                           className="text-foreground/70 hover:text-foreground transition-colors duration-200"
-                          href="#"
+                          href={
+                            `${process.env.NEXT_PUBLIC_DEV_GITHUB}/DevAll` ||
+                            "#"
+                          }
                         >
                           Source Code
                         </a>
@@ -84,7 +97,10 @@ export function Footer() {
                           target="_blank"
                           rel="noreferrer"
                           className="text-foreground/70 hover:text-foreground transition-colors duration-200"
-                          href="#"
+                          href={
+                            `${process.env.NEXT_PUBLIC_DEV_GITHUB}/DevAll/blob/main/README.md` ||
+                            "#"
+                          }
                         >
                           Documentation
                         </a>
@@ -94,7 +110,10 @@ export function Footer() {
                           target="_blank"
                           rel="noreferrer"
                           className="text-foreground/70 hover:text-foreground transition-colors duration-200"
-                          href="#"
+                          href={
+                            `${process.env.NEXT_PUBLIC_DEV_GITHUB}/DevAll/issues` ||
+                            "#"
+                          }
                         >
                           Report Bug
                         </a>

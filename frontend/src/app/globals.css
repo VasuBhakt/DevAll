@@ -38,6 +38,7 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-terminal: var(--terminal);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
   --radius-sm: calc(var(--radius) * 0.6);
@@ -62,6 +63,7 @@
   --secondary-foreground: oklch(21.342% 0.00002 271.152);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(31.714% 0.00004 271.152);
+  --terminal: oklch(82.17% 0.236 147.1);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
@@ -106,6 +108,7 @@
   --success: oklch(75% 0.17 141.9);
   --border: oklch(1 0 0 / 20%);
   --input: oklch(1 0 0 / 20%);
+  --terminal: oklch(82.17% 0.236 147.1);
   --ring: oklch(0.556 0 0);
   --chart: oklch(74.671% 0.17103 62.489);
   --chart-1: oklch(0.87 0 0);

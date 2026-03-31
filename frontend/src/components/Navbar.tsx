@@ -35,7 +35,7 @@ export function Navbar() {
     <nav className="sticky top-0 z-50 w-full bg-background backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40">
       <div className="container mx-auto flex h-[88px] items-center justify-between px-4 sm:px-8">
         {/*Left side*/}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-8">
           <Link
             href="/"
             className="flex items-center font-bold text-xl tracking-tighter transition-transform hover:scale-105"
@@ -73,10 +73,7 @@ export function Navbar() {
                 <DropdownMenuLabel className="px-3 py-2">
                   <div className="flex flex-col gap-0.5">
                     <span className="text-sm font-semibold truncate leading-none">
-                      {user?.username}
-                    </span>
-                    <span className="text-[11px] text-muted-foreground truncate font-medium">
-                      Developer
+                      @{user?.username}
                     </span>
                   </div>
                 </DropdownMenuLabel>

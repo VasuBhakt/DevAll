@@ -99,7 +99,7 @@ export function Sidebar() {
   ];
 
   const bottomItems = [
-    { icon: HelpCircle, label: "Support", href: "/support" },
+    { icon: HelpCircle, label: "Support", href: "/about" },
     { icon: Settings, label: "Settings", href: "/settings" },
   ];
 
