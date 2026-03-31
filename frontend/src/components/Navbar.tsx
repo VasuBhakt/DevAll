@@ -2,7 +2,13 @@
 
 import { useAuth } from "@/hooks";
 import Link from "next/link";
-import { User as UserIcon, Settings, LogOut, ChevronDown } from "lucide-react";
+import {
+  User as UserIcon,
+  Settings,
+  LogOut,
+  ChevronDown,
+  Github,
+} from "lucide-react";
 import { ThemeToggle } from "./buttons";
 import { Button } from "./ui/button";
 import { Logo } from "./Logo";
