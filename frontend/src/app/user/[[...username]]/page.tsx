@@ -88,13 +88,13 @@ export default function UserDashboard({ params }: PageProps) {
   if (!effectiveUsername && !authLoading) {
     return <SignInRequiredState />;
   }
+  if (!profileData && !profileLoading) {
+    return <UserNotFoundState username={effectiveUsername!} />;
+  }
   if (!profileData?.profile) {
     return (
       <CreateProfileState isOwner={isOwner} defaultName={user?.username} />
     );
-  }
-  if (!profileData && !profileLoading) {
-    return <UserNotFoundState username={effectiveUsername!} />;
   }
 
   const {

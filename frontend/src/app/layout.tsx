@@ -4,7 +4,7 @@ import "./globals.css";
 import { QueryProvider, ThemeProvider } from "../providers";
 import { Navbar } from "@/components/Navbar";
 import { Sidebar } from "@/components/Sidebar";
-import { Footer } from "@/components/Footer";
+import { Footer, ClientOnly } from "@/components";
 import { InteractiveBackground } from "@/components/InteractiveBackground";
 
 const geistSans = Geist({
@@ -35,9 +35,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="h-screen flex flex-col relative overflow-hidden">
+      <body className="min-h-full flex flex-col relative overflow-hidden">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -45,19 +46,21 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <QueryProvider>
-            <InteractiveBackground />
-            <Navbar />
-            <div className="flex flex-1 overflow-hidden">
-              <Sidebar />
-              <main className="flex-1 flex flex-col bg-transparent min-h-0 overflow-hidden">
-                <div className="flex-1 overflow-y-auto p-6 relative">
-                  <div className="min-h-full flex flex-col">
-                    <div className="flex-1">{children}</div>
-                    <Footer />
+            <ClientOnly>
+              <InteractiveBackground />
+              <Navbar />
+              <div className="flex flex-1 overflow-hidden">
+                <Sidebar />
+                <main className="flex-1 flex flex-col bg-transparent overflow-hidden">
+                  <div className="flex-1 overflow-y-auto p-6 relative">
+                    <div className="min-h-full flex flex-col">
+                      <div className="flex-1 min-h-[400px]">{children}</div>
+                      <Footer />
+                    </div>
                   </div>
-                </div>
-              </main>
-            </div>
+                </main>
+              </div>
+            </ClientOnly>
           </QueryProvider>
         </ThemeProvider>
       </body>
