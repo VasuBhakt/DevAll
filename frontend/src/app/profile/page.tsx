@@ -24,8 +24,16 @@ import {
   Camera,
   User as UserIcon,
   MousePointer2,
+  Twitch,
 } from "lucide-react";
-import { Button, Input, Textarea, Badge, MarkdownRenderer } from "@/components";
+import {
+  Button,
+  Input,
+  Textarea,
+  Badge,
+  MarkdownRenderer,
+  SignInRequiredState,
+} from "@/components";
 import { cn } from "@/lib/utils";
 
 export default function ProfilePage() {
@@ -88,7 +96,7 @@ export default function ProfilePage() {
   };
 
   if (isLoading) return <ProfileLoading />;
-  if (error || !profile) return <ProfileError />;
+  if (!profile) return <SignInRequiredState />;
 
   const firstLetter =
     profile.name?.[0]?.toUpperCase() ||
@@ -289,6 +297,7 @@ export default function ProfilePage() {
                   isEditing={isEditing}
                   register={register("github")}
                   value={profile.github}
+                  color="text-primary"
                 />
                 <SocialInput
                   icon={Linkedin}
@@ -297,6 +306,7 @@ export default function ProfilePage() {
                   isEditing={isEditing}
                   register={register("linkedin")}
                   value={profile.linkedin}
+                  color="text-blue-500"
                 />
                 <SocialInput
                   icon={Twitter}
@@ -305,6 +315,7 @@ export default function ProfilePage() {
                   isEditing={isEditing}
                   register={register("xtwitter")}
                   value={profile.xtwitter}
+                  color="text-blue-400"
                 />
                 <SocialInput
                   icon={Instagram}
@@ -313,6 +324,7 @@ export default function ProfilePage() {
                   isEditing={isEditing}
                   register={register("instagram")}
                   value={profile.instagram}
+                  color="text-pink-700"
                 />
                 <SocialInput
                   icon={Youtube}
@@ -321,6 +333,7 @@ export default function ProfilePage() {
                   isEditing={isEditing}
                   register={register("youtube")}
                   value={profile.youtube}
+                  color="text-red-500"
                 />
                 <SocialInput
                   icon={Bot}
@@ -329,22 +342,25 @@ export default function ProfilePage() {
                   isEditing={isEditing}
                   register={register("reddit")}
                   value={profile.reddit}
+                  color="text-orange-500"
                 />
                 <SocialInput
-                  icon={Gamepad2}
+                  icon={Twitch}
                   id="twitch"
                   label="Twitch"
                   isEditing={isEditing}
                   register={register("twitch")}
                   value={profile.twitch}
+                  color="text-purple-500"
                 />
                 <SocialInput
-                  icon={MessageSquare}
+                  icon={Gamepad2}
                   id="discord"
                   label="Discord"
                   isEditing={isEditing}
                   register={register("discord")}
                   value={profile.discord}
+                  color="text-blue-500"
                 />
               </div>
             </div>
@@ -499,12 +515,13 @@ function SocialInput({
   isEditing,
   register,
   value,
+  color,
 }: any) {
   return (
     <div className="group/social">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2 text-xs font-bold text-foreground/80 uppercase tracking-widest">
-          <Icon size={14} />
+          <Icon size={14} className={color} />
           {label}
         </div>
       </div>
@@ -547,29 +564,6 @@ function ProfileLoading() {
         <div className="h-[400px] bg-card/40 rounded-[2rem] border border-border/60" />
         <div className="lg:col-span-2 h-[400px] bg-card/40 rounded-[2rem] border border-border/60" />
       </div>
-    </div>
-  );
-}
-
-function ProfileError() {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6 text-center px-6">
-      <div className="p-6 rounded-full bg-primary/10 text-primary border border-primary/20">
-        <MousePointer2 size={48} />
-      </div>
-      <div className="space-y-3 max-w-md">
-        <h2 className="text-3xl font-bold tracking-tight">Access Restricted</h2>
-        <p className="text-muted-foreground text-lg">
-          Builders only beyond this point. Sign in to view and manage your full
-          project portfolio.
-        </p>
-      </div>
-      <Button
-        className="rounded-full px-10 h-12 text-lg font-bold"
-        onClick={() => (window.location.href = "/signin")}
-      >
-        Go to Sign In
-      </Button>
     </div>
   );
 }

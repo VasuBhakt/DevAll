@@ -17,8 +17,9 @@ import {
   ExperienceCardSkeleton,
 } from "@/app/experiences/[[...username]]/ExperienceCard";
 import { AddEditExperienceModal } from "@/app/experiences/[[...username]]/AddEditExperienceModal";
-import { Button } from "@/components/ui/button";
-import { Plus, Briefcase, MousePointer2, Loader2, Info } from "lucide-react";
+import { Button, LoadingState, SignInRequiredState } from "@/components";
+import { Plus, Briefcase, MousePointer2, Loader2, Info, RefreshCw } from "lucide-react";
+import { UserNotFoundState } from "@/components/UserNotFound";
 
 interface PageProps {
   params: Promise<{ username?: string[] }>;
@@ -41,26 +42,34 @@ export default function ExperiencesPage({ params }: PageProps) {
     useState<ExperienceResponse | null>(null);
 
   // Infinite Query for Experiences
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
-    useInfiniteQuery({
-      queryKey: ["experiences", effectiveUsername],
-      queryFn: ({ pageParam = 1 }) => {
-        if (!effectiveUsername) return Promise.resolve([]);
-        return isOwner
-          ? ExperienceService.getCurrentUserExperiences(pageParam, 10)
-          : ExperienceService.getUserExperiences(
-              effectiveUsername,
-              pageParam,
-              10
-            );
-      },
-      initialPageParam: 1,
-      getNextPageParam: (lastPage, allPages) => {
-        // Backend returns an array of items. If the last page had fewer than 10 (limit), no more pages.
-        return lastPage.length === 10 ? allPages.length + 1 : undefined;
-      },
-      enabled: !!effectiveUsername,
-    });
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+    isLoading: dataLoading,
+    isError,
+    refetch,
+  } = useInfiniteQuery({
+    queryKey: ["experiences", effectiveUsername],
+    queryFn: ({ pageParam = 1 }) => {
+      if (!effectiveUsername) return Promise.resolve([]);
+      return isOwner
+        ? ExperienceService.getCurrentUserExperiences(pageParam, 10)
+        : ExperienceService.getUserExperiences(
+            effectiveUsername,
+            pageParam,
+            10
+          );
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      // Backend returns an array of items. If the last page had fewer than 10 (limit), no more pages.
+      return lastPage.length === 10 ? allPages.length + 1 : undefined;
+    },
+    enabled: !!effectiveUsername,
+  });
 
   // Intersection Observer for Infinite Scroll
   const observerTarget = useRef(null);
@@ -131,9 +140,11 @@ export default function ExperiencesPage({ params }: PageProps) {
     }
   };
 
-  if (authLoading) return <LoadingState />;
+  if (authLoading) return <LoadingState message="Gathering Experience..." />;
   if (!effectiveUsername && !authLoading && status === "pending")
     return <SignInRequiredState />;
+  if (!data && !dataLoading)
+    return <UserNotFoundState username={effectiveUsername!} />;
 
   const allExperiences = data?.pages.flat() || [];
 
@@ -185,7 +196,7 @@ export default function ExperiencesPage({ params }: PageProps) {
           <EmptyState isOwner={isOwner} onAdd={() => setIsModalOpen(true)} />
         )}
 
-        {status === "success" && allExperiences.length > 0 && (
+        {allExperiences.length > 0 && (
           <div className="grid grid-cols-1 gap-6 relative">
             {/* Subtle vertical line for visual flow on larger screens */}
             <div className="absolute left-[30px] top-6 bottom-6 w-[2px] bg-gradient-to-b from-primary/10 via-border/40 to-primary/10 hidden md:block" />
@@ -216,10 +227,27 @@ export default function ExperiencesPage({ params }: PageProps) {
               </span>
             </div>
           )}
-          {!hasNextPage && allExperiences.length > 0 && (
+          {!hasNextPage && allExperiences.length > 0 && status === "success" && (
             <div className="text-muted-foreground text-sm flex items-center gap-2 bg-secondary/20 px-4 py-2 rounded-full border border-border/40">
-              <Info size={16} />
-              <span>That's all the experiences for now!</span>
+              <Briefcase size={16} className="text-primary/60" />
+              <span>You've seen the full journey!</span>
+            </div>
+          )}
+          {isError && allExperiences.length > 0 && (
+            <div className="flex flex-col items-center gap-4 py-4">
+              <div className="text-destructive text-sm font-medium flex items-center gap-2 bg-destructive/10 px-4 py-2 rounded-full border border-destructive/20">
+                <Info size={16} />
+                <span>Failed to load more experience.</span>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => refetch()}
+                className="rounded-full gap-2 hover:bg-destructive/5 hover:text-destructive hover:border-destructive/30"
+              >
+                <RefreshCw size={14} />
+                Retry Loading
+              </Button>
             </div>
           )}
         </div>
@@ -235,17 +263,6 @@ export default function ExperiencesPage({ params }: PageProps) {
         experience={editingExperience}
         onSave={handleSave}
       />
-    </div>
-  );
-}
-
-function LoadingState() {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-      <Loader2 size={48} className="animate-spin text-primary" />
-      <span className="text-lg font-semibold text-muted-foreground animate-pulse tracking-wide">
-        Gathering experiences...
-      </span>
     </div>
   );
 }
@@ -281,29 +298,6 @@ function EmptyState({
           Add Your First Experience
         </Button>
       )}
-    </div>
-  );
-}
-
-function SignInRequiredState() {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6 text-center px-6">
-      <div className="p-6 rounded-full bg-primary/10 text-primary border border-primary/20">
-        <MousePointer2 size={48} />
-      </div>
-      <div className="space-y-2 max-w-md">
-        <h2 className="text-3xl font-bold tracking-tight">Access Restricted</h2>
-        <p className="text-muted-foreground text-lg">
-          You need to be signed in to view or manage experiences. Join our
-          community of builders to showcase yours.
-        </p>
-      </div>
-      <Button
-        className="rounded-full px-10 h-12 text-lg font-bold"
-        onClick={() => (window.location.href = "/signin")}
-      >
-        Go to Sign In
-      </Button>
     </div>
   );
 }

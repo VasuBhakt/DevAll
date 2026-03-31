@@ -29,7 +29,7 @@ export default function SigninPage() {
   // Redirect if already signed in
   useEffect(() => {
     if (isSignedIn) {
-      router.replace("/dashboard");
+      router.replace("/user");
     }
   }, [isSignedIn, router]);
 
@@ -37,7 +37,7 @@ export default function SigninPage() {
     setStatus({ type: null, message: null });
     try {
       await signinAsync(data);
-      router.replace("/dashboard");
+      router.replace("/user");
     } catch (err: any) {
       const message =
         err.response?.data?.message ||

@@ -86,15 +86,15 @@ export function Sidebar() {
   };
 
   const menuItems = [
-    { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-    { icon: Code2, label: "Repo Profiles", href: "/repo-profiles" },
+    { icon: LayoutDashboard, label: "Dashboard", href: "/user" },
+    { icon: FolderKanban, label: "Repo Profiles", href: "/repo-profiles" },
     {
       icon: Award,
       label: "Competitive Programming",
       href: "/cp-profiles",
     },
     { icon: Briefcase, label: "Experience", href: "/experiences" },
-    { icon: FolderKanban, label: "Projects", href: "/projects" },
+    { icon: Code2, label: "Projects", href: "/projects" },
     { icon: Trophy, label: "Achievements", href: "/achievements" },
   ];
 

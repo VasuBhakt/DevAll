@@ -7,7 +7,7 @@ import {
   BookOpen,
   ExternalLink,
   RefreshCw,
-  Code2,
+  FolderKanban,
   Loader2,
   Check,
   Trash2,
@@ -381,7 +381,7 @@ function EmptyPlatformState({
     <div className="flex flex-col items-center justify-center min-h-[500px] border-2 border-dashed border-border/40 rounded-[3rem] bg-secondary/5 space-y-8 text-center p-12 animate-in zoom-in-95 duration-700 ease-out relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none" />
       <div className="p-10 rounded-full bg-secondary/20 border border-border/40 text-muted-foreground/30 relative group-hover:scale-110 transition-transform duration-500">
-        <Code2 size={64} strokeWidth={1} />
+        <FolderKanban size={64} strokeWidth={1} />
         <div className="absolute -bottom-2 -right-2 p-2 rounded-full bg-background border border-border/40 text-primary/40 shadow-xl">
           <RefreshCw size={24} className="animate-spin-slow" />
         </div>

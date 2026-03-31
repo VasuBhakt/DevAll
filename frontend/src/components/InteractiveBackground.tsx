@@ -45,7 +45,7 @@ export function InteractiveBackground() {
       vx: (Math.random() - 0.5) * 0.12, // Even slower for elegance
       vy: (Math.random() - 0.5) * 0.12,
       size: Math.random() * 250 + 250, // 250px - 500px large
-      color: `hsla(${230 + Math.random() * 50}, 85%, 65%, 0.18)`, // More vibrant & opaque
+      color: `hsla(${230 + Math.random() * 50}, 85%, 65%, 0.3)`, // More vibrant & opaque
     }));
   };
 

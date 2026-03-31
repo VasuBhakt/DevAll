@@ -17,15 +17,9 @@ import {
   ProjectCardSkeleton,
 } from "@/app/projects/[[...username]]/ProjectCard";
 import { AddEditProjectModal } from "@/app/projects/[[...username]]/AddEditProjectModal";
-import { Button } from "@/components/ui/button";
-import {
-  Plus,
-  FolderKanban,
-  MousePointer2,
-  Loader2,
-  Info,
-  Rocket,
-} from "lucide-react";
+import { Button, LoadingState, SignInRequiredState } from "@/components";
+import { Plus, Code2, Loader2, Info, Rocket, RefreshCw } from "lucide-react";
+import { UserNotFoundState } from "@/components/UserNotFound";
 
 interface PageProps {
   params: Promise<{ username?: string[] }>;
@@ -49,23 +43,31 @@ export default function ProjectsPage({ params }: PageProps) {
   );
 
   // Infinite Query for Projects
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
-    useInfiniteQuery({
-      queryKey: ["projects", effectiveUsername],
-      queryFn: ({ pageParam = 1 }) => {
-        if (!effectiveUsername) return Promise.resolve([]);
-        // Using common pattern as in experiences/achievements
-        return isOwner
-          ? ProjectService.getCurrentUserProjects(pageParam, 10)
-          : ProjectService.getUserProjects(effectiveUsername, pageParam, 10);
-      },
-      initialPageParam: 1,
-      getNextPageParam: (lastPage, allPages) => {
-        // Backend returns an array of items. If the last page had fewer than 10 (limit), no more pages.
-        return lastPage.length === 10 ? allPages.length + 1 : undefined;
-      },
-      enabled: !!effectiveUsername,
-    });
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+    isLoading: dataLoading,
+    isError,
+    refetch,
+  } = useInfiniteQuery({
+    queryKey: ["projects", effectiveUsername],
+    queryFn: ({ pageParam = 1 }) => {
+      if (!effectiveUsername) return Promise.resolve([]);
+      // Using common pattern as in experiences/achievements
+      return isOwner
+        ? ProjectService.getCurrentUserProjects(pageParam, 10)
+        : ProjectService.getUserProjects(effectiveUsername, pageParam, 10);
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      // Backend returns an array of items. If the last page had fewer than 10 (limit), no more pages.
+      return lastPage.length === 10 ? allPages.length + 1 : undefined;
+    },
+    enabled: !!effectiveUsername,
+  });
 
   // Intersection Observer for Infinite Scroll
   const observerTarget = useRef(null);
@@ -136,9 +138,11 @@ export default function ProjectsPage({ params }: PageProps) {
     }
   };
 
-  if (authLoading) return <LoadingState />;
+  if (authLoading) return <LoadingState message="Gathering Projects..." />;
   if (!effectiveUsername && !authLoading && status === "pending")
     return <SignInRequiredState />;
+  if (!data && !dataLoading)
+    return <UserNotFoundState username={effectiveUsername!} />;
 
   const allProjects = data?.pages.flat() || [];
 
@@ -149,7 +153,7 @@ export default function ProjectsPage({ params }: PageProps) {
         <div className="space-y-2">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-primary/10 text-primary border border-primary/20">
-              <FolderKanban size={28} />
+              <Code2 size={28} />
             </div>
             <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
               {isOwner ? "My Projects" : `${effectiveUsername}'s Projects`}
@@ -190,7 +194,7 @@ export default function ProjectsPage({ params }: PageProps) {
           <EmptyState isOwner={isOwner} onAdd={() => setIsModalOpen(true)} />
         )}
 
-        {status === "success" && allProjects.length > 0 && (
+        {allProjects.length > 0 && (
           <div className="grid grid-cols-1 gap-6 relative">
             {/* Subtle vertical line for visual flow on larger screens */}
             <div className="absolute left-[30px] top-6 bottom-6 w-[2px] bg-gradient-to-b from-primary/10 via-border/40 to-primary/10 hidden md:block" />
@@ -221,10 +225,27 @@ export default function ProjectsPage({ params }: PageProps) {
               </span>
             </div>
           )}
-          {!hasNextPage && allProjects.length > 0 && (
+          {!hasNextPage && allProjects.length > 0 && status === "success" && (
             <div className="text-muted-foreground text-sm flex items-center gap-2 bg-secondary/20 px-4 py-2 rounded-full border border-border/40">
-              <Info size={16} />
+              <Rocket size={16} className="text-primary/60" />
               <span>You've reached the end of the roadmap!</span>
+            </div>
+          )}
+          {isError && allProjects.length > 0 && (
+            <div className="flex flex-col items-center gap-4 py-4">
+              <div className="text-destructive text-sm font-medium flex items-center gap-2 bg-destructive/10 px-4 py-2 rounded-full border border-destructive/20">
+                <Info size={16} />
+                <span>Failed to continue the roadmap.</span>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => refetch()}
+                className="rounded-full gap-2 hover:bg-destructive/5 hover:text-destructive hover:border-destructive/30"
+              >
+                <RefreshCw size={14} />
+                Resume Exploration
+              </Button>
             </div>
           )}
         </div>
@@ -244,17 +265,6 @@ export default function ProjectsPage({ params }: PageProps) {
   );
 }
 
-function LoadingState() {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-      <Loader2 size={48} className="animate-spin text-primary" />
-      <span className="text-lg font-semibold text-muted-foreground animate-pulse tracking-wide">
-        Loading Projects Portfolio...
-      </span>
-    </div>
-  );
-}
-
 function EmptyState({
   isOwner,
   onAdd,
@@ -265,7 +275,7 @@ function EmptyState({
   return (
     <div className="flex flex-col items-center justify-center min-h-[400px] border-2 border-dashed border-border/60 rounded-3xl bg-secondary/5 space-y-6 text-center p-8">
       <div className="p-6 rounded-full bg-secondary/20 border border-border/40 text-muted-foreground/40">
-        <FolderKanban size={48} strokeWidth={1.5} />
+        <Code2 size={48} strokeWidth={1.5} />
       </div>
       <div className="space-y-2 max-w-sm mx-auto">
         <h3 className="text-2xl font-bold tracking-tight text-foreground">
@@ -286,29 +296,6 @@ function EmptyState({
           Add Your First Project
         </Button>
       )}
-    </div>
-  );
-}
-
-function SignInRequiredState() {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6 text-center px-6">
-      <div className="p-6 rounded-full bg-primary/10 text-primary border border-primary/20">
-        <MousePointer2 size={48} />
-      </div>
-      <div className="space-y-3 max-w-md">
-        <h2 className="text-3xl font-bold tracking-tight">Access Restricted</h2>
-        <p className="text-muted-foreground text-lg">
-          Builders only beyond this point. Sign in to view and manage your full
-          project portfolio.
-        </p>
-      </div>
-      <Button
-        className="rounded-full px-10 h-12 text-lg font-bold"
-        onClick={() => (window.location.href = "/signin")}
-      >
-        Go to Sign In
-      </Button>
     </div>
   );
 }

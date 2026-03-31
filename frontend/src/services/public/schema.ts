@@ -6,9 +6,9 @@ import { AchievementResponse as PublicAchievement } from "../achievements";
 export interface PublicCPProfile {
   platform: string;
   handle: string;
-  rating?: number | null;
+  rating: number;
   max_rating?: number | null;
-  rank?: string | null;
+  rank?: string;
   max_rank?: string | null;
   problems_solved?: number | null;
   easy_problems?: number | null;
@@ -19,11 +19,11 @@ export interface PublicCPProfile {
 export interface PublicRepoResponse {
   platform: string;
   profile_link: string;
-  avatar?: string | null;
   followers_count?: number | null;
-  public_repos_count?: number | null;
+  public_repo_count?: number | null;
   likes_count?: number | null;
   contribution_count?: number | null;
+  papers_count?: number | null;
 }
 
 export interface PublicProfileResponse {

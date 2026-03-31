@@ -39,9 +39,9 @@ export const AtcoderRankColor = (rank: number) => {
   if (rank < 400) return { first: "text-gray-500", second: "text-gray-500" };
   if (rank < 800)
     return { first: "text-orange-900", second: "text-orange-900" };
-  if (rank < 1200) return { first: "text-green-500", second: "text-green-500" };
+  if (rank < 1200) return { first: "text-green-700", second: "text-green-700" };
   if (rank < 1600) return { first: "text-cyan-500", second: "text-cyan-500" };
-  if (rank < 2000) return { first: "text-blue-500", second: "text-blue-500" };
+  if (rank < 2000) return { first: "text-blue-700", second: "text-blue-700" };
   if (rank < 2400)
     return { first: "text-yellow-500", second: "text-yellow-500" };
   if (rank < 2800)

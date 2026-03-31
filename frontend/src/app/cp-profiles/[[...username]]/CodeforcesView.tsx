@@ -40,11 +40,11 @@ export const CodeforcesRankColor = (
   rank: number
 ): { first: string; second: string } => {
   if (rank < 1200) return { first: "text-gray-500", second: "text-gray-500" };
-  if (rank < 1400) return { first: "text-green-500", second: "text-green-500" };
+  if (rank < 1400) return { first: "text-green-700", second: "text-green-700" };
   if (rank < 1600) return { first: "text-cyan-500", second: "text-cyan-500" };
-  if (rank < 1900) return { first: "text-blue-500", second: "text-blue-500" };
+  if (rank < 1900) return { first: "text-blue-700", second: "text-blue-700" };
   if (rank < 2100)
-    return { first: "text-purple-500", second: "text-purple-500" };
+    return { first: "text-purple-600", second: "text-purple-600" };
   if (rank < 2300)
     return { first: "text-orange-500", second: "text-orange-500" };
   if (rank < 2400)

@@ -4,11 +4,18 @@ import { use, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks";
 import { RepoService } from "@/services/repoProfile";
-import { Github, Database, Code2, MousePointer2, Loader2 } from "lucide-react";
-import { Button } from "@/components";
+import {
+  Github,
+  Database,
+  FolderKanban,
+  MousePointer2,
+  Loader2,
+} from "lucide-react";
+import { Button, LoadingState, SignInRequiredState } from "@/components";
 import { cn } from "@/lib/utils";
 import { GithubView } from "./GithubView";
 import { HuggingFaceView } from "./HuggingFaceView";
+import { UserNotFoundState } from "@/components/UserNotFound";
 
 interface PageProps {
   params: Promise<{ username?: string[] }>;
@@ -35,8 +42,11 @@ export default function RepoProfilesPage({ params }: PageProps) {
     enabled: !!effectiveUsername,
   });
 
-  if (authLoading) return <LoadingState />;
+  if (authLoading)
+    return <LoadingState message="Gathering Repositories and Deployments..." />;
   if (!effectiveUsername && !authLoading) return <SignInRequiredState />;
+  if (!profiles && !profilesLoading)
+    return <UserNotFoundState username={effectiveUsername!} />;
 
   const githubProfile = profiles?.github;
   const hfProfile = profiles?.hugging_face;
@@ -64,7 +74,7 @@ export default function RepoProfilesPage({ params }: PageProps) {
       <div className="space-y-3">
         <div className="flex items-center gap-4">
           <div className="p-3 rounded-2xl bg-primary/10 text-primary border border-primary/20 shadow-sm backdrop-blur-sm">
-            <Code2 size={32} strokeWidth={2.5} />
+            <FolderKanban size={32} strokeWidth={2.5} />
           </div>
           <div>
             <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
@@ -140,42 +150,6 @@ export default function RepoProfilesPage({ params }: PageProps) {
           )}
         </div>
       </div>
-    </div>
-  );
-}
-
-function LoadingState() {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-      <Loader2 size={48} className="animate-spin text-primary" />
-      <span className="text-lg font-semibold text-muted-foreground animate-pulse tracking-wide">
-        Loading Repos Portfolio...
-      </span>
-    </div>
-  );
-}
-
-function SignInRequiredState() {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6 text-center px-6">
-      <div className="p-6 rounded-full bg-primary/10 text-primary border border-primary/20">
-        <MousePointer2 size={48} />
-      </div>
-      <div className="space-y-3 max-w-md">
-        <h2 className="text-3xl font-bold tracking-tight uppercase">
-          Access Restricted
-        </h2>
-        <p className="text-muted-foreground text-lg">
-          Forge your profile first. Sign in to showcase your code and models to
-          the world.
-        </p>
-      </div>
-      <Button
-        className="rounded-full px-10 h-12 text-lg font-bold hover:scale-105 transition-transform"
-        onClick={() => (window.location.href = "/signin")}
-      >
-        Go to Sign In
-      </Button>
     </div>
   );
 }

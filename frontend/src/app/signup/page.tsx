@@ -31,7 +31,7 @@ export default function SignupPage() {
   // Redirect if already signed in
   useEffect(() => {
     if (isSignedIn) {
-      router.replace("/dashboard");
+      router.replace("/user");
     }
   }, [isSignedIn, router]);
 

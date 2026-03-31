@@ -42,11 +42,11 @@ export const CodechefRankColor = (
   if (rank < 1400)
     return { first: "text-gray-500", second: "text-gray-500", rank: "1" };
   if (rank < 1600)
-    return { first: "text-green-500", second: "text-green-500", rank: "2" };
+    return { first: "text-green-700", second: "text-green-700", rank: "2" };
   if (rank < 1800)
-    return { first: "text-blue-500", second: "text-blue-500", rank: "3" };
+    return { first: "text-blue-700", second: "text-blue-700", rank: "3" };
   if (rank < 2000)
-    return { first: "text-purple-500", second: "text-purple-500", rank: "4" };
+    return { first: "text-purple-600", second: "text-purple-600", rank: "4" };
   if (rank < 2200)
     return { first: "text-yellow-500", second: "text-yellow-500", rank: "5" };
   if (rank < 2500)
