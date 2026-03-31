@@ -47,6 +47,7 @@ class DependenciesService:
                 id=user.id,
                 username=user.username,
                 role=user.role if isinstance(user.role, str) else user.role.value,
+                email=user.email,
             )
             return "Authorized"
         except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):

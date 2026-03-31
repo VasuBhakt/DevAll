@@ -259,7 +259,7 @@ export default function Home() {
             {/* Terminal Content */}
             <div className="p-8 sm:p-12 min-h-[300px] flex items-center justify-center bg-black/80">
               <div className="w-full">
-                <div className="text-[#22eb5e] font-mono text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">
+                <div className="text-terminal font-mono text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">
                   <span className="opacity-50 mr-3 select-none">$</span>
                   <Typewriter
                     texts={[

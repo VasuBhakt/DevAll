@@ -143,6 +143,7 @@ class AuthService:
             id=user.id,
             username=user.username,
             role=user.role if isinstance(user.role, str) else user.role.value,
+            email=user.email,
         )
 
         tokens = self.util_service.generate_access_and_refresh_tokens(user_response)
@@ -235,6 +236,7 @@ class AuthService:
             id=user.id,
             username=user.username,
             role=user.role if isinstance(user.role, str) else user.role.value,
+            email=user.email,
         )
         tokens = self.util_service.generate_access_and_refresh_tokens(user_response)
         user.refresh_token = self.util_service.hash_token(tokens.refresh_token)
