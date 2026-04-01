@@ -309,12 +309,21 @@ export default function UserDashboard({ params }: PageProps) {
         {/* Tab Panels */}
         <div className="min-h-[500px]">
           {activeTab === "profile" &&
-            (profile?.readme && !isOwner ? (
+            (!profile?.readme && !isOwner ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 opacity-40">
+                <Layers size={64} strokeWidth={1} />
+                <p className="text-xl font-bold">
+                  System documentation pending initialization.
+                </p>
+                <p className="text-md font-bold">
+                  This user has not added their readme yet.
+                </p>
+              </div>
+            ) : (
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
                 <SectionContainer
                   title="About Me"
                   icon={User}
-                  hideEmptyPlaceholder
                   username={effectiveUsername}
                 >
                   <div className="p-10 rounded-[3rem] bg-card/30 backdrop-blur-md border border-border/40">
@@ -326,16 +335,6 @@ export default function UserDashboard({ params }: PageProps) {
                     )}
                   </div>
                 </SectionContainer>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 opacity-40">
-                <Layers size={64} strokeWidth={1} />
-                <p className="text-xl font-bold">
-                  System documentation pending initialization.
-                </p>
-                <p className="text-md font-bold">
-                  This user has not added their readme yet.
-                </p>
               </div>
             ))}
 
