@@ -130,6 +130,7 @@ export function AddEditAchievementModal({
                 "bg-background/50 mx-1",
                 "placeholder:text-foreground/30"
               )}
+              maxLength={200}
             />
             {errors.title && <FieldError errors={[errors.title]} />}
           </Field>
@@ -147,6 +148,7 @@ export function AddEditAchievementModal({
                   "bg-background/50 mx-1",
                   "placeholder:text-foreground/30"
                 )}
+                maxLength={200}
               />
             </Field>
 
@@ -160,6 +162,7 @@ export function AddEditAchievementModal({
                   "bg-background/50 mx-1",
                   "placeholder:text-foreground/30"
                 )}
+                maxLength={200}
               />
             </Field>
           </div>
@@ -192,6 +195,7 @@ export function AddEditAchievementModal({
                   "bg-background/50 mx-1",
                   "placeholder:text-foreground/30"
                 )}
+                maxLength={500}
               />
             </Field>
           </div>
@@ -206,6 +210,7 @@ export function AddEditAchievementModal({
                 "bg-background/50 mx-1",
                 "placeholder:text-foreground/30"
               )}
+              maxLength={500}
             />
           </Field>
 
@@ -220,6 +225,7 @@ export function AddEditAchievementModal({
                 "placeholder:text-foreground/30"
               )}
               placeholder="Describe what you achieved or what this certification entails..."
+              maxLength={500}
             />
           </Field>
 

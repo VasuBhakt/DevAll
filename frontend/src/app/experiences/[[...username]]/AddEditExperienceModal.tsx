@@ -130,6 +130,7 @@ export function AddEditExperienceModal({
                   "bg-background/50 h-11 mx-1",
                   "placeholder:text-foreground/30"
                 )}
+                maxLength={200}
               />
               {errors.organization && (
                 <FieldError errors={[errors.organization]} />
@@ -150,6 +151,7 @@ export function AddEditExperienceModal({
                   "bg-background/50 h-11 mx-1",
                   "placeholder:text-foreground/30"
                 )}
+                maxLength={200}
               />
               {errors.job_title && <FieldError errors={[errors.job_title]} />}
             </Field>
@@ -204,6 +206,7 @@ export function AddEditExperienceModal({
                 "bg-background/50 h-11 mx-1",
                 "placeholder:text-foreground/30"
               )}
+              maxLength={200}
             />
           </Field>
 
@@ -285,6 +288,7 @@ export function AddEditExperienceModal({
                 "bg-background/50 h-11 mx-1",
                 "placeholder:text-foreground/30"
               )}
+              maxLength={500}
               placeholder="Describe your achievements and responsibilities..."
             />
             {errors.description && <FieldError errors={[errors.description]} />}

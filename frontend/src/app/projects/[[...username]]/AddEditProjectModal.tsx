@@ -135,6 +135,7 @@ export function AddEditProjectModal({
                   "bg-background/50 h-11 mx-1",
                   "placeholder:text-foreground/30"
                 )}
+                maxLength={200}
               />
               {errors.name && <FieldError errors={[errors.name]} />}
             </Field>
@@ -172,6 +173,7 @@ export function AddEditProjectModal({
                 "bg-background/50 mx-1",
                 "placeholder:text-foreground/30"
               )}
+              maxLength={500}
               placeholder="Deep dive into the core architecture, technical challenges and impact..."
             />
             {errors.description && <FieldError errors={[errors.description]} />}
@@ -188,6 +190,7 @@ export function AddEditProjectModal({
                   "bg-background/50 h-11",
                   "placeholder:text-foreground/30"
                 )}
+                maxLength={500}
               />
             </Field>
 
@@ -201,6 +204,7 @@ export function AddEditProjectModal({
                   "bg-background/50 h-11",
                   "placeholder:text-foreground/30"
                 )}
+                maxLength={500}
               />
             </Field>
           </div>
