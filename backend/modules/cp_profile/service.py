@@ -38,8 +38,6 @@ class CPProfileService:
         redis_client=None,
         force: bool = False,
     ):
-        cache_key = f"cp_profile:{platform}:{user_id}"
-
         # 1. Determine which model to use
         if platform == "codeforces":
             platform_model = CodeforcesProfile
@@ -51,13 +49,6 @@ class CPProfileService:
             platform_model = AtCoderProfile
         else:
             raise APIException(400, "Invalid platform")
-
-        # 2. Check Cache (Skip if force=True)
-        if redis_client and not force:
-            cached_data = await redis_client.get(cache_key)
-            if cached_data:
-                logger.info(f"Cache hit for {cache_key}")
-                return platform_model.model_validate_json(cached_data)
 
         # 3. Fetch if not in cache
         profile = None
@@ -95,14 +86,6 @@ class CPProfileService:
             )
             await db.execute(stmt)
             await db.commit()
-
-        # 5. Save to Cache
-        if redis_client:
-            # Cache for 6 hours
-            await redis_client.set(
-                cache_key, profile.model_dump_json(by_alias=False), ex=3600 * 6
-            )
-            logger.info(f"Cached data for {cache_key}")
 
         return profile
 
@@ -201,6 +184,4 @@ class CPProfileService:
                 status=500,
                 error_code="SERVER_ERROR",
             )
-        if redis_client:
-            await redis_client.delete(f"cp_profile:{platform}:{user_id}")
         return "Profile deleted successfully"
