@@ -1,6 +1,6 @@
 # DevAll
 
-**DevAll** is a purpose-built, unified workspace designed to consolidate your entire technical identity into a single, sleek dashboard. By aggregating real-time statistics from platforms like GitHub an and various competitive programming platforms, DevAll eliminates the need for multiple profile links, providing a unified view of your contributions, rankings, and repositories.
+**DevAll** is a purpose-built, unified workspace designed to consolidate your entire technical identity into a single, sleek dashboard. By aggregating real-time statistics from and various competitive programming and repository platforms, DevAll eliminates the need for multiple profile links, providing a unified view of your contributions, rankings, and repositories.
 
 > **Note:** This project is **not open source** and is proprietary software. All rights reserved.
 
