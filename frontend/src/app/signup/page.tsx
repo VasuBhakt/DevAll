@@ -110,6 +110,11 @@ export default function SignupPage() {
                       value: 3,
                       message: "Username must be at least 3 characters",
                     },
+                    pattern: {
+                      value: /^[A-Za-z0-9_]+$/,
+                      message:
+                        "Username can only contain letters, numbers, and underscores. No spaces allowed.",
+                    },
                   })}
                   id="username"
                   type="text"

@@ -187,7 +187,7 @@ export default function UserDashboard({ params }: PageProps) {
             </div>
 
             <div className="max-w-2xl">
-              <p className="text-foreground/80 text-lg leading-relaxed italic font-medium">
+              <p className="text-foreground/40 text-lg leading-relaxed italic font-medium">
                 {profile?.bio ||
                   "This user is on a stealth journey through the techverse."}
               </p>
@@ -285,8 +285,8 @@ export default function UserDashboard({ params }: PageProps) {
             {[
               { id: "profile", label: "Profile", icon: User },
               { id: "projects", label: "Projects", icon: Code2 },
-              { id: "experience", label: "Experience", icon: Briefcase },
-              { id: "cp", label: "Competitve", icon: Award },
+              { id: "career", label: "Career", icon: Briefcase },
+              { id: "cp", label: "Competitve Programming", icon: Award },
               { id: "repos", label: "Repositories", icon: FolderKanban },
             ].map((tab) => (
               <button
@@ -308,114 +308,164 @@ export default function UserDashboard({ params }: PageProps) {
 
         {/* Tab Panels */}
         <div className="min-h-[500px]">
-          {activeTab === "profile" && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-              <SectionContainer
-                title="About Me"
-                icon={User}
-                hideEmptyPlaceholder
-                username={effectiveUsername}
-              >
-                <div className="p-10 rounded-[3rem] bg-card/30 backdrop-blur-md border border-border/40">
-                  {profile?.readme ? (
-                    <MarkdownRenderer
-                      content={profile.readme}
-                      className="max-h-[800px] overflow-y-auto custom-scrollbar"
-                    />
-                  ) : (
-                    <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 opacity-40">
-                      <Layers size={64} strokeWidth={1} />
-                      <p className="text-xl font-bold">
-                        System documentation pending initialization.
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </SectionContainer>
-            </div>
-          )}
+          {activeTab === "profile" &&
+            (profile?.readme && !isOwner ? (
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <SectionContainer
+                  title="About Me"
+                  icon={User}
+                  hideEmptyPlaceholder
+                  username={effectiveUsername}
+                >
+                  <div className="p-10 rounded-[3rem] bg-card/30 backdrop-blur-md border border-border/40">
+                    {profile?.readme && (
+                      <MarkdownRenderer
+                        content={profile.readme}
+                        className="max-h-[800px] overflow-y-auto custom-scrollbar"
+                      />
+                    )}
+                  </div>
+                </SectionContainer>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 opacity-40">
+                <Layers size={64} strokeWidth={1} />
+                <p className="text-xl font-bold">
+                  System documentation pending initialization.
+                </p>
+                <p className="text-md font-bold">
+                  This user has not added their readme yet.
+                </p>
+              </div>
+            ))}
 
-          {activeTab === "projects" && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-              <SectionContainer
-                title="Projects"
-                icon={Code2}
-                isEmpty={projects.length === 0}
-                isOwner={isOwner}
-                addHref={`/projects/${effectiveUsername}`}
-                subValue="Top 3"
-                username={effectiveUsername}
-              >
-                <PublicProjectSection projects={projects} />
-              </SectionContainer>
-            </div>
-          )}
+          {activeTab === "projects" &&
+            (projects.length === 0 && !isOwner ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 opacity-40">
+                <Layers size={64} strokeWidth={1} />
+                <p className="text-xl font-bold">
+                  System documentation pending initialization.
+                </p>
+                <p className="text-md font-bold">
+                  This user has not added any projects yet.
+                </p>
+              </div>
+            ) : (
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <SectionContainer
+                  title="Projects"
+                  icon={Code2}
+                  isEmpty={projects.length === 0}
+                  isOwner={isOwner}
+                  addHref={`/projects/${effectiveUsername}`}
+                  subValue="Top 3"
+                  username={effectiveUsername}
+                >
+                  <PublicProjectSection projects={projects} />
+                </SectionContainer>
+              </div>
+            ))}
 
-          {activeTab === "experience" && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 grid grid-cols-1 lg:grid-cols-2 gap-12">
-              <SectionContainer
-                title="Experience"
-                icon={Briefcase}
-                isEmpty={experiences.length === 0}
-                isOwner={isOwner}
-                addHref={`/experiences/${effectiveUsername}`}
-                subValue="Most Recent"
-                username={effectiveUsername}
-              >
-                <PublicExperienceSection experiences={experiences} />
-              </SectionContainer>
+          {activeTab === "career" &&
+            (experiences.length === 0 &&
+            achievements.length === 0 &&
+            !isOwner ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 opacity-40">
+                <Layers size={64} strokeWidth={1} />
+                <p className="text-xl font-bold">
+                  System documentation pending initialization.
+                </p>
+                <p className="text-md font-bold">
+                  This user has not added any experience or achievements yet.
+                </p>
+              </div>
+            ) : (
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <SectionContainer
+                  title="Experience"
+                  icon={Briefcase}
+                  isEmpty={experiences.length === 0}
+                  isOwner={isOwner}
+                  addHref={`/experiences/${effectiveUsername}`}
+                  subValue="Most Recent"
+                  username={effectiveUsername}
+                >
+                  <PublicExperienceSection experiences={experiences} />
+                </SectionContainer>
 
-              <SectionContainer
-                title="Achievements"
-                icon={Trophy}
-                isEmpty={achievements.length === 0}
-                isOwner={isOwner}
-                addHref={`/achievements/${effectiveUsername}`}
-                subValue="Top 3"
-                username={effectiveUsername}
-              >
-                <PublicAchievementSection achievements={achievements} />
-              </SectionContainer>
-            </div>
-          )}
+                <SectionContainer
+                  title="Achievements"
+                  icon={Trophy}
+                  isEmpty={achievements.length === 0}
+                  isOwner={isOwner}
+                  addHref={`/achievements/${effectiveUsername}`}
+                  subValue="Top 3"
+                  username={effectiveUsername}
+                >
+                  <PublicAchievementSection achievements={achievements} />
+                </SectionContainer>
+              </div>
+            ))}
 
-          {activeTab === "cp" && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-              <SectionContainer
-                title="Competitive Programming"
-                icon={Award}
-                isEmpty={cp_profiles.length === 0}
-                isOwner={isOwner}
-                addHref={`/cp-profiles/${effectiveUsername}`}
-                username={effectiveUsername}
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {cp_profiles.map((p, i) => (
-                    <CPQuickCard key={i} profile={p} />
-                  ))}
-                </div>
-              </SectionContainer>
-            </div>
-          )}
+          {activeTab === "cp" &&
+            (cp_profiles.length === 0 && !isOwner ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 opacity-40">
+                <Layers size={64} strokeWidth={1} />
+                <p className="text-xl font-bold">
+                  System documentation pending initialization.
+                </p>
+                <p className="text-md font-bold">
+                  This user has not synced any programming profiles yet.
+                </p>
+              </div>
+            ) : (
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <SectionContainer
+                  title="Competitive Programming"
+                  icon={Award}
+                  isEmpty={cp_profiles.length === 0}
+                  isOwner={isOwner}
+                  addHref={`/cp-profiles/${effectiveUsername}`}
+                  username={effectiveUsername}
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {cp_profiles.map((p, i) => (
+                      <CPQuickCard key={i} profile={p} />
+                    ))}
+                  </div>
+                </SectionContainer>
+              </div>
+            ))}
 
-          {activeTab === "repos" && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-              <SectionContainer
-                title="Repositories"
-                icon={FolderKanban}
-                isEmpty={repo_profiles.length === 0}
-                isOwner={isOwner}
-                addHref={`/repo-profiles/${effectiveUsername}`}
-                username={effectiveUsername}
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {repo_profiles.map((p, i) => (
-                    <RepoQuickCard key={i} profile={p} />
-                  ))}
-                </div>
-              </SectionContainer>
-            </div>
-          )}
+          {activeTab === "repos" &&
+            (repo_profiles.length === 0 && !isOwner ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 opacity-40">
+                <Layers size={64} strokeWidth={1} />
+                <p className="text-xl font-bold">
+                  System documentation pending initialization.
+                </p>
+                <p className="text-md font-bold">
+                  This user has not synced any repositories yet.
+                </p>
+              </div>
+            ) : (
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <SectionContainer
+                  title="Repositories"
+                  icon={FolderKanban}
+                  isEmpty={repo_profiles.length === 0}
+                  isOwner={isOwner}
+                  addHref={`/repo-profiles/${effectiveUsername}`}
+                  username={effectiveUsername}
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {repo_profiles.map((p, i) => (
+                      <RepoQuickCard key={i} profile={p} />
+                    ))}
+                  </div>
+                </SectionContainer>
+              </div>
+            ))}
         </div>
       </div>
     </div>
@@ -485,7 +535,7 @@ function SectionContainer({
                 </p>
                 {isOwner && (
                   <p className="text-xs text-muted-foreground/60">
-                    Click the add button above to showcase your work.
+                    Go to {`your ${title} Page`} to add content.
                   </p>
                 )}
               </div>
