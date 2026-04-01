@@ -175,19 +175,19 @@ export default function UserDashboard({ params }: PageProps) {
                     className="flex items-center gap-2 hover:text-primary transition-colors text-sm"
                   >
                     <Globe size={16} className="text-primary/60" />
-                    <span>
-                      {profile?.portfolio_website?.replace(
-                        /^https?:\/\/(www\.)?/,
-                        ""
-                      )}
-                    </span>
+                    <span>Website</span>
                   </a>
                 )}
               </div>
             </div>
 
             <div className="max-w-2xl">
-              <p className="text-foreground/40 text-lg leading-relaxed italic font-medium">
+              <p
+                className={cn(
+                  "text-foreground/40 text-lg leading-relaxed italic font-medium",
+                  profile?.bio && "text-foreground"
+                )}
+              >
                 {profile?.bio ||
                   "This user is on a stealth journey through the techverse."}
               </p>
