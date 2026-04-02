@@ -11,14 +11,14 @@
 - **Unified Dashboard:** Seamlessly functions as both a personal development workspace and a public-facing portfolio.
 - **Asynchronous Data Aggregation**: Leverages Python’s asyncio.gather and httpx to fetch metrics from multiple third-party APIs concurrently, keeping system latency bounded to the slowest external response.
 - **Distributed Global Throttling**: Utilizes a Redis-backed coordination layer to space out requests globally to prevent IP blacklisting and maintain consitent service
-- **Modern UI/UX:** Built with Tailwind CSS, Framer Motion for sleek interactions, and Shadcn UI for premium, accessible components.
+- **Modern UI/UX:** Built with Tailwind CSS, Framer Motion for sleek interactions, and Shadcn UI for premium, accessible components. State managament handled through TanStack Query
 ---
 
 ## 🏗️ System Architecture
 
 ```
 DevAll/
-├── frontend/     # NextJS 16 (Hosted on Vercel)
+├── frontend/     # NextJS 16 + TanStack Query (Hosted on Vercel)
 └── backend/      # FastAPI + NeonDB (PostgreSQL) + Redis (Hosted on Render)
 
 ```
