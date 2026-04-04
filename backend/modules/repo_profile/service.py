@@ -186,5 +186,5 @@ class RepoProfileService:
                 error_code="SERVER_ERROR",
             )
         if redis_client:
-            await redis_client.delete(f"repo_profile:{platform}:{user_id}")
+            await redis_client.delete(f"{platform}:{user_id}")
         return "Profile deleted successfully"

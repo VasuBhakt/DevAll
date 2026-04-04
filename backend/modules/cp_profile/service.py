@@ -197,4 +197,6 @@ class CPProfileService:
                 status=500,
                 error_code="SERVER_ERROR",
             )
+        if redis_client:
+            await redis_client.delete(f"{platform}:{user_id}")
         return "Profile deleted successfully"
