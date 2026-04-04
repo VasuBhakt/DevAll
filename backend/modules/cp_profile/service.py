@@ -50,6 +50,17 @@ class CPProfileService:
         else:
             raise APIException(400, "Invalid platform")
 
+        cache_key = f"{platform}:{user_id}"
+        if redis_client and await redis_client.exists(cache_key):
+            query = select(CP_Profile).where(
+                CP_Profile.user_id == user_id, CP_Profile.platform == platform
+            )
+            result = await db.execute(query)
+            existing_profile = result.scalars().first()
+            if existing_profile:
+                logger.info(f"Cache hit for {cache_key}")
+                return platform_model.model_validate(existing_profile)
+
         # 3. Fetch if not in cache
         profile = None
         if platform == "codeforces":
@@ -86,7 +97,9 @@ class CPProfileService:
             )
             await db.execute(stmt)
             await db.commit()
-
+        cache_key = f"{platform}:{handle}"
+        if redis_client:
+            await redis_client.set(cache_key, "true", ex=6 * 3600)
         return profile
 
     async def get_cp_profiles(

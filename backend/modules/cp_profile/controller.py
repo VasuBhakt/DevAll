@@ -47,7 +47,7 @@ async def fetch_cp_profile(
     auth_check: str = Depends(get_dependencies_service().verifyJWT),
 ):
     response = await cp_profile_service.fetch_cp_profile(
-        request.state.user.id, handle, platform, db, redis_client, force=True
+        request.state.user.id, handle, platform, db, redis_client
     )
     return APIResponse(
         message="CP profile fetched successfully", status=200, data=response

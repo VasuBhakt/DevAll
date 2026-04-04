@@ -34,7 +34,6 @@ class RepoProfileService:
         redis_client=None,
         force: bool = False,
     ):
-        cache_key = f"repo_profile:{platform}:{user_id}"
 
         # 1. Determine which model to use
         if platform == "github":
@@ -46,12 +45,16 @@ class RepoProfileService:
                 status=400, message="Invalid platform", error_code="INVALID_PLATFORM"
             )
 
-        # 2. Check Cache (Skip if force=True)
-        if redis_client and not force:
-            cached_data = await redis_client.get(cache_key)
-            if cached_data:
+        cache_key = f"{platform}:{user_id}"
+        if redis_client and await redis_client.exists(cache_key):
+            query = select(Repo_Profile).where(
+                Repo_Profile.user_id == user_id, Repo_Profile.platform == platform
+            )
+            result = await db.execute(query)
+            existing_profile = result.scalars().first()
+            if existing_profile:
                 logger.info(f"Cache hit for {cache_key}")
-                return platform_model.model_validate_json(cached_data)
+                return platform_model.model_validate(existing_profile)
 
         # 3. Fetch if not in cache
         profile = None
@@ -85,9 +88,7 @@ class RepoProfileService:
         # 5. Save to Cache
         if redis_client:
             # Cache for 6 hours
-            await redis_client.set(
-                cache_key, profile.model_dump_json(by_alias=False), ex=3600 * 6
-            )
+            await redis_client.set(cache_key, "true", ex=3600 * 6)
             logger.info(f"Cached data for {cache_key}")
 
         return profile

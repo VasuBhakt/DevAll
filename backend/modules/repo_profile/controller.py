@@ -52,7 +52,6 @@ async def fetch_repo_profile(
         platform,
         db,
         redis_client,
-        force=True,
     )
 
     return APIResponse(
