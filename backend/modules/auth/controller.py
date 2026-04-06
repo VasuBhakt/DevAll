@@ -128,8 +128,18 @@ async def signout(
             error_code="UNAUTHORIZED",
         )
     message = await auth_service.signout(request.state.user.id, db)
-    response.delete_cookie("access_token")
-    response.delete_cookie("refresh_token")
+    response.delete_cookie(
+        key="access_token",
+        httponly=True,
+        secure=True,
+        samesite="none",
+    )
+    response.delete_cookie(
+        key="refresh_token",
+        httponly=True,
+        secure=True,
+        samesite="none",
+    )
     return APIResponse(message=message, status=200)
 
 
