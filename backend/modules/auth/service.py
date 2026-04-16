@@ -123,7 +123,8 @@ class AuthService:
         self, request: SigninRequest, db: AsyncSession = Depends(get_db)
     ) -> SigninResponse:
         query = select(User).where(
-            (User.email == request.identifier) | (User.username == request.identifier)
+            (User.email == request.identifier)
+            | (User.username == request.identifier.lower())
         )
         result = await db.execute(query)
         user = result.scalars().first()
