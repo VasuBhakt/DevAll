@@ -260,9 +260,9 @@ export default function LeetcodeView({
             <div className="w-32 h-32 rounded-full bg-transparent flex items-center justify-center backdrop-blur-sm group-hover:scale-105 transition-transform duration-500">
               {profile?.rank ? (
                 <img
-                  src={`${profile.rank}.png`}
-                  alt="LeetCode"
-                  className="w-full h-full object-cover rounded-full"
+                  src={`/${profile?.rank}.png`}
+                  alt={"LeetCode Rank"}
+                  className="w-full h-full object-contain hover:drop-shadow-[0_0_15px_rgba(var(--primary),0.3)] transition-all duration-300"
                 />
               ) : (
                 <img
