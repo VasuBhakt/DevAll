@@ -18,12 +18,15 @@ export function UserNotFoundState({ username }: Props) {
         <p className="text-muted-foreground text-lg">
           The user @{username} does not exist.
         </p>
+        <p className="text-muted-foreground text-sm">
+          (If you are here for the first time, this might be a server issue, please try refreshing or try again later.)
+        </p>
       </div>
       <Button
         className="rounded-full px-10 h-12 text-lg font-bold hover:scale-105 transition-transform"
-        onClick={() => (window.location.href = "/signin")}
+        onClick={() => (window.location.href = "/")}
       >
-        Go to Sign In
+        Go to Main Page
       </Button>
     </div>
   );
