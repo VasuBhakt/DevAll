@@ -9,8 +9,9 @@
 ## 🚀 Core Capabilities
 - **Secure Auth** : JWT-based authentication with Refresh Token rotation and Brevo password recovery and email verification.
 - **Unified Dashboard:** Seamlessly functions as both a personal development workspace and a public-facing portfolio.
-- **Asynchronous Data Aggregation**: Leverages Python’s asyncio.gather and httpx to fetch metrics from multiple third-party APIs concurrently, keeping system latency bounded to the slowest external response.
-- **Distributed Global Throttling**: Utilizes a Redis-backed coordination layer to space out requests globally to prevent IP blacklisting and maintain consitent service
+- **Non-Blocking Background Aggregation**: Implements a Stale-While-Revalidate pattern using FastAPI `BackgroundTasks` to instantly return cached data, completely decoupling API response times from slow third-party platforms.
+- **Resilient Fan-Out Architecture**: Leverages Python’s `asyncio` and `tenacity` to concurrently fetch external metrics in the background, featuring automatic exponential backoff retries for robust fault tolerance.
+- **Distributed Global Throttling**: Utilizes a Redis-backed coordination layer to space out requests globally to prevent IP blacklisting and maintain consistent service.
 - **Modern UI/UX:** Built with Tailwind CSS, Framer Motion for sleek interactions, and Shadcn UI for premium, accessible components. State managament handled through TanStack Query
 ---
 
