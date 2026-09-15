@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, BackgroundTasks
 from .service import CPProfileService
 from database import get_db, get_redis
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -23,9 +23,10 @@ async def get_cp_profiles(
     db: AsyncSession = Depends(get_db),
     redis_client: Redis = Depends(get_redis),
     cp_profile_service: CPProfileService = Depends(get_cp_profile_service),
+    background_tasks: BackgroundTasks = BackgroundTasks(),
 ):
     response = await cp_profile_service.get_cp_profiles(
-        username.lower(), db, redis_client
+        username.lower(), db, redis_client, background_tasks
     )
     return APIResponse(
         message="CP profiles fetched successfully", status=200, data=response

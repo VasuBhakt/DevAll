@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, BackgroundTasks
 from .service import RepoProfileService
 from database import get_db, get_redis
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -23,9 +23,10 @@ async def get_repo_profiles(
     db: AsyncSession = Depends(get_db),
     redis_client: Redis = Depends(get_redis),
     repo_profile_service: RepoProfileService = Depends(get_repo_profile_service),
+    background_tasks: BackgroundTasks = BackgroundTasks(),
 ):
     response = await repo_profile_service.get_repo_profiles(
-        username.lower(), db, redis_client
+        username.lower(), db, redis_client, background_tasks
     )
     return APIResponse(
         message="Repo profiles fetched successfully", status=200, data=response

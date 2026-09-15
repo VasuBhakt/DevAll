@@ -14,6 +14,9 @@ from .fetchers import (
 from utils import APIException
 from .schemas import RepoProfileResponse
 import json
+from tenacity import retry, stop_after_attempt, wait_exponential
+from database.database import AsyncSessionLocal
+from fastapi import BackgroundTasks
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -93,8 +96,29 @@ class RepoProfileService:
 
         return profile
 
+    @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
+    async def fetch_repo_profile_with_retry(self, user_id, handle, platform, db, redis_client):
+        return await self.fetch_repo_profile(user_id, handle, platform, db, redis_client, force=True)
+
+    async def background_refresh_all(self, user_id, profiles_to_fetch, redis_client, username):
+        async with AsyncSessionLocal() as db:
+            tasks = [
+                self.fetch_repo_profile_with_retry(user_id, handle, platform, db, redis_client)
+                for platform, handle in profiles_to_fetch.items()
+            ]
+            if tasks:
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+                for i, res in enumerate(results):
+                    platform = list(profiles_to_fetch.keys())[i]
+                    if isinstance(res, Exception):
+                        logger.error(f"Background refresh failed for {platform}: {str(res)}")
+            
+            fresh_key = f"repo_profiles:fresh:{username}"
+            if redis_client:
+                await redis_client.set(fresh_key, "true", ex=24 * 3600)
+
     async def get_repo_profiles(
-        self, username: str, db: AsyncSession = Depends(get_db), redis_client=None
+        self, username: str, db: AsyncSession = Depends(get_db), redis_client=None, background_tasks: BackgroundTasks = None
     ) -> RepoProfileResponse:
         """Fetches all repo profiles for a user. If not refreshed in 24 hours, fetches from API."""
         # 1. Fetch User ID and existing profiles in one query
@@ -126,30 +150,18 @@ class RepoProfileService:
         if redis_client:
             is_fresh = await redis_client.get(fresh_key)
 
-        # 3. If NOT fresh, refresh all existing platforms in parallel
+        # 3. If NOT fresh, enqueue background refresh
         if not is_fresh:
-            logger.info(f"Refreshing all repo profiles for user {username} (24h stale)")
-            platforms = list(db_profiles.keys())
-            tasks = [
-                self.fetch_repo_profile(
-                    user_id, db_profiles[p].handle, p, db, redis_client, force=True
+            logger.info(f"Queueing background refresh for repo profiles of user {username}")
+            profiles_to_fetch = {p: db_profiles[p].handle for p in db_profiles}
+            if background_tasks and profiles_to_fetch:
+                background_tasks.add_task(
+                    self.background_refresh_all,
+                    user_id,
+                    profiles_to_fetch,
+                    redis_client,
+                    username
                 )
-                for p in platforms
-            ]
-
-            if tasks:
-                results = await asyncio.gather(*tasks, return_exceptions=True)
-                for i, res in enumerate(results):
-                    if isinstance(res, Exception):
-                        logger.error(
-                            f"Background refresh failed for {platforms[i]}: {str(res)}"
-                        )
-                    else:
-                        # Update local dict with new data to avoid re-fetching from DB
-                        db_profiles[platforms[i]] = res
-            # Set fresh flag for 24 hours
-            if redis_client:
-                await redis_client.set(fresh_key, "true", ex=24 * 3600)
         # 4. Map to RepoProfileResponse
         response = RepoProfileResponse()
         for platform, profile in db_profiles.items():
