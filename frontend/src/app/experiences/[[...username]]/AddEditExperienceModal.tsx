@@ -281,6 +281,11 @@ export function AddEditExperienceModal({
             <Textarea
               {...register("description", {
                 required: "Description is required",
+                validate: (value) => {
+                  if (!value) return true;
+                  const wordCount = value.trim().split(/\s+/).length;
+                  return wordCount <= 2000 || "Description must not exceed 2000 words";
+                }
               })}
               id="description"
               rows={4}
@@ -288,7 +293,7 @@ export function AddEditExperienceModal({
                 "bg-background/50 h-11 mx-1",
                 "placeholder:text-foreground/30"
               )}
-              maxLength={500}
+              maxLength={20000}
               placeholder="Describe your achievements and responsibilities..."
             />
             {errors.description && <FieldError errors={[errors.description]} />}

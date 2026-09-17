@@ -18,6 +18,15 @@ class AchievementBase(BaseModel):
     def format_date(cls, v):
         return parse_date(cls, v)
 
+    @field_validator("description")
+    @classmethod
+    def validate_description_length(cls, v):
+        if v is not None:
+            words = v.split()
+            if len(words) > 2000:
+                raise ValueError("Description must not exceed 2000 words")
+        return v
+
 
 class CreateAchievementRequest(AchievementBase):
     pass

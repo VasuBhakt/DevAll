@@ -217,7 +217,13 @@ export function AddEditAchievementModal({
           <Field>
             <FieldLabel htmlFor="description">Details / Description</FieldLabel>
             <Textarea
-              {...register("description")}
+              {...register("description", {
+                validate: (value) => {
+                  if (!value) return true;
+                  const wordCount = value.trim().split(/\s+/).length;
+                  return wordCount <= 2000 || "Description must not exceed 2000 words";
+                }
+              })}
               id="description"
               rows={4}
               className={cn(
@@ -225,8 +231,9 @@ export function AddEditAchievementModal({
                 "placeholder:text-foreground/30"
               )}
               placeholder="Describe what you achieved or what this certification entails..."
-              maxLength={500}
+              maxLength={20000}
             />
+            {errors.description && <FieldError errors={[errors.description]} />}
           </Field>
 
           <DialogFooter className="pt-4 gap-3">

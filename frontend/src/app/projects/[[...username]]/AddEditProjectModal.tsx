@@ -166,6 +166,11 @@ export function AddEditProjectModal({
             <Textarea
               {...register("description", {
                 required: "Description is required",
+                validate: (value) => {
+                  if (!value) return true;
+                  const wordCount = value.trim().split(/\s+/).length;
+                  return wordCount <= 2000 || "Description must not exceed 2000 words";
+                }
               })}
               id="description"
               rows={4}
@@ -173,7 +178,7 @@ export function AddEditProjectModal({
                 "bg-background/50 mx-1",
                 "placeholder:text-foreground/30"
               )}
-              maxLength={500}
+              maxLength={20000}
               placeholder="Deep dive into the core architecture, technical challenges and impact..."
             />
             {errors.description && <FieldError errors={[errors.description]} />}
