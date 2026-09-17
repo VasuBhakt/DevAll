@@ -103,7 +103,7 @@ export default function CPProfilesPage({ params }: PageProps) {
       </div>
       <div className="space-y-6">
         <div className="flex flex-wrap items-center gap-3 p-2 bg-secondary/15 rounded-[1.5rem] w-fit border border-border/40 backdrop-blur-sm">
-          {platforms.map((p) => (
+          {platforms.map((p) => ((p.available || isOwner) && (
             <button
               key={p.id}
               onClick={() => setActivePlatform(p.id as Platform)}
@@ -117,7 +117,7 @@ export default function CPProfilesPage({ params }: PageProps) {
               <img src={p.logo} alt={p.label} width={20} height={20} />
               {p.label}
             </button>
-          ))}
+          )))}
         </div>
         {/* Content Area */}
         <div className="relative min-h-[600px] w-full">
