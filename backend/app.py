@@ -7,18 +7,27 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 import os
+import logging
 from dotenv import load_dotenv
 
 load_dotenv()
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(SlowAPIMiddleware)
 
+frontend_url = os.getenv("FRONTEND_URL")
+allowed_origins = [frontend_url] if frontend_url else []
+if "http://localhost:3000" not in allowed_origins:
+    allowed_origins.append("http://localhost:3000")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("FRONTEND_URL", None)],
+    allow_origins=allowed_origins,
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -60,7 +69,7 @@ async def health_check():
 
 
 @app.exception_handler(APIException)
-async def global_exception_handler(request: Request, exc: APIException):
+async def api_exception_handler(request: Request, exc: APIException):
     status = getattr(exc, "status", 500)
     message = getattr(exc, "message", "Internal Server Error")
 
@@ -71,5 +80,19 @@ async def global_exception_handler(request: Request, exc: APIException):
             "status": status,
             "message": message,
             "error_code": exc.error_code,
+        },
+    )
+
+
+@app.exception_handler(Exception)
+async def all_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Unhandled Server Error on {request.url.path}: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={
+            "success": False,
+            "status": 500,
+            "message": str(exc),
+            "error_code": "INTERNAL_SERVER_ERROR",
         },
     )

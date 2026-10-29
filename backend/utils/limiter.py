@@ -10,9 +10,13 @@ load_dotenv()
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = os.getenv("REDIS_PORT", "6379")
 REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
-REDIS_USERNAME = os.getenv("REDIS_USERNAME")
+REDIS_USERNAME = os.getenv("REDIS_USERNAME", "default")
+is_ssl = (
+    os.getenv("REDIS_SSL", "false").lower() in ("true", "1", "yes")
+    or "upstash.io" in REDIS_HOST
+)
 
-protocol = "redis"
+protocol = "rediss" if is_ssl else "redis"
 
 if REDIS_PASSWORD:
     if REDIS_USERNAME:
