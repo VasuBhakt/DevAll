@@ -12,6 +12,7 @@ class AchievementBase(BaseModel):
     event: Optional[str] = None
     event_date: Optional[date] = None
     event_link: Optional[str] = None
+    is_pinned: Optional[bool] = False
 
     @field_validator("event_date", mode="before")
     @classmethod

@@ -95,7 +95,7 @@ class AchievementService:
             query = (
                 select(Achievement)
                 .where(Achievement.user_id == user_id)
-                .order_by(Achievement.created_at.desc())
+                .order_by(Achievement.is_pinned.desc(), Achievement.created_at.desc())
                 .offset(offset)
                 .limit(limit)
             )

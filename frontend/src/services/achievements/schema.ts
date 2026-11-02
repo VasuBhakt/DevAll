@@ -6,6 +6,7 @@ export interface CreateAchievementRequest {
   event?: string | null;
   event_date?: Date | null;
   event_link?: string | null;
+  is_pinned?: boolean;
 }
 
 export interface UpdateAchievementRequest extends Partial<CreateAchievementRequest> {}
@@ -19,4 +20,5 @@ export interface AchievementResponse {
   event?: string | null;
   event_date?: Date | null;
   event_link?: string | null;
+  is_pinned?: boolean;
 }

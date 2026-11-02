@@ -65,7 +65,7 @@ class PublicService:
         achievements_query = (
             select(Achievement)
             .where(Achievement.user_id == user.id)
-            .order_by(desc(Achievement.event_date), desc(Achievement.created_at))
+            .order_by(desc(Achievement.is_pinned), desc(Achievement.event_date), desc(Achievement.created_at))
             .limit(3)
         )
         achievements_res = await db.execute(achievements_query)

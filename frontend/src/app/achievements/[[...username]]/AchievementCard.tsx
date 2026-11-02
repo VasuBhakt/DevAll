@@ -9,6 +9,7 @@ import {
   Lightbulb,
   Link2,
   Pencil,
+  Pin,
   Trash2,
 } from "lucide-react";
 import { Button, Badge } from "@/components/ui";
@@ -44,9 +45,16 @@ export function AchievementCard({
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div className="space-y-3 flex-1">
           <div className="space-y-1">
-            <h3 className="text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
-              {achievement.title}
-            </h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
+                {achievement.title}
+              </h3>
+              {achievement.is_pinned && (
+                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-full">
+                  <Pin size={10} className="rotate-45" /> Pinned
+                </span>
+              )}
+            </div>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-muted-foreground text-sm font-medium">
               {achievement.event && (
                 <div className="flex items-center gap-1.5">

@@ -7,6 +7,7 @@ import {
   Lightbulb,
   ExternalLink,
   Link2,
+  Pin,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -19,6 +20,7 @@ export default function PublicAchievementSection({ achievements }: Props) {
     <div className="grid grid-cols-1 gap-4">
       {achievements.map((achievement, i) => (
         <div
+          key={achievement.id || i}
           className={cn(
             "group relative p-6 rounded-2xl bg-card/40 backdrop-blur-sm border border-border/60 hover:border-primary/40 transition-all duration-300"
           )}
@@ -26,9 +28,16 @@ export default function PublicAchievementSection({ achievements }: Props) {
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
             <div className="space-y-3 flex-1">
               <div className="space-y-1">
-                <h3 className="text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
-                  {achievement.title}
-                </h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
+                    {achievement.title}
+                  </h3>
+                  {achievement.is_pinned && (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-full">
+                      <Pin size={10} className="rotate-45" /> Featured
+                    </span>
+                  )}
+                </div>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-muted-foreground text-sm font-medium">
                   {achievement.event && (
                     <div className="flex items-center gap-1.5">
