@@ -111,33 +111,33 @@ class ProjectService:
                 error_code="SERVER_ERROR",
             )
 
-        # Delete Project
-        async def delete_project(
-            self,
-            user_id: str,
-            project_id: str,
-            db: AsyncSession = Depends(get_db),
-        ) -> str:
-            query = select(Project).where(Project.id == project_id)
-            result = await db.execute(query)
-            existing_project = result.scalars().first()
+    # Delete Project
+    async def delete_project(
+        self,
+        user_id: str,
+        project_id: str,
+        db: AsyncSession = Depends(get_db),
+    ) -> str:
+        query = select(Project).where(Project.id == project_id)
+        result = await db.execute(query)
+        existing_project = result.scalars().first()
 
-            if not existing_project:
-                raise APIException(
-                    message="Project not found",
-                    status=404,
-                    error_code="PROJECT_NOT_FOUND",
-                )
+        if not existing_project:
+            raise APIException(
+                message="Project not found",
+                status=404,
+                error_code="PROJECT_NOT_FOUND",
+            )
 
-            try:
-                await db.delete(existing_project)
-                await db.commit()
-            except Exception as e:
-                await db.rollback()
-                logger.error(f"Database error during project deletion: {e}")
-                raise APIException(
-                    message="An error occurred while deleting project",
-                    status=500,
-                    error_code="SERVER_ERROR",
-                )
-            return "Project deleted successfully"
+        try:
+            await db.delete(existing_project)
+            await db.commit()
+        except Exception as e:
+            await db.rollback()
+            logger.error(f"Database error during project deletion: {e}")
+            raise APIException(
+                message="An error occurred while deleting project",
+                status=500,
+                error_code="SERVER_ERROR",
+            )
+        return "Project deleted successfully"
