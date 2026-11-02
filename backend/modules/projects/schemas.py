@@ -13,6 +13,7 @@ class ProjectBase(BaseModel):
     github_link: Optional[str] = None
     project_link: Optional[str] = None
     project_date: Optional[date] = None
+    is_pinned: Optional[bool] = False
 
     @field_validator("project_date", mode="before")
     @classmethod

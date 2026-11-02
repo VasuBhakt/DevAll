@@ -7,6 +7,7 @@ export interface CreateProjectRequest {
   github_link?: string | null;
   project_link?: string | null;
   project_date?: Date | null;
+  is_pinned?: boolean;
 }
 
 export interface UpdateProjectRequest extends Partial<CreateProjectRequest> {}
@@ -22,4 +23,5 @@ export interface ProjectResponse {
   github_link?: string | null;
   project_link?: string | null;
   project_date?: Date | null;
+  is_pinned?: boolean;
 }

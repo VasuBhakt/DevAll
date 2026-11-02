@@ -198,6 +198,7 @@ class Project(Base):
     github_link = Column(String, nullable=True)
     project_link = Column(String, nullable=True)
     project_date = Column(Date, nullable=True)
+    is_pinned = Column(Boolean, default=False, server_default='false', nullable=False)
 
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

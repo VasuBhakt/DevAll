@@ -55,7 +55,7 @@ class PublicService:
         projects_query = (
             select(Project)
             .where(Project.user_id == user.id)
-            .order_by(desc(Project.project_date), desc(Project.created_at))
+            .order_by(desc(Project.is_pinned), desc(Project.project_date), desc(Project.created_at))
             .limit(3)
         )
         projects_res = await db.execute(projects_query)

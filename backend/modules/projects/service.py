@@ -90,7 +90,7 @@ class ProjectService:
             query = (
                 select(Project)
                 .where(Project.user_id == user_id)
-                .order_by(Project.created_at.desc())
+                .order_by(Project.is_pinned.desc(), Project.created_at.desc())
                 .offset(offset)
                 .limit(limit)
             )

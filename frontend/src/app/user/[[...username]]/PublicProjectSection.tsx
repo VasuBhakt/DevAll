@@ -2,7 +2,7 @@ import { Badge } from "@/components";
 import { cn } from "@/lib/utils";
 import { ProjectResponse } from "@/services/projects";
 import { format } from "date-fns";
-import { Calendar, Code2, Github, Globe, Layers } from "lucide-react";
+import { Calendar, Code2, Github, Globe, Layers, Pin } from "lucide-react";
 import Link from "next/link";
 
 interface Props {
@@ -21,9 +21,16 @@ export default function PublicProjectSection({ projects }: Props) {
             {/* Header Section */}
             <div className="flex items-start justify-between gap-4">
               <div className="space-y-1.5 font-medium">
-                <h3 className="text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
-                  {project.name}
-                </h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
+                    {project.name}
+                  </h3>
+                  {project.is_pinned && (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-full">
+                      <Pin size={10} className="rotate-45" /> Featured
+                    </span>
+                  )}
+                </div>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-muted-foreground text-sm">
                   {project.project_date && (
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-secondary/30 w-fit px-2.5 py-1 rounded-full border border-border/40">

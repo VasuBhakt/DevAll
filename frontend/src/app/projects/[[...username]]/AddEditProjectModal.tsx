@@ -21,7 +21,7 @@ import {
 } from "@/components/ui";
 import { DatePicker } from "@/components/ui";
 import { CreateProjectRequest, ProjectResponse } from "@/services/projects";
-import { Loader2, X, Plus } from "lucide-react";
+import { Loader2, X, Plus, Pin } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AddEditProjectModalProps {
@@ -60,6 +60,7 @@ export function AddEditProjectModal({
       github_link: "",
       project_link: "",
       project_date: undefined,
+      is_pinned: false,
     },
   });
 
@@ -77,6 +78,7 @@ export function AddEditProjectModal({
         project_date: project.project_date
           ? new Date(project.project_date)
           : undefined,
+        is_pinned: project.is_pinned || false,
       });
     } else if (!project && isOpen) {
       reset({
@@ -88,6 +90,7 @@ export function AddEditProjectModal({
         github_link: "",
         project_link: "",
         project_date: undefined,
+        is_pinned: false,
       });
     }
   }, [project, isOpen, reset]);
@@ -213,6 +216,47 @@ export function AddEditProjectModal({
               />
             </Field>
           </div>
+
+                    <Controller
+            control={control}
+            name="is_pinned"
+            render={({ field }) => (
+              <div className="flex items-center justify-between p-4 rounded-2xl bg-secondary/20 border border-border/50 hover:border-primary/30 transition-all mx-1">
+                <div className="flex items-center gap-3">
+                  <div
+                    className={cn(
+                      "p-2 rounded-xl transition-colors",
+                      field.value
+                        ? "bg-primary/20 text-primary"
+                        : "bg-muted text-muted-foreground"
+                    )}
+                  >
+                    <Pin
+                      size={18}
+                      className={cn(
+                        "transition-transform",
+                        field.value && "rotate-45"
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">
+                      Pin to Profile
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Showcase this project at the top of your portfolio (Top 3)
+                    </p>
+                  </div>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={!!field.value}
+                  onChange={(e) => field.onChange(e.target.checked)}
+                  className="h-5 w-5 rounded border-border text-primary focus:ring-primary accent-primary cursor-pointer"
+                />
+              </div>
+            )}
+          />
 
           <div className="space-y-6">
             <Controller
